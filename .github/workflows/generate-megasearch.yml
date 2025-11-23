@@ -1,0 +1,151 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║           GITHUB ACTIONS - MEGASEARCH AUTO-GENERATOR                         ║
+# ║           Institut du Couple - Régénération automatique                       ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+#
+# Ce workflow se déclenche automatiquement quand un knowledge_index.json est modifié
+# Il régénère le megasearch.json et commit les changements
+
+name: 🔄 Regenerate MegaSearch
+
+on:
+  push:
+    paths:
+      # Déclencher sur tout changement de knowledge_index.json
+      - '**/knowledge_index.json'
+      - 'Base de connaissances/**/knowledge_index.json'
+      - 'Modules/**/knowledge_index.json'
+      - 'Outils/**/knowledge_index.json'
+      # Aussi déclencher si le script lui-même change
+      - 'generate_megasearch.py'
+      - '.github/workflows/generate-megasearch.yml'
+  
+  # Permettre le déclenchement manuel
+  workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Forcer la régénération complète'
+        required: false
+        default: 'true'
+        type: boolean
+
+# Permissions nécessaires pour commit
+permissions:
+  contents: write
+
+jobs:
+  regenerate-megasearch:
+    name: 🚀 Régénérer MegaSearch
+    runs-on: ubuntu-latest
+    
+    steps:
+      # ─────────────────────────────────────────────────────────────────
+      # 1. Checkout du repo
+      # ─────────────────────────────────────────────────────────────────
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      # ─────────────────────────────────────────────────────────────────
+      # 2. Setup Python
+      # ─────────────────────────────────────────────────────────────────
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      # ─────────────────────────────────────────────────────────────────
+      # 3. Afficher les fichiers knowledge_index.json détectés
+      # ─────────────────────────────────────────────────────────────────
+      - name: 🔍 Lister les fichiers knowledge_index.json
+        run: |
+          echo "📚 Fichiers knowledge_index.json trouvés:"
+          find . -name "knowledge_index.json" -not -path "./.git/*" | head -50
+          echo ""
+          echo "📊 Total: $(find . -name "knowledge_index.json" -not -path "./.git/*" | wc -l) fichiers"
+      
+      # ─────────────────────────────────────────────────────────────────
+      # 4. Exécuter le générateur
+      # ─────────────────────────────────────────────────────────────────
+      - name: 🚀 Générer megasearch.json
+        run: |
+          echo "═══════════════════════════════════════════════════════════"
+          echo "🔄 Lancement du générateur MegaSearch BEAST MODE"
+          echo "═══════════════════════════════════════════════════════════"
+          python generate_megasearch.py --repo . --output megasearch.json
+      
+      # ─────────────────────────────────────────────────────────────────
+      # 5. Vérifier le résultat
+      # ─────────────────────────────────────────────────────────────────
+      - name: 📊 Vérifier le megasearch.json généré
+        run: |
+          if [ -f megasearch.json ]; then
+            echo "✅ megasearch.json généré avec succès"
+            echo ""
+            echo "📦 Taille du fichier:"
+            ls -lh megasearch.json
+            echo ""
+            echo "📋 Aperçu des métadonnées:"
+            python -c "
+          import json
+          with open('megasearch.json', 'r') as f:
+              data = json.load(f)
+          meta = data.get('meta', {})
+          print(f'  Version:          {meta.get(\"version\", \"N/A\")}')
+          print(f'  Dernière MAJ:     {meta.get(\"last_update\", \"N/A\")}')
+          print(f'  Documents:        {meta.get(\"total_documents\", 0)}')
+          print(f'  Chapitres:        {meta.get(\"total_chapitres\", 0)}')
+          print(f'  Chunks:           {meta.get(\"total_chunks\", 0)}')
+          print(f'  Concepts:         {meta.get(\"total_concepts\", 0)}')
+          print(f'  Outils:           {meta.get(\"total_outils\", 0)}')
+          print(f'  Pages totales:    {meta.get(\"total_pages\", 0)}')
+          "
+          else
+            echo "❌ Erreur: megasearch.json non généré"
+            exit 1
+          fi
+      
+      # ─────────────────────────────────────────────────────────────────
+      # 6. Commit et push si changements
+      # ─────────────────────────────────────────────────────────────────
+      - name: 📤 Commit et push megasearch.json
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # Vérifier s'il y a des changements
+          if git diff --quiet megasearch.json 2>/dev/null; then
+            echo "ℹ️ Pas de changements détectés dans megasearch.json"
+          else
+            git add megasearch.json
+            
+            # Message de commit détaillé
+            COMMIT_MSG="🔄 Auto-update megasearch.json
+
+          📊 Régénération automatique de la base de connaissances
+          📅 $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+          
+          Triggered by: ${{ github.event_name }}
+          Commit: ${{ github.sha }}"
+            
+            git commit -m "$COMMIT_MSG"
+            git push
+            
+            echo "✅ megasearch.json mis à jour et poussé"
+          fi
+      
+      # ─────────────────────────────────────────────────────────────────
+      # 7. Résumé final
+      # ─────────────────────────────────────────────────────────────────
+      - name: 📋 Résumé
+        run: |
+          echo ""
+          echo "═══════════════════════════════════════════════════════════"
+          echo "✅ WORKFLOW TERMINÉ AVEC SUCCÈS"
+          echo "═══════════════════════════════════════════════════════════"
+          echo ""
+          echo "Le megasearch.json est maintenant à jour et prêt"
+          echo "pour être utilisé comme base de connaissances GPT."
+          echo ""
