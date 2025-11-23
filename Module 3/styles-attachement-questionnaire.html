@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styles d'Attachement - Comment sommes-nous en lien ?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --vert-sauge: #C8D0C3;
+            --beige-sable: #D8CDBB;
+            --sable: #E6D7C3;
+            --mer: #8FAFB1;
+            --blanc: #FFFFFF;
+            --noir: #000000;
+            --gris-texte: #333333;
+        }
+
+        body {
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--sable) 0%, var(--beige-sable) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--gris-texte);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--blanc);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        h1 {
+            color: var(--mer);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: var(--mer);
+            margin-top: 40px;
+            margin-bottom: 25px;
+            font-size: 2em;
+            font-weight: 600;
+            border-bottom: 3px solid var(--vert-sauge);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: var(--gris-texte);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        .intro {
+            background: var(--sable);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            line-height: 1.8;
+            border-left: 5px solid var(--mer);
+        }
+
+        .education-section {
+            background: var(--beige-sable);
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border-left: 5px solid var(--mer);
+        }
+
+        .style-card {
+            background: var(--blanc);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid var(--mer);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .style-title {
+            font-weight: 600;
+            color: var(--mer);
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .partner-selector {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .partner-btn {
+            background: linear-gradient(135deg, var(--mer) 0%, var(--vert-sauge) 100%);
+            color: var(--blanc);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(143, 175, 177, 0.3);
+        }
+
+        .partner-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .partner-btn.active {
+            background: linear-gradient(135deg, var(--gris-texte) 0%, var(--mer) 100%);
+        }
+
+        .partner-btn.inactive {
+            opacity: 0.6;
+        }
+
+        .question-container {
+            background: var(--blanc);
+            border: 1px solid var(--vert-sauge);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .question-text {
+            font-weight: 500;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .scale-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .scale-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .scale-option input[type="radio"] {
+            margin-bottom: 8px;
+            transform: scale(1.2);
+        }
+
+        .scale-label {
+            font-size: 0.8em;
+            text-align: center;
+            color: var(--gris-texte);
+            line-height: 1.2;
+        }
+
+        .progress-section {
+            background: var(--sable);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, var(--mer) 0%, var(--vert-sauge) 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .results-section {
+            background: var(--beige-sable);
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border-left: 5px solid var(--mer);
+        }
+
+        .chart-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: var(--blanc);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .compatibility-section {
+            background: var(--sable);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border-left: 5px solid var(--mer);
+        }
+
+        .compatibility-tabs {
+            display: flex;
+            border-bottom: 2px solid var(--vert-sauge);
+            margin-bottom: 25px;
+            gap: 5px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 15px 25px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--gris-texte);
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            background: var(--blanc);
+            color: var(--mer);
+        }
+
+        .tab-btn.active {
+            background: var(--blanc);
+            color: var(--mer);
+            border-bottom: 3px solid var(--mer);
+        }
+
+        .tab-btn:nth-child(1).active {
+            border-bottom-color: var(--mer);
+        }
+
+        .tab-btn:nth-child(2).active {
+            border-bottom-color: var(--vert-sauge);
+        }
+
+        .tab-btn:nth-child(3).active {
+            border-bottom-color: var(--beige-sable);
+        }
+
+        .tab-btn:nth-child(4).active {
+            border-bottom-color: var(--sable);
+        }
+
+        .tab-content {
+            min-height: 300px;
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .tab-panel h4 {
+            color: var(--mer);
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--vert-sauge);
+        }
+
+        .compatibility-result {
+            background: var(--blanc);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid var(--mer);
+            line-height: 1.7;
+        }
+
+        .profile-highlight {
+            background: linear-gradient(135deg, var(--mer) 0%, var(--vert-sauge) 100%);
+            color: var(--blanc);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .analysis-section {
+            margin: 20px 0;
+        }
+
+        .analysis-section h5 {
+            color: var(--mer);
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .analysis-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .analysis-list li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            border-left: 2px solid var(--vert-sauge);
+            margin-left: 10px;
+            margin-bottom: 5px;
+        }
+
+        .analysis-list li::before {
+            content: "▶";
+            position: absolute;
+            left: -8px;
+            color: var(--mer);
+            font-size: 0.8em;
+        }
+
+        .recommendation {
+            background: var(--sable);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid var(--beige-sable);
+        }
+
+        .recommendation strong {
+            color: var(--mer);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .score-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .score-card {
+            background: var(--blanc);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .score-title {
+            font-weight: 600;
+            color: var(--mer);
+            margin-bottom: 10px;
+        }
+
+        .score-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--gris-texte);
+        }
+
+        .nav-buttons {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--mer) 0%, var(--vert-sauge) 100%);
+            color: var(--blanc);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(143, 175, 177, 0.3);
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid var(--beige-sable);
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--noir);
+        }
+
+        .dominant-style {
+            background: linear-gradient(135deg, var(--mer) 0%, var(--vert-sauge) 100%);
+            color: var(--blanc);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .interpretation {
+            background: var(--blanc);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid var(--mer);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            .scale-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .scale-option {
+                flex-direction: row;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>STYLES D'ATTACHEMENT</h1>
+        <div style="text-align: center; color: var(--mer); font-weight: 600; margin-bottom: 30px;">
+            Comment sommes-nous en lien ?
+        </div>
+
+        <!-- Section Éducative -->
+        <div id="education-section" class="education-section">
+            <h2>Comprendre les Styles d'Attachement</h2>
+            <div class="intro" style="background: var(--blanc);">
+                <strong>Qu'est-ce que l'attachement ?</strong><br>
+                L'attachement est notre façon naturelle de créer et maintenir des liens émotionnels avec les personnes importantes de notre vie. Notre style d'attachement influence profondément nos relations amoureuses et notre façon de vivre l'intimité.
+            </div>
+
+            <h3>Les Quatre Styles d'Attachement</h3>
+
+            <div class="style-card">
+                <div class="style-title">Style Sécure (24-30 points)</div>
+                <p>Les personnes avec un attachement sécurisé ont généralement une image positive d'elles-mêmes et des autres. Elles se sentent en confiance pour exprimer leurs émotions, demander de l'aide, et elles savent quelles attentes réalistes avoir envers leur partenaire. Vous vous sentez à l'aise avec l'intimité et l'autonomie.</p>
+            </div>
+
+            <div class="style-card">
+                <div class="style-title">Style Anxieux (28-35 points)</div>
+                <p>Ce style se développe souvent lorsque les figures d'attachement étaient imprévisibles ou parfois absentes. L'adulte anxieux cherche une proximité constante, peut vivre une peur intense d'être abandonné et cherche souvent à être rassuré. Vous pouvez parfois vous inquiéter de la stabilité de votre relation.</p>
+            </div>
+
+            <div class="style-card">
+                <div class="style-title">Style Évitant (28-35 points)</div>
+                <p>L'attachement évitant émerge lorsque les émotions ont été découragées ou minimisées dans l'enfance. Ces personnes ont appris à éviter de trop dépendre des autres. Dans le couple, elles peuvent avoir du mal à exprimer leurs besoins et à tolérer une trop grande proximité. Vous valorisez votre indépendance et pouvez avoir des difficultés avec l'intimité émotionnelle profonde.</p>
+            </div>
+
+            <div class="style-card">
+                <div class="style-title">Style Désorganisé (21-30 points)</div>
+                <p>Ce style d'attachement peut créer de la souffrance dans les relations et un accompagnement thérapeutique individuel est conseillé pour développer plus de sécurité relationnelle. Vos réactions émotionnelles dans votre relation peuvent parfois vous surprendre vous-même.</p>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn" onclick="startQuestionnaire()">Commencer le Questionnaire</button>
+            </div>
+        </div>
+
+        <!-- Sélection du partenaire -->
+        <div id="partner-selection" class="partner-selector hidden">
+            <h2>Qui répond au questionnaire ?</h2>
+            <div class="intro">
+                Chaque partenaire doit répondre individuellement au questionnaire. Vous pourrez ensuite comparer vos profils d'attachement.
+            </div>
+            <button class="partner-btn" id="partner1-btn" onclick="selectPartner(1)">Partenaire 1</button>
+            <button class="partner-btn" id="partner2-btn" onclick="selectPartner(2)">Partenaire 2</button>
+        </div>
+
+        <!-- Section du questionnaire -->
+        <div id="questionnaire-section" class="hidden">
+            <div id="current-partner-display" class="intro"></div>
+            
+            <div class="progress-section">
+                <div>Question <span id="current-question">1</span> sur 26</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+
+            <div id="questions-container"></div>
+
+            <div class="nav-buttons">
+                <button class="btn" id="prev-btn" onclick="previousQuestion()" disabled>Précédent</button>
+                <button class="btn" id="next-btn" onclick="nextQuestion()" disabled>Suivant</button>
+                <button class="btn hidden" id="finish-btn" onclick="finishCurrentPartner()">Terminer pour ce partenaire</button>
+            </div>
+        </div>
+
+        <!-- Section des résultats -->
+        <div id="results-section" class="hidden">
+            <h2>Vos Résultats</h2>
+            
+            <div id="individual-results">
+                <div id="partner1-results" class="results-section hidden">
+                    <h3>Résultats Partenaire 1</h3>
+                    <div class="chart-container">
+                        <canvas id="chart1" width="400" height="300"></canvas>
+                    </div>
+                    <div id="partner1-scores" class="score-display"></div>
+                    <div id="partner1-dominant" class="dominant-style hidden"></div>
+                    <div id="partner1-interpretation" class="interpretation hidden"></div>
+                </div>
+
+                <div id="partner2-results" class="results-section hidden">
+                    <h3>Résultats Partenaire 2</h3>
+                    <div class="chart-container">
+                        <canvas id="chart2" width="400" height="300"></canvas>
+                    </div>
+                    <div id="partner2-scores" class="score-display"></div>
+                    <div id="partner2-dominant" class="dominant-style hidden"></div>
+                    <div id="partner2-interpretation" class="interpretation hidden"></div>
+                </div>
+            </div>
+
+            <div id="compatibility-analysis" class="compatibility-section hidden">
+                <h3>Analyse de Compatibilité</h3>
+                <div id="compatibility-content">
+                    <div class="compatibility-tabs">
+                        <button class="tab-btn active" data-tab="impact">Impact</button>
+                        <button class="tab-btn" data-tab="transactions">Transactions</button>
+                        <button class="tab-btn" data-tab="conflits">Conflits</button>
+                        <button class="tab-btn" data-tab="communication">Communication</button>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <div id="impact-tab" class="tab-panel active">
+                            <h4>Impact dans votre relation</h4>
+                            <div id="impact-content" class="compatibility-result"></div>
+                        </div>
+                        
+                        <div id="transactions-tab" class="tab-panel">
+                            <h4>Transactions émotionnelles</h4>
+                            <div id="transactions-content" class="compatibility-result"></div>
+                        </div>
+                        
+                        <div id="conflits-tab" class="tab-panel">
+                            <h4>Gestion des conflits</h4>
+                            <div id="conflits-content" class="compatibility-result"></div>
+                        </div>
+                        
+                        <div id="communication-tab" class="tab-panel">
+                            <h4>Patterns de communication</h4>
+                            <div id="communication-content" class="compatibility-result"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn" onclick="restartQuestionnaire()">Recommencer</button>
+                <button class="btn" onclick="exportResults()">Exporter les Résultats</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            Bilan de Compétences du Couple - Marie-Christine Abatte Psychologue<br>
+            Questionnaire sur les Styles d'Attachement pour Couples
+        </div>
+    </div>
+
+    <script>
+        // Questions du questionnaire
+        const questions = [
+            { text: "Je me sens à l'aise de partager mes sentiments intimes avec mon/ma partenaire.", category: "secure" },
+            { text: "Je crains que mon/ma partenaire ne m'aime pas autant que je l'aime.", category: "anxious" },
+            { text: "Je préfère garder une certaine distance émotionnelle, même avec mon/ma partenaire.", category: "avoidant" },
+            { text: "Je fais facilement confiance à mon/ma partenaire.", category: "secure" },
+            { text: "Je m'inquiète souvent que mon/ma partenaire me quitte.", category: "anxious" },
+            { text: "J'ai du mal à dépendre de mon/ma partenaire, même pour des choses importantes.", category: "avoidant" },
+            { text: "Je me sens en sécurité quand mon/ma partenaire est proche de moi.", category: "secure" },
+            { text: "J'ai besoin de beaucoup de réassurance de la part de mon/ma partenaire.", category: "anxious" },
+            { text: "Je deviens mal à l'aise quand mon/ma partenaire veut être très proche émotionnellement.", category: "avoidant" },
+            { text: "Je peux exprimer mes besoins à mon/ma partenaire sans crainte.", category: "secure" },
+            { text: "Je vérifie souvent si mon/ma partenaire m'aime vraiment.", category: "anxious" },
+            { text: "Je préfère ne pas montrer mes vulnérabilités à mon/ma partenaire.", category: "anxious" },
+            { text: "Je communique ouvertement mes besoins à mon/ma partenaire.", category: "secure" },
+            { text: "Quand mon/ma partenaire est distant(e), je crains immédiatement le pire.", category: "anxious" },
+            { text: "J'ai tendance à minimiser l'importance des relations intimes.", category: "avoidant" },
+            { text: "Je me sens en confiance et je demande du soutien à mon/ma partenaire.", category: "secure" },
+            { text: "Je remets souvent en question les sentiments de mon/ma partenaire pour moi.", category: "anxious" },
+            { text: "Je me sens étouffé(e) quand mon/ma partenaire est trop demandeur/demandeuse.", category: "avoidant" },
+            { text: "Les conflits avec mon/ma partenaire me stressent ou me font peur.", category: "anxious" },
+            { text: "J'ai trouvé difficile d'exprimer mes besoins émotionnels.", category: "avoidant" },
+            { text: "Mes réactions émotionnelles dans ma relation me semblent parfois imprévisibles ou contradictoires.", category: "disorganized" },
+            { text: "J'oscille entre vouloir être très proche de mon/ma partenaire et vouloir m'éloigner.", category: "disorganized" },
+            { text: "J'ai du mal à identifier ce que je ressens vraiment dans ma relation.", category: "disorganized" },
+            { text: "Je peux passer rapidement d'un besoin intense de proximité à un besoin de distance.", category: "disorganized" },
+            { text: "Les relations intimes me font ressentir à la fois du désir et de la peur.", category: "disorganized" },
+            { text: "J'ai tendance à envoyer des signaux contradictoires à mon/ma partenaire.", category: "disorganized" }
+        ];
+
+        // État de l'application
+        let currentPartner = 0;
+        let currentQuestionIndex = 0;
+        let responses = {
+            partner1: {},
+            partner2: {}
+        };
+        let completedPartners = [];
+
+        // Mapping des catégories aux questions
+        const categoryQuestions = {
+            secure: [1, 4, 7, 10, 13, 16],
+            anxious: [2, 5, 8, 11, 14, 17, 19, 12],
+            avoidant: [3, 6, 9, 15, 18, 20],
+            disorganized: [21, 22, 23, 24, 25, 26]
+        };
+
+        // Interprétations
+        const interpretations = {
+            secure: "Les personnes avec un attachement sécurisé ont généralement une image positive d'elles-mêmes et des autres. Elles se sentent en confiance pour exprimer leurs émotions, demander de l'aide, et elles savent quelles attentes réalistes avoir envers leur partenaire. Vous vous sentez à l'aise avec l'intimité et l'autonomie. Vous communiquez ouvertement vos besoins et faites confiance en votre partenaire.",
+            anxious: "Ce style se développe souvent lorsque les figures d'attachement étaient imprévisibles ou parfois absentes. L'adulte anxieux cherche une proximité constante, peut vivre une peur intense d'être abandonné et cherche souvent à être rassuré. Vous avez tendance à rechercher beaucoup de proximité et de réassurance. Vous pouvez parfois vous inquiéter de la stabilité de votre relation.",
+            avoidant: "L'attachement évitant émerge lorsque les émotions ont été découragées ou minimisées dans l'enfance. Ces personnes ont appris à éviter de trop dépendre des autres. Dans le couple, elles peuvent avoir du mal à exprimer leurs besoins et à tolérer une trop grande proximité. Vous valorisez votre indépendance et pouvez avoir des difficultés avec l'intimité émotionnelle profonde.",
+            disorganized: "Ce style d'attachement peut créer de la souffrance dans les relations et un accompagnement thérapeutique individuel est conseillé pour développer plus de sécurité relationnelle. Vos réactions émotionnelles dans votre relation peuvent parfois vous surprendre vous-même. Ce style nécessite souvent un accompagnement professionnel pour développer une plus grande sécurité relationnelle."
+        };
+
+        function startQuestionnaire() {
+            document.getElementById('education-section').classList.add('hidden');
+            document.getElementById('partner-selection').classList.remove('hidden');
+        }
+
+        function selectPartner(partnerNum) {
+            currentPartner = partnerNum;
+            document.getElementById('partner-selection').classList.add('hidden');
+            document.getElementById('questionnaire-section').classList.remove('hidden');
+            
+            updatePartnerDisplay();
+            updatePartnerButtons();
+            displayQuestion();
+        }
+
+        function updatePartnerDisplay() {
+            const display = document.getElementById('current-partner-display');
+            display.innerHTML = `<strong>Réponses du Partenaire ${currentPartner}</strong><br>
+                Répondez à chaque question en pensant à votre relation actuelle. Il n'y a pas de bonnes ou mauvaises réponses. Choisissez la réponse qui correspond le mieux à ce que vous ressentez habituellement.`;
+        }
+
+        function updatePartnerButtons() {
+            const partner1Btn = document.getElementById('partner1-btn');
+            const partner2Btn = document.getElementById('partner2-btn');
+            
+            if (completedPartners.includes(1)) {
+                partner1Btn.textContent = 'Partenaire 1 ✓';
+                partner1Btn.classList.add('inactive');
+            }
+            if (completedPartners.includes(2)) {
+                partner2Btn.textContent = 'Partenaire 2 ✓';
+                partner2Btn.classList.add('inactive');
+            }
+            
+            if (currentPartner === 1) {
+                partner1Btn.classList.add('active');
+                partner2Btn.classList.remove('active');
+            } else {
+                partner2Btn.classList.add('active');
+                partner1Btn.classList.remove('active');
+            }
+        }
+
+        function displayQuestion() {
+            const container = document.getElementById('questions-container');
+            const question = questions[currentQuestionIndex];
+            
+            container.innerHTML = `
+                <div class="question-container">
+                    <div class="question-text">
+                        ${currentQuestionIndex + 1}. ${question.text}
+                    </div>
+                    <div class="scale-container">
+                        <div class="scale-option">
+                            <input type="radio" name="q${currentQuestionIndex}" value="1" onchange="saveResponse(${currentQuestionIndex}, 1)">
+                            <div class="scale-label">Pas du tout d'accord</div>
+                        </div>
+                        <div class="scale-option">
+                            <input type="radio" name="q${currentQuestionIndex}" value="2" onchange="saveResponse(${currentQuestionIndex}, 2)">
+                            <div class="scale-label">Plutôt pas d'accord</div>
+                        </div>
+                        <div class="scale-option">
+                            <input type="radio" name="q${currentQuestionIndex}" value="3" onchange="saveResponse(${currentQuestionIndex}, 3)">
+                            <div class="scale-label">Neutre</div>
+                        </div>
+                        <div class="scale-option">
+                            <input type="radio" name="q${currentQuestionIndex}" value="4" onchange="saveResponse(${currentQuestionIndex}, 4)">
+                            <div class="scale-label">Plutôt d'accord</div>
+                        </div>
+                        <div class="scale-option">
+                            <input type="radio" name="q${currentQuestionIndex}" value="5" onchange="saveResponse(${currentQuestionIndex}, 5)">
+                            <div class="scale-label">Tout à fait d'accord</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Restaurer la réponse précédente si elle existe
+            const partnerKey = `partner${currentPartner}`;
+            if (responses[partnerKey][currentQuestionIndex] !== undefined) {
+                const value = responses[partnerKey][currentQuestionIndex];
+                document.querySelector(`input[name="q${currentQuestionIndex}"][value="${value}"]`).checked = true;
+            }
+
+            updateProgress();
+            updateNavigationButtons();
+        }
+
+        function saveResponse(questionIndex, value) {
+            const partnerKey = `partner${currentPartner}`;
+            responses[partnerKey][questionIndex] = value;
+            updateNavigationButtons();
+        }
+
+        function updateProgress() {
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const finishBtn = document.getElementById('finish-btn');
+            
+            prevBtn.disabled = currentQuestionIndex === 0;
+            
+            const partnerKey = `partner${currentPartner}`;
+            const hasResponse = responses[partnerKey][currentQuestionIndex] !== undefined;
+            nextBtn.disabled = !hasResponse;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.classList.add('hidden');
+                finishBtn.classList.remove('hidden');
+                finishBtn.disabled = !hasResponse;
+            } else {
+                nextBtn.classList.remove('hidden');
+                finishBtn.classList.add('hidden');
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            }
+        }
+
+        function finishCurrentPartner() {
+            completedPartners.push(currentPartner);
+            calculateAndDisplayResults(currentPartner);
+            
+            if (completedPartners.length < 2) {
+                // Proposer au deuxième partenaire de répondre
+                currentQuestionIndex = 0;
+                document.getElementById('questionnaire-section').classList.add('hidden');
+                document.getElementById('partner-selection').classList.remove('hidden');
+                updatePartnerButtons();
+            } else {
+                // Les deux partenaires ont terminé, afficher l'analyse complète
+                document.getElementById('questionnaire-section').classList.add('hidden');
+                document.getElementById('results-section').classList.remove('hidden');
+                showCompatibilityAnalysis();
+            }
+        }
+
+        function calculateScores(partnerNum) {
+            const partnerKey = `partner${partnerNum}`;
+            const partnerResponses = responses[partnerKey];
+            
+            const scores = {
+                secure: 0,
+                anxious: 0,
+                avoidant: 0,
+                disorganized: 0
+            };
+
+            // Calculer les scores pour chaque catégorie
+            Object.keys(categoryQuestions).forEach(category => {
+                categoryQuestions[category].forEach(questionNum => {
+                    const questionIndex = questionNum - 1;
+                    if (partnerResponses[questionIndex] !== undefined) {
+                        scores[category] += partnerResponses[questionIndex];
+                    }
+                });
+            });
+
+            return scores;
+        }
+
+        function getDominantStyle(scores) {
+            return Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+        }
+
+        function getStyleName(style) {
+            const names = {
+                secure: 'Sécure',
+                anxious: 'Anxieux',
+                avoidant: 'Évitant',
+                disorganized: 'Désorganisé'
+            };
+            return names[style];
+        }
+
+        function getScoreRange(style, score) {
+            const ranges = {
+                secure: { min: 24, max: 30 },
+                anxious: { min: 28, max: 40 },
+                avoidant: { min: 24, max: 30 },
+                disorganized: { min: 24, max: 30 }
+            };
+            return ranges[style];
+        }
+
+        function calculateAndDisplayResults(partnerNum) {
+            const scores = calculateScores(partnerNum);
+            const dominant = getDominantStyle(scores);
+            
+            // Afficher les résultats individuels
+            const resultsDiv = document.getElementById(`partner${partnerNum}-results`);
+            resultsDiv.classList.remove('hidden');
+            
+            // Afficher les scores
+            const scoresDiv = document.getElementById(`partner${partnerNum}-scores`);
+            scoresDiv.innerHTML = Object.keys(scores).map(style => `
+                <div class="score-card">
+                    <div class="score-title">${getStyleName(style)}</div>
+                    <div class="score-value">${scores[style]}</div>
+                </div>
+            `).join('');
+            
+            // Afficher le style dominant
+            const dominantDiv = document.getElementById(`partner${partnerNum}-dominant`);
+            dominantDiv.innerHTML = `<h3>Style Dominant: ${getStyleName(dominant)}</h3>`;
+            dominantDiv.classList.remove('hidden');
+            
+            // Afficher l'interprétation
+            const interpretationDiv = document.getElementById(`partner${partnerNum}-interpretation`);
+            interpretationDiv.innerHTML = `<strong>Interprétation:</strong><br>${interpretations[dominant]}`;
+            interpretationDiv.classList.remove('hidden');
+            
+            // Créer le graphique
+            createChart(partnerNum, scores);
+        }
+
+        function createChart(partnerNum, scores) {
+            const ctx = document.getElementById(`chart${partnerNum}`).getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Sécure', 'Anxieux', 'Évitant', 'Désorganisé'],
+                    datasets: [{
+                        label: 'Score',
+                        data: [scores.secure, scores.anxious, scores.avoidant, scores.disorganized],
+                        backgroundColor: [
+                            'rgba(143, 175, 177, 0.8)',
+                            'rgba(200, 208, 195, 0.8)',
+                            'rgba(216, 205, 187, 0.8)',
+                            'rgba(230, 215, 195, 0.8)'
+                        ],
+                        borderColor: [
+                            '#8FAFB1',
+                            '#C8D0C3',
+                            '#D8CDBB',
+                            '#E6D7C3'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: `Profil d'Attachement - Partenaire ${partnerNum}`,
+                            font: {
+                                family: 'Montserrat',
+                                size: 16,
+                                weight: '600'
+                            },
+                            color: '#333333'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 40,
+                            title: {
+                                display: true,
+                                text: 'Score',
+                                font: {
+                                    family: 'Montserrat',
+                                    size: 14,
+                                    weight: '500'
+                                }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Styles d\'Attachement',
+                                font: {
+                                    family: 'Montserrat',
+                                    size: 14,
+                                    weight: '500'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function showCompatibilityAnalysis() {
+            const scores1 = calculateScores(1);
+            const scores2 = calculateScores(2);
+            const dominant1 = getDominantStyle(scores1);
+            const dominant2 = getDominantStyle(scores2);
+            
+            document.getElementById('compatibility-analysis').classList.remove('hidden');
+            
+            // Remplir le contenu de chaque onglet
+            fillTabContent('impact', dominant1, dominant2);
+            fillTabContent('transactions', dominant1, dominant2);
+            fillTabContent('conflits', dominant1, dominant2);
+            fillTabContent('communication', dominant1, dominant2);
+            
+            // Initialiser les onglets
+            initializeTabs();
+        }
+
+        function fillTabContent(dimension, style1, style2) {
+            const contentDiv = document.getElementById(`${dimension}-content`);
+            const analysis = getDetailedAnalysis(dimension, style1, style2);
+            
+            contentDiv.innerHTML = `
+                <div class="profile-highlight">
+                    Votre Profil de Couple : ${getStyleName(style1)} & ${getStyleName(style2)}
+                </div>
+                
+                <div class="analysis-section">
+                    <h5>Points forts</h5>
+                    <ul class="analysis-list">
+                        ${analysis.strengths.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="analysis-section">
+                    <h5>Points d'attention</h5>
+                    <ul class="analysis-list">
+                        ${analysis.challenges.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="recommendation">
+                    <strong>Recommandation professionnelle :</strong><br>
+                    ${analysis.recommendation}
+                </div>
+            `;
+        }
+
+        function getDetailedAnalysis(dimension, style1, style2) {
+            const analyses = {
+                impact: {
+                    'secure-secure': {
+                        strengths: [
+                            'Stabilité émotionnelle mutuelle et équilibrée',
+                            'Capacité à maintenir l\'autonomie tout en restant connectés',
+                            'Confiance naturelle et sécurité relationnelle'
+                        ],
+                        challenges: [
+                            'Risque de routine si l\'on ne cultive pas la nouveauté',
+                            'Possible complaisance dans la zone de confort'
+                        ],
+                        recommendation: 'Votre couple bénéficie d\'une base solide de confiance mutuelle. Continuez à cultiver la communication ouverte et n\'hésitez pas à explorer ensemble de nouveaux défis pour maintenir la vitalité de votre relation.'
+                    },
+                    'secure-anxious': {
+                        strengths: [
+                            'Le partenaire sécure apporte stabilité et réassurance',
+                            'Capacité d\'empathie et de compréhension mutuelle',
+                            'Potentiel d\'équilibrage des besoins relationnels'
+                        ],
+                        challenges: [
+                            'Besoin de réassurance régulière du partenaire anxieux',
+                            'Patience et constance nécessaires du partenaire sécure'
+                        ],
+                        recommendation: 'Le partenaire sécure peut offrir l\'ancrage émotionnel stable dont a besoin le partenaire anxieux pour développer progressivement sa confiance relationnelle. La régularité dans les gestes d\'affection est essentielle.'
+                    },
+                    'secure-avoidant': {
+                        strengths: [
+                            'Respect mutuel de l\'autonomie individuelle',
+                            'Absence de pression émotionnelle excessive',
+                            'Stabilité dans la distance émotionnelle'
+                        ],
+                        challenges: [
+                            'Risque de manque d\'intimité émotionnelle',
+                            'Difficulté à exprimer les besoins affectifs'
+                        ],
+                        recommendation: 'Le partenaire sécure peut aider l\'évitant à s\'ouvrir progressivement en respectant son rythme et en montrant que l\'intimité peut être sécurisante plutôt que menaçante.'
+                    },
+                    'secure-disorganized': {
+                        strengths: [
+                            'Stabilité offerte par le partenaire sécure',
+                            'Potentiel de guérison relationnelle',
+                            'Environnement sécurisant pour l\'exploration émotionnelle'
+                        ],
+                        challenges: [
+                            'Imprévisibilité des réactions du partenaire désorganisé',
+                            'Besoin de patience et de compréhension constantes'
+                        ],
+                        recommendation: 'Un accompagnement thérapeutique professionnel est recommandé pour aider le partenaire avec un style désorganisé à développer une sécurité relationnelle. Le partenaire sécure peut offrir un environnement stable et prévisible.'
+                    },
+                    'anxious-anxious': {
+                        strengths: [
+                            'Compréhension mutuelle des besoins de réassurance',
+                            'Empathie naturelle face aux insécurités',
+                            'Motivation commune pour renforcer le lien'
+                        ],
+                        challenges: [
+                            'Amplification mutuelle des insécurités',
+                            'Risque de dépendance émotionnelle excessive',
+                            'Difficulté à apaiser les craintes mutuelles'
+                        ],
+                        recommendation: 'Vous pouvez vous comprendre mutuellement, mais attention à ne pas amplifier vos insécurités respectives. Travaillez ensemble sur le développement de la confiance en soi et établissez des rituels de réassurance sains.'
+                    },
+                    'anxious-avoidant': {
+                        strengths: [
+                            'Complémentarité possible des besoins',
+                            'Opportunité d\'apprentissage mutuel',
+                            'Équilibrage potentiel proximité-autonomie'
+                        ],
+                        challenges: [
+                            'Cycle de poursuite-évitement classique',
+                            'Frustrations réciproques importantes',
+                            'Incompréhension des besoins de l\'autre'
+                        ],
+                        recommendation: 'Cette combinaison nécessite un travail conscient et souvent l\'aide d\'un thérapeute de couple. L\'anxieux doit apprendre à respecter le besoin d\'espace de l\'évitant, tandis que l\'évitant peut progressivement s\'ouvrir à plus d\'intimité.'
+                    },
+                    'anxious-disorganized': {
+                        strengths: [
+                            'Compréhension mutuelle de la vulnérabilité',
+                            'Motivation à chercher de l\'aide ensemble'
+                        ],
+                        challenges: [
+                            'Instabilité émotionnelle amplifiée',
+                            'Difficultés de communication importantes',
+                            'Cycles relationnels chaotiques'
+                        ],
+                        recommendation: 'Cette combinaison peut créer beaucoup d\'instabilité émotionnelle. Un accompagnement thérapeutique professionnel est fortement recommandé pour vous aider à développer des patterns relationnels plus sains et sécurisants.'
+                    },
+                    'avoidant-avoidant': {
+                        strengths: [
+                            'Respect mutuel de l\'indépendance',
+                            'Absence de pression émotionnelle',
+                            'Stabilité dans la distance choisie'
+                        ],
+                        challenges: [
+                            'Manque d\'intimité émotionnelle profonde',
+                            'Difficulté à créer une vraie connexion',
+                            'Risque de relation superficielle'
+                        ],
+                        recommendation: 'Vous respectez mutuellement votre besoin d\'indépendance, mais pourriez manquer d\'intimité émotionnelle. Explorez progressivement des moments de partage plus profonds, en respectant le rythme de chacun.'
+                    },
+                    'avoidant-disorganized': {
+                        strengths: [
+                            'Stabilité apportée par l\'évitant',
+                            'Absence de pression émotionnelle immédiate'
+                        ],
+                        challenges: [
+                            'Manque de soutien émotionnel pour le désorganisé',
+                            'Incompréhension des besoins affectifs',
+                            'Isolement émotionnel du partenaire désorganisé'
+                        ],
+                        recommendation: 'Le retrait émotionnel de l\'évitant peut intensifier l\'insécurité du désorganisé. Un accompagnement professionnel est recommandé pour développer de meilleures stratégies de communication et de soutien mutuel.'
+                    },
+                    'disorganized-disorganized': {
+                        strengths: [
+                            'Compréhension mutuelle des difficultés',
+                            'Motivation commune pour la guérison'
+                        ],
+                        challenges: [
+                            'Instabilité émotionnelle chronique',
+                            'Patterns relationnels chaotiques',
+                            'Difficultés de communication importantes'
+                        ],
+                        recommendation: 'Cette combinaison nécessite un accompagnement thérapeutique intensif et spécialisé. Un travail individuel et de couple est essentiel pour développer une relation plus stable et sécurisante.'
+                    }
+                },
+                transactions: {
+                    'secure-secure': {
+                        strengths: [
+                            'Échanges équilibrés et réciproques',
+                            'Communication claire des besoins',
+                            'Capacité de négociation constructive'
+                        ],
+                        challenges: [
+                            'Risque de prendre l\'équilibre pour acquis',
+                            'Besoin de maintenir l\'attention à la relation'
+                        ],
+                        recommendation: 'Vos interactions sont naturellement équilibrées. Maintenez cette qualité en continuant à exprimer vos besoins clairement et en célébrant régulièrement votre connexion mutuelle.'
+                    },
+                    'secure-anxious': {
+                        strengths: [
+                            'Le partenaire sécure offre constance et prévisibilité',
+                            'Réponse empathique aux besoins du partenaire anxieux',
+                            'Apprentissage progressif de la sécurité'
+                        ],
+                        challenges: [
+                            'Demandes de réassurance fréquentes',
+                            'Risque d\'épuisement du partenaire sécure'
+                        ],
+                        recommendation: 'Le partenaire sécure doit maintenir sa constance tout en aidant l\'anxieux à développer son autonomie émotionnelle. Des rituels de connexion réguliers peuvent aider à réduire l\'anxiété.'
+                    },
+                    'secure-avoidant': {
+                        strengths: [
+                            'Respect des besoins d\'espace',
+                            'Patience dans l\'approche de l\'intimité',
+                            'Communication non-pressante'
+                        ],
+                        challenges: [
+                            'Lenteur dans l\'établissement de l\'intimité',
+                            'Frustration possible du partenaire sécure'
+                        ],
+                        recommendation: 'Le partenaire sécure peut montrer que l\'intimité est sécurisante en respectant les limites de l\'évitant et en procédant par petites étapes progressives.'
+                    },
+                    'secure-disorganized': {
+                        strengths: [
+                            'Stabilité et prévisibilité des interactions',
+                            'Patience face aux incohérences',
+                            'Soutien dans la régulation émotionnelle'
+                        ],
+                        challenges: [
+                            'Imprévisibilité des réponses du partenaire désorganisé',
+                            'Besoin de cohérence constante'
+                        ],
+                        recommendation: 'Maintenez des interactions prévisibles et rassurantes. Un accompagnement professionnel peut aider à établir des patterns de communication plus stables.'
+                    },
+                    'anxious-anxious': {
+                        strengths: [
+                            'Compréhension mutuelle des besoins de soutien',
+                            'Réactivité aux signaux de détresse',
+                            'Motivation à rassurer mutuellement'
+                        ],
+                        challenges: [
+                            'Escalade possible dans les demandes d\'attention',
+                            'Épuisement mutuel dans la réassurance',
+                            'Dépendance émotionnelle excessive'
+                        ],
+                        recommendation: 'Établissez des moments de réassurance structurés pour éviter l\'escalade. Développez ensemble des stratégies d\'auto-apaisement pour réduire la dépendance mutuelle.'
+                    },
+                    'anxious-avoidant': {
+                        strengths: [
+                            'Potentiel d\'apprentissage des différences',
+                            'Équilibrage possible des extrêmes'
+                        ],
+                        challenges: [
+                            'Cycle de demande-retrait chronique',
+                            'Incompréhension des besoins mutuels',
+                            'Frustrations croissantes'
+                        ],
+                        recommendation: 'Apprenez les langages d\'amour différents de chacun. L\'anxieux doit respecter le besoin d\'espace, l\'évitant doit s\'efforcer de donner des signes de connexion réguliers.'
+                    },
+                    'anxious-disorganized': {
+                        strengths: [
+                            'Empathie mutuelle dans la vulnérabilité'
+                        ],
+                        challenges: [
+                            'Cycles émotionnels chaotiques',
+                            'Amplification des insécurités',
+                            'Difficulté à s\'apaiser mutuellement'
+                        ],
+                        recommendation: 'Cette combinaison nécessite un accompagnement professionnel pour développer des patterns de communication plus stables et apprendre des techniques de régulation émotionnelle.'
+                    },
+                    'avoidant-avoidant': {
+                        strengths: [
+                            'Respect mutuel de l\'autonomie',
+                            'Interactions non-intrusives',
+                            'Maintien de l\'indépendance'
+                        ],
+                        challenges: [
+                            'Manque d\'échanges émotionnels profonds',
+                            'Risque de déconnexion progressive',
+                            'Difficulté à exprimer les besoins'
+                        ],
+                        recommendation: 'Créez des moments dédiés au partage émotionnel, même brefs. Explorez progressivement des formes d\'intimité qui respectent votre besoin d\'espace tout en renforçant la connexion.'
+                    },
+                    'avoidant-disorganized': {
+                        strengths: [
+                            'Stabilité apportée par l\'évitant'
+                        ],
+                        challenges: [
+                            'Manque de réponse aux besoins émotionnels',
+                            'Aggravation possible de l\'insécurité',
+                            'Cycles de rapprochement-éloignement'
+                        ],
+                        recommendation: 'L\'évitant doit apprendre à reconnaître et répondre aux signaux émotionnels du partenaire désorganisé. Un accompagnement professionnel est recommandé pour développer une meilleure connexion.'
+                    },
+                    'disorganized-disorganized': {
+                        strengths: [
+                            'Compréhension mutuelle des difficultés'
+                        ],
+                        challenges: [
+                            'Chaos dans les échanges émotionnels',
+                            'Imprévisibilité des interactions',
+                            'Cycles relationnels destructeurs'
+                        ],
+                        recommendation: 'Un accompagnement thérapeutique spécialisé est essentiel pour établir des patterns de communication plus cohérents et développer des stratégies de régulation émotionnelle commune.'
+                    }
+                },
+                conflits: {
+                    'secure-secure': {
+                        strengths: [
+                            'Résolution constructive et collaborative',
+                            'Capacité à rester calmes sous tension',
+                            'Communication respectueuse pendant les désaccords'
+                        ],
+                        challenges: [
+                            'Risque d\'évitement si les sujets deviennent routiniers',
+                            'Possible complaisance dans la résolution'
+                        ],
+                        recommendation: 'Votre approche naturellement constructive des conflits est un atout majeur. Continuez à maintenir cette ouverture et n\'hésitez pas à aborder les sujets difficiles avant qu\'ils ne s\'accumulent.'
+                    },
+                    'secure-anxious': {
+                        strengths: [
+                            'Le partenaire sécure apporte calme et rationalité',
+                            'Volonté de résoudre rapidement les tensions',
+                            'Empathie face aux réactions émotionnelles'
+                        ],
+                        challenges: [
+                            'Réactions intenses du partenaire anxieux',
+                            'Besoin de réassurance immédiate pendant les conflits'
+                        ],
+                        recommendation: 'Le partenaire sécure peut aider à désamorcer les tensions en restant calme et en offrant de la réassurance. Établissez des règles de communication pour les moments de conflit.'
+                    },
+                    'secure-avoidant': {
+                        strengths: [
+                            'Approche rationnelle et non-émotionnelle',
+                            'Respect des besoins d\'espace pendant les conflits',
+                            'Résolution patiente et progressive'
+                        ],
+                        challenges: [
+                            'Évitement possible des sujets difficiles',
+                            'Lenteur dans la résolution des problèmes'
+                        ],
+                        recommendation: 'Créez un environnement sécurisé pour aborder les conflits sans pression. Le partenaire évitant a besoin de temps pour traiter et s\'exprimer sur les désaccords.'
+                    },
+                    'secure-disorganized': {
+                        strengths: [
+                            'Stabilité apportée par le partenaire sécure',
+                            'Patience face aux réactions imprévisibles'
+                        ],
+                        challenges: [
+                            'Réactions chaotiques du partenaire désorganisé',
+                            'Difficulté à maintenir la cohérence dans la résolution'
+                        ],
+                        recommendation: 'Maintenez une approche calme et prévisible. Un accompagnement professionnel peut aider à développer des stratégies de gestion des conflits plus structurées.'
+                    },
+                    'anxious-anxious': {
+                        strengths: [
+                            'Motivation commune à résoudre rapidement',
+                            'Compréhension mutuelle de l\'impact émotionnel'
+                        ],
+                        challenges: [
+                            'Escalade émotionnelle rapide',
+                            'Difficulté à rester objectifs',
+                            'Réactions disproportionnées aux désaccords mineurs'
+                        ],
+                        recommendation: 'Établissez des "temps d\'arrêt" pendant les conflits pour éviter l\'escalade. Développez des techniques de gestion du stress et de communication à froid.'
+                    },
+                    'anxious-avoidant': {
+                        strengths: [
+                            'Complémentarité possible des approches'
+                        ],
+                        challenges: [
+                            'L\'anxieux pousse pour résoudre, l\'évitant se retire',
+                            'Frustration croissante des deux côtés',
+                            'Cycles de poursuite-évitement intensifiés'
+                        ],
+                        recommendation: 'Cette dynamique nécessite un travail thérapeutique. Apprenez à gérer les conflits selon un timing qui convient aux deux partenaires, avec des moments de discussion programmés.'
+                    },
+                    'anxious-disorganized': {
+                        strengths: [
+                            'Compréhension mutuelle de l\'intensité émotionnelle'
+                        ],
+                        challenges: [
+                            'Conflits chaotiques et imprévisibles',
+                            'Escalade émotionnelle incontrôlée',
+                            'Difficulté à revenir au calme'
+                        ],
+                        recommendation: 'Les conflits peuvent devenir très destructeurs. Un accompagnement professionnel est essentiel pour apprendre des techniques de désescalade et de communication constructive.'
+                    },
+                    'avoidant-avoidant': {
+                        strengths: [
+                            'Évitement des confrontations directes',
+                            'Approche rationnelle des désaccords',
+                            'Respect mutuel de l\'espace de réflexion'
+                        ],
+                        challenges: [
+                            'Évitement chronique des sujets difficiles',
+                            'Accumulation de non-dits',
+                            'Résolution superficielle des problèmes'
+                        ],
+                        recommendation: 'Programmez des moments dédiés à la discussion des sujets difficiles. Même si c\'est inconfortable, aborder les problèmes est essentiel pour la santé de votre relation.'
+                    },
+                    'avoidant-disorganized': {
+                        strengths: [
+                            'L\'évitant peut offrir du calme initial'
+                        ],
+                        challenges: [
+                            'Le retrait de l\'évitant intensifie le chaos du désorganisé',
+                            'Cycles destructeurs d\'évitement-escalade',
+                            'Manque de résolution effective'
+                        ],
+                        recommendation: 'L\'évitant doit apprendre à rester présent même dans l\'inconfort émotionnel. Un accompagnement professionnel est recommandé pour développer des stratégies de gestion des conflits.'
+                    },
+                    'disorganized-disorganized': {
+                        strengths: [
+                            'Compréhension mutuelle du chaos émotionnel'
+                        ],
+                        challenges: [
+                            'Conflits explosifs et destructeurs',
+                            'Absence de stratégies de désescalade',
+                            'Cycles répétitifs de chaos relationnel'
+                        ],
+                        recommendation: 'Cette combinaison nécessite un accompagnement thérapeutique spécialisé et intensif pour développer des compétences de gestion des conflits et de régulation émotionnelle.'
+                    }
+                },
+                communication: {
+                    'secure-secure': {
+                        strengths: [
+                            'Expression claire et directe des besoins',
+                            'Écoute active et empathique',
+                            'Communication respectueuse et bienveillante'
+                        ],
+                        challenges: [
+                            'Risque de tenir la communication pour acquise',
+                            'Besoin de maintenir l\'attention aux nuances'
+                        ],
+                        recommendation: 'Votre communication naturellement saine est un fondement solide. Continuez à cultiver l\'écoute active et n\'hésitez pas à partager même les détails qui semblent évidents.'
+                    },
+                    'secure-anxious': {
+                        strengths: [
+                            'Le partenaire sécure offre écoute et validation',
+                            'Encouragement à l\'expression émotionnelle',
+                            'Patience face aux besoins de réassurance'
+                        ],
+                        challenges: [
+                            'Répétitivité dans les demandes de clarification',
+                            'Besoin constant de validation émotionnelle'
+                        ],
+                        recommendation: 'Le partenaire sécure peut aider l\'anxieux à développer sa confiance en communication en offrant des feedbacks réguliers et en validant les émotions exprimées.'
+                    },
+                    'secure-avoidant': {
+                        strengths: [
+                            'Respect du rythme de communication de l\'évitant',
+                            'Communication non-pressante et patiente',
+                            'Encouragement progressif à l\'ouverture'
+                        ],
+                        challenges: [
+                            'Lenteur dans l\'expression des émotions profondes',
+                            'Frustration possible face au manque d\'ouverture'
+                        ],
+                        recommendation: 'Créez un environnement sécurisé pour la communication émotionnelle. Le partenaire évitant a besoin de temps et d\'espace pour s\'ouvrir progressivement.'
+                    },
+                    'secure-disorganized': {
+                        strengths: [
+                            'Offre de stabilité dans les échanges',
+                            'Patience face aux incohérences communicationnelles'
+                        ],
+                        challenges: [
+                            'Imprévisibilité dans les réponses',
+                            'Difficulté à maintenir la cohérence des messages'
+                        ],
+                        recommendation: 'Maintenez une communication claire et cohérente. Un accompagnement professionnel peut aider à développer des patterns de communication plus stables et prévisibles.'
+                    },
+                    'anxious-anxious': {
+                        strengths: [
+                            'Empathie mutuelle face aux besoins émotionnels',
+                            'Volonté de communiquer intensément',
+                            'Validation mutuelle des émotions'
+                        ],
+                        challenges: [
+                            'Sur-communication émotionnelle',
+                            'Difficulté à laisser de l\'espace dans les échanges',
+                            'Escalade possible dans l\'intensité'
+                        ],
+                        recommendation: 'Apprenez à doser l\'intensité communicationnelle. Établissez des moments de pause dans les échanges intenses et développez l\'écoute sans réaction immédiate.'
+                    },
+                    'anxious-avoidant': {
+                        strengths: [
+                            'Opportunité d\'apprentissage des différents styles'
+                        ],
+                        challenges: [
+                            'Styles de communication opposés',
+                            'L\'anxieux pousse à communiquer, l\'évitant se ferme',
+                            'Malentendus fréquents sur les intentions'
+                        ],
+                        recommendation: 'Cette combinaison nécessite souvent un apprentissage thérapeutique des différents styles de communication. Développez des signaux clairs pour les besoins d\'espace et de connexion.'
+                    },
+                    'anxious-disorganized': {
+                        strengths: [
+                            'Compréhension mutuelle de l\'intensité émotionnelle'
+                        ],
+                        challenges: [
+                            'Communication chaotique et imprévisible',
+                            'Messages contradictoires fréquents',
+                            'Difficulté à maintenir la cohérence'
+                        ],
+                        recommendation: 'Un accompagnement professionnel est essentiel pour développer des compétences de communication plus structurées et apprendre à naviguer dans l\'intensité émotionnelle.'
+                    },
+                    'avoidant-avoidant': {
+                        strengths: [
+                            'Communication concise et directe',
+                            'Respect mutuel des silences',
+                            'Absence de pression communicationnelle'
+                        ],
+                        challenges: [
+                            'Manque de profondeur émotionnelle',
+                            'Évitement des sujets sensibles',
+                            'Communication principalement factuelle'
+                        ],
+                        recommendation: 'Explorez progressivement des formes de communication émotionnelle. Même de petits pas vers plus d\'ouverture peuvent enrichir significativement votre connexion.'
+                    },
+                    'avoidant-disorganized': {
+                        strengths: [
+                            'L\'évitant peut offrir une base de calme'
+                        ],
+                        challenges: [
+                            'Incompréhension des besoins communicationnels',
+                            'Le retrait de l\'évitant aggrave l\'insécurité',
+                            'Messages mixtes et confusion'
+                        ],
+                        recommendation: 'L\'évitant doit apprendre à rester engagé communicationnellement même dans l\'inconfort. Un accompagnement professionnel peut aider à développer des compétences de communication adaptées.'
+                    },
+                    'disorganized-disorganized': {
+                        strengths: [
+                            'Compréhension mutuelle de la confusion communicationnelle'
+                        ],
+                        challenges: [
+                            'Communication incohérente et imprévisible',
+                            'Messages contradictoires constants',
+                            'Cycles de malentendus destructeurs'
+                        ],
+                        recommendation: 'Cette combinaison nécessite un accompagnement thérapeutique intensif pour développer des bases communicationnelles stables et apprendre à naviguer ensemble dans la complexité émotionnelle.'
+                    }
+                }
+            };
+            
+            const key1 = `${style1}-${style2}`;
+            const key2 = `${style2}-${style1}`;
+            
+            return analyses[dimension][key1] || analyses[dimension][key2] || {
+                strengths: ['Analyse en cours de développement pour cette combinaison'],
+                challenges: ['Données insuffisantes pour cette combinaison spécifique'],
+                recommendation: 'Nous recommandons de consulter un professionnel pour une analyse personnalisée de votre situation.'
+            };
+        }
+
+        function initializeTabs() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetTab = this.dataset.tab;
+                    
+                    // Désactiver tous les onglets
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabPanels.forEach(panel => panel.classList.remove('active'));
+                    
+                    // Activer l'onglet cliqué
+                    this.classList.add('active');
+                    document.getElementById(`${targetTab}-tab`).classList.add('active');
+                });
+            });
+        }
+
+        function restartQuestionnaire() {
+            currentPartner = 0;
+            currentQuestionIndex = 0;
+            responses = { partner1: {}, partner2: {} };
+            completedPartners = [];
+            
+            document.getElementById('results-section').classList.add('hidden');
+            document.getElementById('education-section').classList.remove('hidden');
+            document.getElementById('partner1-results').classList.add('hidden');
+            document.getElementById('partner2-results').classList.add('hidden');
+            document.getElementById('compatibility-analysis').classList.add('hidden');
+            
+            // Réinitialiser les boutons partenaires
+            document.getElementById('partner1-btn').textContent = 'Partenaire 1';
+            document.getElementById('partner2-btn').textContent = 'Partenaire 2';
+            document.getElementById('partner1-btn').classList.remove('active', 'inactive');
+            document.getElementById('partner2-btn').classList.remove('active', 'inactive');
+        }
+
+        function exportResults() {
+            // Créer un contenu d'export simple
+            const scores1 = calculateScores(1);
+            const scores2 = calculateScores(2);
+            const dominant1 = getDominantStyle(scores1);
+            const dominant2 = getDominantStyle(scores2);
+            
+            const exportContent = `
+RÉSULTATS - STYLES D'ATTACHEMENT
+================================
+
+PARTENAIRE 1:
+- Style dominant: ${getStyleName(dominant1)}
+- Scores: Sécure ${scores1.secure}, Anxieux ${scores1.anxious}, Évitant ${scores1.avoidant}, Désorganisé ${scores1.disorganized}
+
+PARTENAIRE 2:
+- Style dominant: ${getStyleName(dominant2)}
+- Scores: Sécure ${scores2.secure}, Anxieux ${scores2.anxious}, Évitant ${scores2.avoidant}, Désorganisé ${scores2.disorganized}
+
+COMPATIBILITÉ:
+${analyzeCompatibility(dominant1, dominant2)}
+
+Generated by: Marie-Christine Abatte Psychologue
+            `;
+            
+            const blob = new Blob([exportContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'styles-attachement-resultats.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Le questionnaire démarre sur la section éducative
+        });
+    </script>
+</body>
+</html>

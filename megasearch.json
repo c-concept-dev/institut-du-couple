@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "version": "1.0",
+    "last_update": "2025-11-20T17:58:44.927Z",
+    "total_documents": 1,
+    "total_chapitres": 1,
+    "total_chunks": 0,
+    "total_pages": 58
+  },
+  "documents": [
+    {
+      "id": "grandir-et-guerir-grace-au-couple-therapie-imago",
+      "titre": "Grandir et guérir grace au couple thérapie IMAGO",
+      "auteurs": [
+        "Carla NESSI TRIPPI Carlo TRIPPI"
+      ],
+      "approches": [
+        "Imago"
+      ],
+      "langue": "fr",
+      "annee": null,
+      "editeur": "Jouvance",
+      "path": "Base de connaissances/Livres/Grandir et guerir grace au couple",
+      "json_path": "./knowledge_index.json",
+      "pdf_path": "./source.pdf",
+      "stats": {
+        "chapitres": 1,
+        "concepts": 0,
+        "exercices": 0,
+        "cas": 0,
+        "citations": 0,
+        "total_chunks": 0
+      },
+      "pages_total": 58
+    }
+  ],
+  "chunks_complets": [],
+  "index_global": {
+    "par_approche": {
+      "Imago": [
+        "grandir-et-guerir-grace-au-couple-therapie-imago"
+      ]
+    },
+    "par_problematique": {},
+    "par_mot_cle": {},
+    "par_type": {
+      "concept": [],
+      "exercice": [],
+      "cas": [],
+      "citation": [],
+      "outil": []
+    }
+  }
+}

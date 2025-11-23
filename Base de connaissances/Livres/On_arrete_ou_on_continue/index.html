@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On arrête ou on continue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mer: #8FAFB1;
+            --vert-sauge: #C8D0C3;
+            --sable: #E6D7C3;
+            --blanc: #FFFFFF;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--blanc);
+            color: #333;
+            padding: 40px 20px;
+            line-height: 1.7;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--blanc);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: var(--mer);
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 4px solid var(--vert-sauge);
+            padding-bottom: 20px;
+        }
+        .meta {
+            background: linear-gradient(135deg, var(--sable), var(--vert-sauge));
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border-left: 5px solid var(--mer);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+        .stat-card {
+            background: var(--sable);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--mer);
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        h2 {
+            color: var(--mer);
+            margin: 40px 0 20px;
+            font-size: 1.8em;
+        }
+        .chapter {
+            background: var(--sable);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid var(--mer);
+        }
+        .chapter-title {
+            font-weight: 700;
+            color: var(--mer);
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 25px;
+            border-top: 2px solid var(--vert-sauge);
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>On arrête ou on continue</h1>
+        
+        <div class="meta">
+            <p><strong>Auteurs :</strong> Robert Neuburger</p>
+            <p><strong>Année :</strong> N/A</p>
+            <p><strong>Domaine :</strong> Thérapie de couple</p>
+            <p><strong>Approches :</strong> Thérapie systémique, Thérapie de couple</p>
+            <p><strong>Mode d'extraction :</strong> Standard</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value">16</div>
+                <div class="stat-label">Chapitres</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">83</div>
+                <div class="stat-label">Sections</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">38</div>
+                <div class="stat-label">Outils</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">16</div>
+                <div class="stat-label">Exercices</div>
+            </div>
+        </div>
+
+        <h2>Structure des Chapitres</h2>
+        
+            <div class="chapter">
+                <div class="chapter-title">1. Communiquer, un problème ?</div>
+                <p><strong>Pages :</strong> 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64</p>
+                <p><strong>Sections :</strong> 11</p>
+                <p style="margin-top: 10px; font-style: italic;">Ce chapitre explore les différentes formes de communication dans le couple, distinguant communication digitale et analogique. Il analyse les malentendus, les falsifications communicationnelles, les processus décisionnels et les relations sexuelles comme dimensions essentielles de la vie conjugale.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">2. Pourquoi rester en couple ?</div>
+                <p><strong>Pages :</strong> 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77</p>
+                <p><strong>Sections :</strong> 5</p>
+                <p style="margin-top: 10px; font-style: italic;">Ce chapitre explore les raisons qui motivent les individus à rester en couple, abordant les notions d'appartenance, de reconnaissance sociale, de sécurité et de réalisation de projets communs. Il présente également les quatre questions les plus importantes à se poser.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">3. Quelle intimité partagez-vous ?</div>
+                <p><strong>Pages :</strong> 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97</p>
+                <p><strong>Sections :</strong> 9</p>
+                <p style="margin-top: 10px; font-style: italic;">Ce chapitre explore en profondeur la notion d'intimité dans le couple sous ses multiples dimensions : le contenu de l'intimité, l'appartenance des organes sexuels, le partage d'intimité, les territoires communs, le partage de l'espace (cohabitation, lieu de résidence, disposition de l'espace), le temps accordé au couple et l'argent.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">4. Quelle intimité partagez-vous ? (suite)</div>
+                <p><strong>Pages :</strong> 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110</p>
+                <p><strong>Sections :</strong> 7</p>
+                <p style="margin-top: 10px; font-style: italic;">Suite du chapitre sur l'intimité, abordant les échanges affectifs et intellectuels, le partage des tâches et responsabilités, l'entraide, ce que chacun attend du couple, et les violences intimes.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">5. Quelles sont les limites de votre couple ?</div>
+                <p><strong>Pages :</strong> 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126</p>
+                <p><strong>Sections :</strong> 9</p>
+                <p style="margin-top: 10px; font-style: italic;">Ce chapitre explore les frontières du couple : son ouverture ou fermeture sur l'extérieur, l'équilibre entre intimité de couple et intimité personnelle, les couples frileux et poreux, l'impact du passé et des ex, les problèmes de couple versus problèmes de parents, et les fuites d'intime.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">6. Votre couple est-il « normal » ?</div>
+                <p><strong>Pages :</strong> 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143</p>
+                <p><strong>Sections :</strong> 7</p>
+                <p style="margin-top: 10px; font-style: italic;">Ce chapitre interroge la notion de normalité dans le couple, explorant les valeurs, idéaux, rituels propres à chaque couple, le blason du couple, la confiance et fidélité sexuelle, la complicité et les traditions, et propose une réflexion sur ce qu'est un 'bon couple'.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">7. La sexualité dans le couple (suite)</div>
+                <p><strong>Pages :</strong> 144, 145, 146, 147</p>
+                <p><strong>Sections :</strong> 4</p>
+                <p style="margin-top: 10px; font-style: italic;">Suite de l'analyse de la sexualité comme élément central du couple, abordant les normes sexuelles, la recherche d'informations, et l'influence des familles d'origine sur les pratiques sexuelles.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">8. Dignité et respect</div>
+                <p><strong>Pages :</strong> 148, 149, 150</p>
+                <p><strong>Sections :</strong> 3</p>
+                <p style="margin-top: 10px; font-style: italic;">Analyse du concept de dignité dans le couple, distinguant deux types de dignité (couple et individuelle) et explorant le rapport entre appartenance au couple et préservation de l'identité personnelle.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">9. Votre couple peut-il évoluer ?</div>
+                <p><strong>Pages :</strong> 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163</p>
+                <p><strong>Sections :</strong> 5</p>
+                <p style="margin-top: 10px; font-style: italic;">Ce chapitre explore les capacités de changement du couple, les mécanismes de créativité, les crises comme opportunités de transformation, et les différentes solutions pour éviter la rupture.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">10. J'ai mal au couple : pourquoi consulter un(e) thérapeute de couple plutôt qu'un thérapeute individuel ?</div>
+                <p><strong>Pages :</strong> 164, 165, 166, 167, 168, 169</p>
+                <p><strong>Sections :</strong> 4</p>
+                <p style="margin-top: 10px; font-style: italic;">Ce chapitre examine les raisons de consulter un thérapeute de couple, les circonstances appropriées, les différentes situations cliniques (avant/après tromperie), et les travers thérapeutiques à éviter.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">11. Conclusion</div>
+                <p><strong>Pages :</strong> 171, 172, 173</p>
+                <p><strong>Sections :</strong> 2</p>
+                <p style="margin-top: 10px; font-style: italic;">La conclusion synthétise les conditions pour entreprendre une thérapie de couple et explore la dimension irrationnelle du couple ainsi que les limites du bilan rationnel.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">12. Épilogue : Faut-il deux mariages ?</div>
+                <p><strong>Pages :</strong> 175, 176, 177, 178, 179, 180, 181, 182, 183, 184</p>
+                <p><strong>Sections :</strong> 4</p>
+                <p style="margin-top: 10px; font-style: italic;">L'épilogue propose une réflexion sur l'évolution du couple moderne, questionnant la pertinence de deux types de mariage distincts (couple et famille) et explorant les nouvelles formes de vie conjugale.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">13. INTRODUCTION</div>
+                <p><strong>Pages :</strong> 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19</p>
+                <p><strong>Sections :</strong> 4</p>
+                <p style="margin-top: 10px; font-style: italic;">L'introduction présente la fragilité des couples contemporains et la nécessité d'un bilan de couple. Neuburger propose un ouvrage de 'clignotants' pour prévenir les difficultés et offrir des repères de réflexion aux couples. Il introduit le concept de 'maison-couple' et les huit aspects fondamentaux du fonctionnement conjugal.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">14. L'aimez-vous toujours?</div>
+                <p><strong>Pages :</strong> 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33</p>
+                <p><strong>Sections :</strong> 2</p>
+                <p style="margin-top: 10px; font-style: italic;">Ce chapitre explore la question fondamentale de l'amour dans le couple à travers le concept de 'maison-couple'. Il introduit les outils graphiques du relatiogramme et de l'appartenançogramme pour évaluer la place du partenaire et les appartenances de chacun.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">15. Aimez-vous votre couple?</div>
+                <p><strong>Pages :</strong> 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47</p>
+                <p><strong>Sections :</strong> 5</p>
+                <p style="margin-top: 10px; font-style: italic;">Ce chapitre distingue l'amour du partenaire de l'amour du couple en introduisant le concept d'appartenance. Il présente l'appartenançogramme comme outil pour évaluer les différentes sources d'identité et de soutien, et explore la question fondamentale de ce que l'on préfère: le partenaire ou le couple.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">16. Comment communiquez-vous?</div>
+                <p><strong>Pages :</strong> 49, 50, 51, 52, 53</p>
+                <p><strong>Sections :</strong> 2</p>
+                <p style="margin-top: 10px; font-style: italic;">Ce chapitre aborde la communication dans le couple en distinguant la communication digitale (verbale, basée sur les mots) de la communication analogique (non-verbale, basée sur les gestes, le ton, les attitudes). Il explore les malentendus et incompréhensions qui peuvent survenir dans la vie de couple.</p>
+            </div>
+        
+
+        <div class="footer">
+            <p><strong>Institut du Couple - Base de Connaissances Thérapeutiques</strong></p>
+            <p>PDF Batch PRO v2.0 - Mode Standard</p>
+            <p>Bilan de Compétences du couple - Marie-Christine Abatte Psychologue</p>
+        </div>
+    </div>
+</body>
+</html>

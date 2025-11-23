@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vivre en couple - Base de Connaissances</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mer: #8FAFB1;
+            --vert-sauge: #C8D0C3;
+            --beige-sable: #D8CDBB;
+            --sable: #E6D7C3;
+            --blanc: #FFFFFF;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--sable), var(--beige-sable));
+            color: #333;
+            padding: 40px 20px;
+            line-height: 1.7;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--blanc);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: var(--mer);
+            font-size: 2.8em;
+            margin-bottom: 20px;
+            border-bottom: 4px solid var(--vert-sauge);
+            padding-bottom: 20px;
+        }
+        h2 {
+            color: var(--mer);
+            font-size: 2em;
+            margin: 40px 0 20px;
+            border-bottom: 2px solid var(--sable);
+            padding-bottom: 12px;
+        }
+        h3 {
+            color: var(--mer);
+            font-size: 1.5em;
+            margin: 30px 0 15px;
+        }
+        .meta {
+            background: linear-gradient(135deg, var(--sable), var(--vert-sauge));
+            padding: 30px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border-left: 6px solid var(--mer);
+        }
+        .meta p {
+            margin: 10px 0;
+            font-size: 1.05em;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, var(--vert-sauge), var(--sable));
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border: 3px solid var(--mer);
+        }
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--mer);
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            font-size: 1em;
+            font-weight: 600;
+        }
+        .chapter {
+            background: var(--blanc);
+            border: 3px solid var(--vert-sauge);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            transition: all 0.3s;
+        }
+        .chapter:hover {
+            border-color: var(--mer);
+            box-shadow: 0 6px 20px rgba(143, 175, 177, 0.3);
+        }
+        .chapter-title {
+            color: var(--mer);
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 3px solid var(--vert-sauge);
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Vivre en couple</h1>
+        
+        <div class="meta">
+            <p><strong>✍️ Auteurs :</strong> Mony Elkaïm</p>
+            <p><strong>📅 Année :</strong> Non spécifiée</p>
+            <p><strong>🎯 Approches :</strong> Systémique</p>
+            <p><strong>🏥 Domaine :</strong> Thérapie de couple</p>
+            <p><strong>🌐 Langue :</strong> Français</p>
+            <p><strong>🎓 Niveau :</strong> professionnel_expert</p>
+            <p><strong>📖 Pages :</strong> 58</p>
+        </div>
+
+        <h2>📊 Statistiques d'Extraction</h2>
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value">13</div>
+                <div class="stat-label">Chapitres</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">26</div>
+                <div class="stat-label">Sections</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">77</div>
+                <div class="stat-label">Concepts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">14</div>
+                <div class="stat-label">Frameworks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">15</div>
+                <div class="stat-label">Outils</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Exercices</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">6</div>
+                <div class="stat-label">Cas Cliniques</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">10</div>
+                <div class="stat-label">Citations</div>
+            </div>
+        </div>
+
+        <h2>📖 Structure des Chapitres</h2>
+        
+            <div class="chapter">
+                <div class="chapter-title">1. VIVRE EN COUPLE - Introduction générale</div>
+                <p><strong>Pages :</strong> 1, 2</p>
+                <p><strong>Sections :</strong> 2</p>
+                <p style="margin-top: 10px; font-style: italic;">Introduction à la vision systémique du couple comme un système dynamique où chaque partenaire influence l'autre. Présentation de la notion fondamentale que le couple crée sa propre réalité à travers les interactions mutuelles.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">2. A PROPOS DU BIEN ORDONNE COMME PAR L'AUTRE - Le concept de responsabilité circulaire</div>
+                <p><strong>Pages :</strong> 2, 3</p>
+                <p><strong>Sections :</strong> 1</p>
+                <p style="margin-top: 10px; font-style: italic;">Exploration du concept systémique fondamental selon lequel dans un couple, chaque comportement est à la fois cause et effet. Remise en question de la notion linéaire de responsabilité au profit d'une compréhension circulaire des interactions.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">3. VIVRE EN COUPLE (suite) - La dynamique du changement</div>
+                <p><strong>Pages :</strong> 3, 4, 5, 6</p>
+                <p><strong>Sections :</strong> 2</p>
+                <p style="margin-top: 10px; font-style: italic;">Analyse approfondie de la résistance au changement dans les couples et des mécanismes qui maintiennent les patterns dysfonctionnels malgré la souffrance qu'ils génèrent.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">4. VIVRE EN COUPLE (suite) - La communication dans le couple</div>
+                <p><strong>Pages :</strong> 6, 7, 8</p>
+                <p><strong>Sections :</strong> 2</p>
+                <p style="margin-top: 10px; font-style: italic;">Exploration des patterns de communication dysfonctionnels et des stratégies pour améliorer la qualité des échanges dans le couple.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">5. CHANTIER BIEN ORDONNE COMMENCE PAR L'AUTRE - La réciprocité et le changement mutuel</div>
+                <p><strong>Pages :</strong> 8, 9, 10</p>
+                <p><strong>Sections :</strong> 2</p>
+                <p style="margin-top: 10px; font-style: italic;">Exploration du concept systémique selon lequel le changement dans un couple nécessite une transformation mutuelle et réciproque plutôt qu'unilatérale.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">6. DES PRESCRIPTIONS QUI PARAISSENT CE QU'ELLES SONT - Le paradoxe thérapeutique</div>
+                <p><strong>Pages :</strong> 11, 12, 13</p>
+                <p><strong>Sections :</strong> 2</p>
+                <p style="margin-top: 10px; font-style: italic;">Introduction aux techniques paradoxales en thérapie de couple, où le thérapeute prescrit apparemment le symptôme pour mieux le transformer.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">7. VIVRE EN COUPLE (suite) - Intimité et sexualité</div>
+                <p><strong>Pages :</strong> 13, 14, 15</p>
+                <p><strong>Sections :</strong> 2</p>
+                <p style="margin-top: 10px; font-style: italic;">Exploration des dimensions d'intimité émotionnelle et sexuelle dans le couple, et de leur interdépendance dans la satisfaction relationnelle.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">8. Quand le sexe s'en mêle</div>
+                <p><strong>Pages :</strong> 16, 17, 18, 19, 20, 21</p>
+                <p><strong>Sections :</strong> 2</p>
+                <p style="margin-top: 10px; font-style: italic;">Ce chapitre explore comment les dynamiques sexuelles révèlent et influencent les patterns relationnels du couple, en mettant l'accent sur l'analyse systémique des comportements sexuels et leurs significations dans le contexte conjugal.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">9. Un jeu pour les couples</div>
+                <p><strong>Pages :</strong> 21, 22, 23, 24, 25, 26, 27, 28, 29, 30</p>
+                <p><strong>Sections :</strong> 2</p>
+                <p style="margin-top: 10px; font-style: italic;">Ce chapitre présente un exercice pratique structuré permettant aux couples d'explorer leurs dynamiques relationnelles à travers un jeu thérapeutique basé sur l'échange et la compréhension mutuelle.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">10. Plation et le couple-entité</div>
+                <p><strong>Pages :</strong> 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45</p>
+                <p><strong>Sections :</strong> 3</p>
+                <p style="margin-top: 10px; font-style: italic;">Exploration du concept de 'couple-entité' selon Platon et analyse des mécanismes systémiques qui maintiennent les couples dans des patterns dysfonctionnels, incluant la stratégie du pire comme fonction protectrice des croyances profondes.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">11. ... et conflits incessants</div>
+                <p><strong>Pages :</strong> 46, 47, 48</p>
+                <p><strong>Sections :</strong> 1</p>
+                <p style="margin-top: 10px; font-style: italic;">Exploration des mécanismes de conflits répétitifs dans le couple. Analyse des processus circulaires qui maintiennent les tensions et empêchent la résolution des différends.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">12. Malentendus ou « bien entendus » ?</div>
+                <p><strong>Pages :</strong> 48, 49, 50, 51, 52</p>
+                <p><strong>Sections :</strong> 2</p>
+                <p style="margin-top: 10px; font-style: italic;">Exploration du concept selon lequel les malentendus apparents dans le couple sont en réalité des 'bien entendus' qui servent une fonction dans le système relationnel. Analyse de la communication implicite et des besoins non exprimés.</p>
+            </div>
+        
+            <div class="chapter">
+                <div class="chapter-title">13. La géométrie variable des reproches</div>
+                <p><strong>Pages :</strong> 52, 53, 54, 55, 56, 57, 58</p>
+                <p><strong>Sections :</strong> 3</p>
+                <p style="margin-top: 10px; font-style: italic;">Exploration de la nature changeante et contextuelle des reproches dans le couple. Analyse de comment les reproches varient selon les contextes et servent différentes fonctions dans le système relationnel.</p>
+            </div>
+        
+
+        <div class="footer">
+            <p><strong>Institut du Couple - Base de Connaissances Thérapeutiques</strong></p>
+            <p style="margin-top: 10px;">
+                Généré par PDF Batch PRO - Édition Claude Ultimate<br>
+                Bilan de Compétences du couple© - Marie-Christine Abatte Psychologue
+            </p>
+            <p style="margin-top: 10px; font-size: 0.85em;">
+                Date de création : 23/11/2025
+            </p>
+        </div>
+    </div>
+</body>
+</html>
