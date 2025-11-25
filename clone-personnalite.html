@@ -1296,7 +1296,8 @@ if __name__ == "__main__":
                     const prenom = document.getElementById('prenom')?.value?.trim();
                     const domaine = document.getElementById('domaine')?.value?.trim();
                     const sector = document.querySelector('.sector.selected');
-                    return prenom && domaine && sector;
+                    // Retourner explicitement un boolean
+                    return !!(prenom && domaine && sector);
                     
                 case 1: // Mode
                     return selectedMode !== '';
@@ -1361,12 +1362,20 @@ if __name__ == "__main__":
             const secteur = document.querySelector('.sector.selected')?.dataset.s;
             const usage = document.getElementById('usage').value;
             
-            if (!prenom || !age || !domaine || !secteur || !usage) {
-                alert('Veuillez remplir tous les champs');
+            // Seuls prenom, domaine et secteur sont obligatoires
+            if (!prenom || !domaine || !secteur) {
+                showNotification('⚠️ Veuillez remplir : Prénom, Domaine et Secteur', 'warning');
                 return;
             }
             
-            contextData = { prenom, age, domaine, secteur, usage };
+            // Age et Usage sont optionnels
+            contextData = { 
+                prenom, 
+                age: age || 'Non spécifié', 
+                domaine, 
+                secteur, 
+                usage: usage || 'Non spécifié' 
+            };
             document.getElementById('nav0').classList.add('done');
             go(1);
         }
@@ -2337,9 +2346,52 @@ COMMENCE L'INTERVIEW MAINTENANT !`;
         
         // PROGRESS
         function updateProgress(mode, current, total) {
-            const pct = Math.round((current / total) * 100);
-            document.getElementById('prog' + mode).style.width = pct + '%';
-            document.getElementById('qCount' + mode).textContent = current;
+            // Vérifier si c'est l'appel depuis go() (1 seul param)
+            if (arguments.length === 1) {
+                // C'est pour la barre de progression principale
+                updateMainProgress(mode); // mode est en fait step
+                return;
+            }
+            
+            // Sinon c'est pour la progress bar spécifique au mode
+            const progEl = document.getElementById('prog' + mode);
+            const countEl = document.getElementById('qCount' + mode);
+            
+            if (progEl && countEl) {
+                const pct = Math.round((current / total) * 100);
+                progEl.style.width = pct + '%';
+                countEl.textContent = current;
+            }
+        }
+        
+        function updateMainProgress(step) {
+            const stepNames = [
+                'Définir le contexte',
+                'Choisir le mode',
+                'Interview & Questions',
+                'Valider les réponses',
+                'Exporter le clone'
+            ];
+            
+            const estimatedTimes = [
+                '2-3 min',
+                '1 min',
+                '10-15 min',
+                '2-3 min',
+                '1 min'
+            ];
+            
+            const percentage = ((step + 1) / 5) * 100;
+            
+            const fillEl = document.getElementById('progressFill');
+            const stepEl = document.getElementById('currentStep');
+            const nameEl = document.getElementById('stepName');
+            const timeEl = document.getElementById('estimatedTime');
+            
+            if (fillEl) fillEl.style.width = percentage + '%';
+            if (stepEl) stepEl.textContent = step + 1;
+            if (nameEl) nameEl.textContent = stepNames[step] || '';
+            if (timeEl) timeEl.textContent = estimatedTimes[step] || '15-20 min';
         }
         
         // ============================================
