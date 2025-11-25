@@ -1293,10 +1293,10 @@ if __name__ == "__main__":
         function validateSection(section) {
             switch(section) {
                 case 0: // Contexte
-                    const name = document.getElementById('name')?.value?.trim();
-                    const role = document.getElementById('role')?.value?.trim();
+                    const prenom = document.getElementById('prenom')?.value?.trim();
+                    const domaine = document.getElementById('domaine')?.value?.trim();
                     const sector = document.querySelector('.sector.selected');
-                    return name && role && sector;
+                    return prenom && domaine && sector;
                     
                 case 1: // Mode
                     return selectedMode !== '';
