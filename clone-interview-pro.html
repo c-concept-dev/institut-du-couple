@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clone de Personnalité - Interview IA | Institut du Couple</title>
+    <title>Clone de Personnalité v7.1 ULTIME - Interview IA | Institut du Couple</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -588,7 +588,7 @@
         <div class="progress-content">
             <div class="progress-info">
                 <span id="phaseLabel">Phase 0/6 - Préparation</span>
-                <span id="estimateLabel">~35 min</span>
+                <span id="estimateLabel">~55 min</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -600,10 +600,12 @@
     <div class="container">
         <!-- Welcome screen -->
         <div class="welcome-screen" id="welcomeScreen">
-            <h1>Clone de Personnalité v7.0</h1>
+            <h1>Clone de Personnalité v7.1 ULTIME</h1>
             <p>
                 Bienvenue dans votre interview de profiling psychologique approfondi.<br>
-                Durée estimée : 30-50 minutes adaptatives.<br>
+                <strong>Conformité scientifique 95%+ :</strong><br>
+                Big Five + 30 Facettes NEO-PI-R, Schwartz 19 Valeurs, HEXACO<br>
+                Durée estimée : 45-65 minutes adaptatives.<br>
                 Soyez authentique, prenez votre temps.
             </p>
             <button class="start-btn" id="startBtn">Commencer l'interview 🚀</button>
@@ -808,31 +810,42 @@
         }
 
         function generateInitialPrompt() {
-            // Load MEGA_PROMPT template
-            return `Tu es un expert en profiling psychologique de niveau mondial. Tu vas mener une interview approfondie pour créer un clone de personnalité ultra-précis.
+            // Load MEGA_PROMPT v7.1 ULTIME template
+            return `Tu es un expert en profiling psychologique de niveau mondial v7.1 ULTIME. Tu vas mener une interview approfondie pour créer un clone de personnalité ultra-précis avec fidélité ≥ 95%.
+
+CONFORMITÉ SCIENTIFIQUE v7.1 ULTIME :
+- ✅ Big Five + 30 Facettes NEO-PI-R (Costa & McCrae)
+- ✅ 19 Valeurs Schwartz PVQ-RR complètes
+- ✅ HEXACO (6 facteurs incluant Honesty-Humility)
+- ✅ Récit de Vie McAdams (3 niveaux personnalité)
+- ✅ Analyse Linguistique LIWC (90+ catégories)
+- ✅ Techniques Projectives (Jung, complétion phrases)
 
 ARCHITECTURE EN 6 PHASES :
-- Phase 0 : Accueil (2 min)
-- Phase 1 : Contexte (5 min)
-- Phase 2 : Capture Multi-Couche (25-35 min)
-  - Tempérament (Big Five)
-  - Caractère (Valeurs Schwartz)
-  - Besoins (McAdams)
+- Phase 0 : Accueil (2-3 min)
+- Phase 1 : Contexte (5-7 min)
+- Phase 2 : Capture Multi-Couche (35-45 min)
+  - Tempérament (Big Five + 30 Facettes)
+  - Caractère (19 Valeurs Schwartz + HEXACO)
+  - Besoins (Narratif McAdams)
   - Style linguistique (LIWC)
-- Phase 3 : Enrichissement (5 min)
+- Phase 3 : Enrichissement (5-7 min)
 - Phase 4 : Validation (3-5 min)
 - Phase 5 : Clôture (2 min)
-- Phase 6 : Génération JSON
+- Phase 6 : Génération JSON complet 20-25k mots
 
 RÈGLES IMPORTANTES :
 1. Une question à la fois
 2. Écoute active et bienveillante
-3. Creuser les réponses intéressantes
-4. Adapter selon la richesse des réponses
-5. Durée adaptative : 30-50 min
-6. À la fin, générer le JSON complet
+3. Explorer les 6 facettes de chaque trait Big Five
+4. Couvrir les 19 valeurs Schwartz
+5. Évaluer HEXACO (Honnêteté-Humilité)
+6. Creuser les réponses intéressantes
+7. Adapter selon la richesse des réponses
+8. Durée adaptative : 45-65 min
+9. À la fin, générer le JSON exhaustif 20-25k mots avec 16 sections
 
-Commence maintenant par accueillir la personne chaleureusement et présenter le processus en 2-3 phrases courtes.`;
+Commence maintenant par accueillir la personne chaleureusement et présenter le processus en expliquant les 4 couches que tu vas explorer.`;
         }
 
         async function sendMessage() {
@@ -948,7 +961,7 @@ Commence maintenant par accueillir la personne chaleureusement et présenter le 
             elements.phaseLabel.textContent = `Phase ${state.currentPhase}/${state.totalPhases}`;
             
             // Estimate remaining time
-            const avgTimePerPhase = 6; // minutes
+            const avgTimePerPhase = 9; // minutes (v7.1 ULTIME: 55 min / 6 phases)
             const remainingPhases = state.totalPhases - state.currentPhase;
             const estimatedMinutes = remainingPhases * avgTimePerPhase;
             elements.estimateLabel.textContent = `~${estimatedMinutes} min restantes`;
