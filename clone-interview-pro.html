@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clone de Personnalité - Interview IA | Institut du Couple</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Couleurs Institut du Couple */
+            --mer: #8FAFB1;
+            --mer-dark: #6A8B8D;
+            --vert-sauge: #C8D0C3;
+            --beige-sable: #D8CDBB;
+            --sable: #E6D7C3;
+            --blanc: #FFFFFF;
+            --texte: #2A2A2A;
+            --texte-light: #666666;
+            
+            /* Mode clair (défaut) */
+            --bg-primary: #FAFAF8;
+            --bg-secondary: var(--blanc);
+            --bg-input: var(--blanc);
+            --text-primary: var(--texte);
+            --text-secondary: var(--texte-light);
+            --border-color: var(--vert-sauge);
+            --shadow: rgba(0, 0, 0, 0.08);
+        }
+
+        /* Mode sombre */
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-input: #333333;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #4a4a4a;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           HEADER
+        ============================================ */
+        .header {
+            background: linear-gradient(135deg, var(--mer), var(--mer-dark));
+            color: var(--blanc);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .timer {
+            font-size: 1.5rem;
+            font-weight: 300;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: var(--blanc);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(20deg);
+        }
+
+        /* Progress bar */
+        .progress-container {
+            background: var(--bg-primary);
+            padding: 0.5rem 2rem;
+            box-shadow: 0 2px 5px var(--shadow);
+        }
+
+        .progress-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--mer), var(--mer-dark));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        /* ============================================
+           MAIN CONTAINER
+        ============================================ */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            min-height: calc(100vh - 200px);
+        }
+
+        /* Welcome screen */
+        .welcome-screen {
+            text-align: center;
+            padding: 3rem 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .welcome-screen h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--mer-dark);
+            margin-bottom: 1rem;
+        }
+
+        .welcome-screen p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, var(--mer), var(--mer-dark));
+            color: var(--blanc);
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(143, 175, 177, 0.3);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(143, 175, 177, 0.4);
+        }
+
+        /* Chat interface */
+        .chat-container {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .messages {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 1rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message.claude {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--mer);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blanc);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: var(--vert-sauge);
+            color: var(--texte);
+        }
+
+        .message-content {
+            max-width: 70%;
+            background: var(--bg-secondary);
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px var(--shadow);
+            line-height: 1.6;
+        }
+
+        .message.claude .message-content {
+            border-bottom-left-radius: 5px;
+        }
+
+        .message.user .message-content {
+            border-bottom-right-radius: 5px;
+            background: var(--mer);
+            color: var(--blanc);
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: var(--mer);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        /* Input area */
+        .input-container {
+            position: sticky;
+            bottom: 0;
+            background: var(--bg-primary);
+            padding: 1rem;
+            box-shadow: 0 -2px 10px var(--shadow);
+        }
+
+        .input-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .input-area {
+            flex: 1;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            color: var(--text-primary);
+            resize: none;
+            min-height: 50px;
+            max-height: 150px;
+            transition: all 0.3s ease;
+        }
+
+        .input-area:focus {
+            outline: none;
+            border-color: var(--mer);
+            box-shadow: 0 0 0 3px rgba(143, 175, 177, 0.1);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, var(--mer), var(--mer-dark));
+            color: var(--blanc);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(143, 175, 177, 0.4);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Floating voice button */
+        .voice-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--mer);
+            color: var(--blanc);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(143, 175, 177, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 50;
+        }
+
+        .voice-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(143, 175, 177, 0.5);
+        }
+
+        .voice-btn.active {
+            background: #e74c3c;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Stats sidebar */
+        .stats-panel {
+            position: fixed;
+            right: -300px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            box-shadow: -2px 0 10px var(--shadow);
+            padding: 2rem;
+            transition: right 0.3s ease;
+            z-index: 90;
+            overflow-y: auto;
+        }
+
+        .stats-panel.open {
+            right: 0;
+        }
+
+        .stats-toggle {
+            position: fixed;
+            right: 20px;
+            top: 100px;
+            background: var(--mer);
+            color: var(--blanc);
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px 0 0 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 91;
+        }
+
+        .stats-toggle:hover {
+            transform: translateX(-5px);
+        }
+
+        .stat-item {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--mer-dark);
+        }
+
+        /* Control buttons */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+        }
+
+        .control-btn:hover {
+            border-color: var(--mer);
+            background: var(--mer);
+            color: var(--blanc);
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .timer {
+                font-size: 1.2rem;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .stats-panel {
+                width: 100%;
+                right: -100%;
+            }
+
+            .stats-toggle {
+                right: 10px;
+            }
+
+            .voice-btn {
+                bottom: 80px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+            }
+
+            .welcome-screen h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--vert-sauge);
+            border-top-color: var(--mer);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="logo">🧬 Institut du Couple</div>
+                <div class="timer" id="timer">00:00</div>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle" id="themeToggle" title="Mode sombre">🌙</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Progress bar -->
+    <div class="progress-container">
+        <div class="progress-content">
+            <div class="progress-info">
+                <span id="phaseLabel">Phase 0/6 - Préparation</span>
+                <span id="estimateLabel">~35 min</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main container -->
+    <div class="container">
+        <!-- Welcome screen -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <h1>Clone de Personnalité v7.0</h1>
+            <p>
+                Bienvenue dans votre interview de profiling psychologique approfondi.<br>
+                Durée estimée : 30-50 minutes adaptatives.<br>
+                Soyez authentique, prenez votre temps.
+            </p>
+            <button class="start-btn" id="startBtn">Commencer l'interview 🚀</button>
+        </div>
+
+        <!-- Chat interface -->
+        <div class="chat-container" id="chatContainer">
+            <div class="messages" id="messages"></div>
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="message-avatar">🤖</div>
+                <div>Claude réfléchit
+                    <div class="typing-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input area -->
+    <div class="input-container" id="inputContainer" style="display: none;">
+        <div class="input-wrapper">
+            <textarea 
+                class="input-area" 
+                id="inputArea" 
+                placeholder="Tapez votre réponse..."
+                rows="1"
+            ></textarea>
+            <button class="send-btn" id="sendBtn" title="Envoyer">
+                <span>→</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating voice button -->
+    <button class="voice-btn" id="voiceBtn" title="Reconnaissance vocale" style="display: none;">
+        🎤
+    </button>
+
+    <!-- Stats panel -->
+    <button class="stats-toggle" id="statsToggle">📊</button>
+    <div class="stats-panel" id="statsPanel">
+        <h3 style="margin-bottom: 1.5rem; color: var(--mer-dark);">Statistiques</h3>
+        
+        <div class="stat-item">
+            <div class="stat-label">Temps écoulé</div>
+            <div class="stat-value" id="statTime">0 min</div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-label">Questions posées</div>
+            <div class="stat-value" id="statQuestions">0</div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-label">Réponses données</div>
+            <div class="stat-value" id="statResponses">0</div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-label">Mots écrits</div>
+            <div class="stat-value" id="statWords">0</div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-label">Phase actuelle</div>
+            <div class="stat-value" id="statPhase">0/6</div>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" id="pauseBtn">⏸ Pause</button>
+            <button class="control-btn" id="exportBtn">💾 Exporter</button>
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        const CONFIG = {
+            WORKER_URL: 'https://clone-proxy.11drumboy11.workers.dev',
+            MODEL: 'claude-sonnet-4-20250514',
+            MAX_TOKENS: 4000,
+            AUTOSAVE_INTERVAL: 30000, // 30 secondes
+        };
+
+        // ============================================
+        // STATE
+        // ============================================
+        const state = {
+            messages: [],
+            startTime: null,
+            elapsedSeconds: 0,
+            timerInterval: null,
+            currentPhase: 0,
+            totalPhases: 6,
+            questionCount: 0,
+            responseCount: 0,
+            totalWords: 0,
+            isPaused: false,
+            recognition: null,
+        };
+
+        // ============================================
+        // DOM ELEMENTS
+        // ============================================
+        const elements = {
+            welcomeScreen: document.getElementById('welcomeScreen'),
+            chatContainer: document.getElementById('chatContainer'),
+            inputContainer: document.getElementById('inputContainer'),
+            messages: document.getElementById('messages'),
+            inputArea: document.getElementById('inputArea'),
+            sendBtn: document.getElementById('sendBtn'),
+            voiceBtn: document.getElementById('voiceBtn'),
+            timer: document.getElementById('timer'),
+            progressFill: document.getElementById('progressFill'),
+            phaseLabel: document.getElementById('phaseLabel'),
+            estimateLabel: document.getElementById('estimateLabel'),
+            typingIndicator: document.getElementById('typingIndicator'),
+            themeToggle: document.getElementById('themeToggle'),
+            statsToggle: document.getElementById('statsToggle'),
+            statsPanel: document.getElementById('statsPanel'),
+            pauseBtn: document.getElementById('pauseBtn'),
+            exportBtn: document.getElementById('exportBtn'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            startBtn: document.getElementById('startBtn'),
+        };
+
+        // Stats elements
+        const statsElements = {
+            time: document.getElementById('statTime'),
+            questions: document.getElementById('statQuestions'),
+            responses: document.getElementById('statResponses'),
+            words: document.getElementById('statWords'),
+            phase: document.getElementById('statPhase'),
+        };
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        async function init() {
+            // Load saved state
+            loadState();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Setup voice recognition
+            setupVoiceRecognition();
+            
+            // Load theme
+            loadTheme();
+            
+            // Auto-resize textarea
+            autoResizeTextarea();
+        }
+
+        function setupEventListeners() {
+            elements.startBtn.addEventListener('click', startInterview);
+            elements.sendBtn.addEventListener('click', sendMessage);
+            elements.inputArea.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            elements.voiceBtn.addEventListener('click', toggleVoiceRecognition);
+            elements.themeToggle.addEventListener('click', toggleTheme);
+            elements.statsToggle.addEventListener('click', toggleStats);
+            elements.pauseBtn.addEventListener('click', togglePause);
+            elements.exportBtn.addEventListener('click', exportJSON);
+            
+            // Auto-resize input
+            elements.inputArea.addEventListener('input', autoResizeTextarea);
+            
+            // Autosave
+            setInterval(saveState, CONFIG.AUTOSAVE_INTERVAL);
+        }
+
+        // ============================================
+        // INTERVIEW FLOW
+        // ============================================
+        async function startInterview() {
+            elements.welcomeScreen.style.display = 'none';
+            elements.chatContainer.style.display = 'block';
+            elements.inputContainer.style.display = 'block';
+            elements.voiceBtn.style.display = 'flex';
+            
+            // Start timer
+            state.startTime = Date.now();
+            startTimer();
+            
+            // Initial prompt
+            await sendClaudeMessage([
+                { role: 'user', content: generateInitialPrompt() }
+            ]);
+        }
+
+        function generateInitialPrompt() {
+            // Load MEGA_PROMPT template
+            return `Tu es un expert en profiling psychologique de niveau mondial. Tu vas mener une interview approfondie pour créer un clone de personnalité ultra-précis.
+
+ARCHITECTURE EN 6 PHASES :
+- Phase 0 : Accueil (2 min)
+- Phase 1 : Contexte (5 min)
+- Phase 2 : Capture Multi-Couche (25-35 min)
+  - Tempérament (Big Five)
+  - Caractère (Valeurs Schwartz)
+  - Besoins (McAdams)
+  - Style linguistique (LIWC)
+- Phase 3 : Enrichissement (5 min)
+- Phase 4 : Validation (3-5 min)
+- Phase 5 : Clôture (2 min)
+- Phase 6 : Génération JSON
+
+RÈGLES IMPORTANTES :
+1. Une question à la fois
+2. Écoute active et bienveillante
+3. Creuser les réponses intéressantes
+4. Adapter selon la richesse des réponses
+5. Durée adaptative : 30-50 min
+6. À la fin, générer le JSON complet
+
+Commence maintenant par accueillir la personne chaleureusement et présenter le processus en 2-3 phrases courtes.`;
+        }
+
+        async function sendMessage() {
+            const text = elements.inputArea.value.trim();
+            if (!text || state.isPaused) return;
+            
+            // Add user message
+            addMessage('user', text);
+            state.messages.push({ role: 'user', content: text });
+            
+            // Clear input
+            elements.inputArea.value = '';
+            autoResizeTextarea();
+            
+            // Update stats
+            state.responseCount++;
+            state.totalWords += text.split(/\s+/).length;
+            updateStats();
+            
+            // Send to Claude
+            await sendClaudeMessage(state.messages);
+            
+            // Save state
+            saveState();
+        }
+
+        async function sendClaudeMessage(messages) {
+            elements.sendBtn.disabled = true;
+            elements.typingIndicator.classList.add('active');
+            
+            try {
+                const response = await fetch(CONFIG.WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages,
+                        model: CONFIG.MODEL,
+                        max_tokens: CONFIG.MAX_TOKENS,
+                    }),
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const claudeMessage = data.content[0].text;
+                
+                // Add Claude message
+                addMessage('claude', claudeMessage);
+                state.messages.push({ role: 'assistant', content: claudeMessage });
+                
+                // Update stats
+                state.questionCount++;
+                detectPhaseChange(claudeMessage);
+                updateStats();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage('claude', "Désolé, une erreur s'est produite. Veuillez réessayer.");
+            } finally {
+                elements.typingIndicator.classList.remove('active');
+                elements.sendBtn.disabled = false;
+                elements.inputArea.focus();
+            }
+        }
+
+        // ============================================
+        // UI FUNCTIONS
+        // ============================================
+        function addMessage(type, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = type === 'claude' ? '🤖' : '👤';
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.textContent = text;
+            
+            if (type === 'claude') {
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(content);
+            } else {
+                messageDiv.appendChild(content);
+                messageDiv.appendChild(avatar);
+            }
+            
+            elements.messages.appendChild(messageDiv);
+            elements.messages.scrollTop = elements.messages.scrollHeight;
+        }
+
+        function detectPhaseChange(text) {
+            const phases = [
+                'phase 0', 'phase 1', 'phase 2', 'phase 3', 'phase 4', 'phase 5', 'phase 6'
+            ];
+            
+            const lowerText = text.toLowerCase();
+            for (let i = 0; i < phases.length; i++) {
+                if (lowerText.includes(phases[i])) {
+                    state.currentPhase = i;
+                    updateProgress();
+                    break;
+                }
+            }
+        }
+
+        function updateProgress() {
+            const percentage = (state.currentPhase / state.totalPhases) * 100;
+            elements.progressFill.style.width = `${percentage}%`;
+            elements.phaseLabel.textContent = `Phase ${state.currentPhase}/${state.totalPhases}`;
+            
+            // Estimate remaining time
+            const avgTimePerPhase = 6; // minutes
+            const remainingPhases = state.totalPhases - state.currentPhase;
+            const estimatedMinutes = remainingPhases * avgTimePerPhase;
+            elements.estimateLabel.textContent = `~${estimatedMinutes} min restantes`;
+        }
+
+        function updateStats() {
+            const minutes = Math.floor(state.elapsedSeconds / 60);
+            statsElements.time.textContent = `${minutes} min`;
+            statsElements.questions.textContent = state.questionCount;
+            statsElements.responses.textContent = state.responseCount;
+            statsElements.words.textContent = state.totalWords;
+            statsElements.phase.textContent = `${state.currentPhase}/${state.totalPhases}`;
+        }
+
+        // ============================================
+        // TIMER
+        // ============================================
+        function startTimer() {
+            state.timerInterval = setInterval(() => {
+                if (!state.isPaused) {
+                    state.elapsedSeconds++;
+                    updateTimerDisplay();
+                    updateStats();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(state.elapsedSeconds / 60);
+            const seconds = state.elapsedSeconds % 60;
+            elements.timer.textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // ============================================
+        // VOICE RECOGNITION
+        // ============================================
+        function setupVoiceRecognition() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                elements.voiceBtn.style.display = 'none';
+                return;
+            }
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            state.recognition = new SpeechRecognition();
+            state.recognition.continuous = false;
+            state.recognition.interimResults = false;
+            state.recognition.lang = 'fr-FR';
+            
+            state.recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                elements.inputArea.value = transcript;
+                autoResizeTextarea();
+            };
+            
+            state.recognition.onend = () => {
+                elements.voiceBtn.classList.remove('active');
+            };
+        }
+
+        function toggleVoiceRecognition() {
+            if (!state.recognition) return;
+            
+            if (elements.voiceBtn.classList.contains('active')) {
+                state.recognition.stop();
+                elements.voiceBtn.classList.remove('active');
+            } else {
+                state.recognition.start();
+                elements.voiceBtn.classList.add('active');
+            }
+        }
+
+        // ============================================
+        // CONTROLS
+        // ============================================
+        function togglePause() {
+            state.isPaused = !state.isPaused;
+            elements.pauseBtn.textContent = state.isPaused ? '▶ Reprendre' : '⏸ Pause';
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            elements.themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            elements.themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        function toggleStats() {
+            elements.statsPanel.classList.toggle('open');
+        }
+
+        function autoResizeTextarea() {
+            elements.inputArea.style.height = 'auto';
+            elements.inputArea.style.height = elements.inputArea.scrollHeight + 'px';
+        }
+
+        // ============================================
+        // SAVE/LOAD STATE
+        // ============================================
+        function saveState() {
+            const stateToSave = {
+                messages: state.messages,
+                elapsedSeconds: state.elapsedSeconds,
+                currentPhase: state.currentPhase,
+                questionCount: state.questionCount,
+                responseCount: state.responseCount,
+                totalWords: state.totalWords,
+                timestamp: Date.now(),
+            };
+            localStorage.setItem('cloneInterviewState', JSON.stringify(stateToSave));
+        }
+
+        function loadState() {
+            const savedState = localStorage.getItem('cloneInterviewState');
+            if (savedState) {
+                try {
+                    const parsed = JSON.parse(savedState);
+                    // Check if less than 24h old
+                    if (Date.now() - parsed.timestamp < 86400000) {
+                        if (confirm('Une interview précédente a été trouvée. Voulez-vous continuer ?')) {
+                            state.messages = parsed.messages;
+                            state.elapsedSeconds = parsed.elapsedSeconds;
+                            state.currentPhase = parsed.currentPhase;
+                            state.questionCount = parsed.questionCount;
+                            state.responseCount = parsed.responseCount;
+                            state.totalWords = parsed.totalWords;
+                            
+                            // Restore UI
+                            elements.welcomeScreen.style.display = 'none';
+                            elements.chatContainer.style.display = 'block';
+                            elements.inputContainer.style.display = 'block';
+                            elements.voiceBtn.style.display = 'flex';
+                            
+                            // Restore messages
+                            state.messages.forEach(msg => {
+                                addMessage(msg.role === 'user' ? 'user' : 'claude', msg.content);
+                            });
+                            
+                            startTimer();
+                            updateProgress();
+                            updateStats();
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error loading state:', e);
+                }
+            }
+        }
+
+        // ============================================
+        // EXPORT JSON
+        // ============================================
+        function exportJSON() {
+            const exportData = {
+                meta: {
+                    version: '1.0',
+                    date_creation: new Date().toISOString(),
+                    duree_interview: `${Math.floor(state.elapsedSeconds / 60)} minutes`,
+                    nb_questions_posees: state.questionCount,
+                    nb_reponses: state.responseCount,
+                    total_mots: state.totalWords,
+                },
+                conversation: state.messages,
+            };
+            
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `clone-interview-${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ============================================
+        // START APP
+        // ============================================
+        init();
+    </script>
+</body>
+</html>
