@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clone de Personnalité v7.1 ULTIME - Interview IA | Institut du Couple</title>
+    <title>Clone de Personnalité - Interview IA</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Couleurs Institut du Couple */
+            /* Couleurs interface */
             --mer: #8FAFB1;
             --mer-dark: #6A8B8D;
             --vert-sauge: #C8D0C3;
@@ -574,7 +574,7 @@
     <header class="header">
         <div class="header-content">
             <div class="header-left">
-                <div class="logo">🧬 Institut du Couple</div>
+                <div class="logo">🧬 Clone de Personnalité</div>
                 <div class="timer" id="timer">00:00</div>
             </div>
             <div class="header-right">
@@ -600,11 +600,11 @@
     <div class="container">
         <!-- Welcome screen -->
         <div class="welcome-screen" id="welcomeScreen">
-            <h1>Clone de Personnalité v7.1 ULTIME</h1>
+            <h1>Clone de Personnalité - Interview IA</h1>
             <p>
                 Bienvenue dans votre interview de profiling psychologique approfondi.<br>
-                <strong>Conformité scientifique 95%+ :</strong><br>
-                Big Five + 30 Facettes NEO-PI-R, Schwartz 19 Valeurs, HEXACO<br>
+                Interview psychologique approfondie<br>
+                Analyse psychologique approfondie<br>
                 Durée estimée : 45-65 minutes adaptatives.<br>
                 Soyez authentique, prenez votre temps.
             </p>
@@ -691,7 +691,8 @@
         // CONFIGURATION
         // ============================================
         const CONFIG = {
-            WORKER_URL: 'https://clone-proxy.11drumboy11.workers.dev',
+            // ⚠️ À CONFIGURER : Remplacez par votre URL Worker Cloudflare
+            WORKER_URL: 'YOUR_CLOUDFLARE_WORKER_URL_HERE',
             MODEL: 'claude-sonnet-4-20250514',
             MAX_TOKENS: 4000,
             AUTOSAVE_INTERVAL: 30000, // 30 secondes
@@ -814,9 +815,9 @@
             return `Tu es un expert en profiling psychologique de niveau mondial v7.1 ULTIME. Tu vas mener une interview approfondie pour créer un clone de personnalité ultra-précis avec fidélité ≥ 95%.
 
 CONFORMITÉ SCIENTIFIQUE v7.1 ULTIME :
-- ✅ Big Five + 30 Facettes NEO-PI-R (Costa & McCrae)
-- ✅ 19 Valeurs Schwartz PVQ-RR complètes
-- ✅ HEXACO (6 facteurs incluant Honesty-Humility)
+- ✅ Analyse de personnalité multi-dimensionnelle
+- ✅ Système de valeurs personnelles complet
+- ✅ Facteurs de personnalité étendus
 - ✅ Récit de Vie McAdams (3 niveaux personnalité)
 - ✅ Analyse Linguistique LIWC (90+ catégories)
 - ✅ Techniques Projectives (Jung, complétion phrases)
@@ -825,8 +826,8 @@ ARCHITECTURE EN 6 PHASES :
 - Phase 0 : Accueil (2-3 min)
 - Phase 1 : Contexte (5-7 min)
 - Phase 2 : Capture Multi-Couche (35-45 min)
-  - Tempérament (Big Five + 30 Facettes)
-  - Caractère (19 Valeurs Schwartz + HEXACO)
+  - Tempérament (traits de personnalité)
+  - Caractère (valeurs et motivations)
   - Besoins (Narratif McAdams)
   - Style linguistique (LIWC)
 - Phase 3 : Enrichissement (5-7 min)
@@ -838,8 +839,8 @@ RÈGLES IMPORTANTES :
 1. Une question à la fois
 2. Écoute active et bienveillante
 3. Explorer les 6 facettes de chaque trait Big Five
-4. Couvrir les 19 valeurs Schwartz
-5. Évaluer HEXACO (Honnêteté-Humilité)
+4. Couvrir l'ensemble des valeurs personnelles
+5. Évaluer les traits comportementaux
 6. Creuser les réponses intéressantes
 7. Adapter selon la richesse des réponses
 8. Durée adaptative : 45-65 min
