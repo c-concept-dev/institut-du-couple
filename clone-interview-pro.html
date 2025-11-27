@@ -682,6 +682,54 @@
             background: #1e293b;
         }
 
+        /* Paraverbal Section */
+        .paraverbal-section {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        body.dark .paraverbal-section {
+            background: #0f172a;
+        }
+
+        .paraverbal-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .paraverbal-metrics {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+
+        body.dark .metric-item {
+            background: #1e293b;
+        }
+
+        .metric-label {
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
         .revelations-toggle {
             position: fixed;
             right: 1rem;
@@ -1229,49 +1277,69 @@
         }
 
         /* Upload button */
-        .avatar-upload-btn {
+        /* Avatar name input - sobre */
+        .avatar-name-input {
+            padding: 0.5rem;
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            background: white;
+            transition: all var(--transition);
+        }
+
+        .avatar-name-input:focus {
+            outline: none;
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 3px rgba(143, 175, 177, 0.1);
+        }
+
+        /* Avatar photo actions - liens simples */
+        .avatar-photo-actions {
             display: flex;
+            justify-content: center;
             align-items: center;
             gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .avatar-link {
+            color: #9ca3af;
+            text-decoration: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            font-family: inherit;
+            font-size: inherit;
+            transition: color var(--transition);
+        }
+
+        .avatar-link:hover {
+            color: var(--primary);
+        }
+
+        .avatar-link-separator {
+            color: #d1d5db;
+        }
+
+        /* Avatar export button */
+        .avatar-export-btn {
             padding: 0.5rem 1rem;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 0.85rem;
+            font-family: inherit;
             transition: all var(--transition);
+            margin-top: 0.5rem;
         }
 
-        .avatar-upload-btn:hover {
+        .avatar-export-btn:hover {
             background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .avatar-upload-btn input[type="file"] {
-            display: none;
-        }
-
-        .avatar-remove-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all var(--transition);
-        }
-
-        .avatar-remove-btn:hover {
-            background: #dc2626;
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
         /* Mode toggle */
@@ -1425,8 +1493,8 @@
             <span class="badge-premium">Premium</span>
         </div>
         <div class="header-controls">
-            <div class="timer" id="timer">⏱️ 00:00</div>
-            <button class="control-btn" id="statsToggle" title="Statistiques">📊</button>
+            <div class="timer" id="timer">00:00</div>
+            <button class="control-btn" id="statsToggle" title="Statistiques">Stats</button>
             <button class="control-btn" id="themeToggle" title="Changer le thème">🌓</button>
             <button class="control-btn" id="pauseBtn" title="Pause">⏸️</button>
             <button class="control-btn" id="exportBtn" title="Exporter">💾</button>
@@ -1436,14 +1504,14 @@
     <!-- Avatar Sidebar -->
     <div class="avatar-sidebar" id="avatarSidebar">
         <div class="avatar-header">
-            <h3>🎨 Avatar Personnalité</h3>
-            <button class="avatar-toggle-btn" id="avatarToggleBtn" title="Masquer">⬅️</button>
+            <h3>Avatar Personnalité</h3>
+            <button class="avatar-toggle-btn" id="avatarToggleBtn" title="Masquer">◄</button>
         </div>
         
         <!-- Mode Toggle -->
         <div class="avatar-mode-toggle">
-            <button class="mode-btn" id="modeGenerative">✨ Génératif</button>
-            <button class="mode-btn active" id="modeHybrid">🎨 Hybride</button>
+            <button class="mode-btn" id="modeGenerative">Génératif</button>
+            <button class="mode-btn active" id="modeHybrid">Hybride</button>
         </div>
         
         <div class="avatar-container">
@@ -1454,33 +1522,36 @@
             </div>
             
             <!-- Upload Controls -->
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%;">
                 <!-- Name input -->
                 <input 
                     type="text" 
                     id="avatarNameInput" 
-                    placeholder="Votre prénom (optionnel)" 
-                    style="
-                        padding: 0.5rem;
-                        border: 1px solid var(--border-light);
-                        border-radius: 8px;
-                        font-size: 0.9rem;
-                        font-family: inherit;
-                    "
+                    placeholder="Votre prénom" 
+                    class="avatar-name-input"
                 />
                 
-                <label class="avatar-upload-btn" for="avatarUploadInput">
-                    📸 Changer la photo
-                    <input type="file" id="avatarUploadInput" accept="image/*">
-                </label>
-                <button class="avatar-remove-btn" id="avatarRemoveBtn" style="display: none;">
-                    🗑️ Supprimer la photo
+                <!-- Photo actions (simple links) -->
+                <div class="avatar-photo-actions">
+                    <label for="avatarUploadInput" class="avatar-link">
+                        modifier
+                        <input type="file" id="avatarUploadInput" accept="image/*" style="display: none;">
+                    </label>
+                    <span class="avatar-link-separator">|</span>
+                    <button id="avatarRemoveBtn" class="avatar-link" style="display: none;">
+                        supprimer
+                    </button>
+                </div>
+                
+                <!-- Export button -->
+                <button id="avatarExportBtn" class="avatar-export-btn" style="display: none;">
+                    Télécharger mon avatar
                 </button>
             </div>
         </div>
         
         <div class="avatar-traits">
-            <h4>📊 Traits Big Five</h4>
+            <h4>Traits Big Five</h4>
             <div class="trait-item">
                 <span class="trait-label">Ouverture</span>
                 <span class="trait-value" id="traitOpenness">7.0</span>
@@ -1524,7 +1595,7 @@
     </div>
 
     <!-- Avatar Float Toggle (mobile) -->
-    <button class="avatar-float-toggle" id="avatarFloatToggle">🎨</button>
+    <button class="avatar-float-toggle" id="avatarFloatToggle">Avatar</button>
 
     <!-- Main Container -->
     <div class="main-container with-avatar-sidebar">
@@ -1533,7 +1604,7 @@
             <div class="welcome-content">
                 <h1>Bienvenue 👋</h1>
                 <p>Créons ensemble votre clone de personnalité uploadable dans une IA. Cette interview dure environ 45-65 minutes et génère un profil unique de 25-30k mots.</p>
-                <button class="start-btn" id="startBtn">🚀 Commencer l'aventure</button>
+                <button class="start-btn" id="startBtn">Commencer l'interview</button>
             </div>
         </div>
 
@@ -1610,7 +1681,7 @@
                         <div class="badge-milestone">20 réponses</div>
                     </div>
                     <div class="badge-item locked" data-milestone="30">
-                        <div class="badge-icon">🎯</div>
+                        <div class="badge-icon"></div>
                         <div class="badge-title">Profond</div>
                         <div class="badge-milestone">30 réponses</div>
                     </div>
@@ -1622,8 +1693,30 @@
                 </div>
 
                 <div class="insights-section">
-                    <h4>💡 Insights</h4>
+                    <h4>Insights</h4>
                     <div id="insightsContainer"></div>
+                </div>
+
+                <div class="paraverbal-section">
+                    <h4>Analyse Paraverbale</h4>
+                    <div class="paraverbal-metrics">
+                        <div class="metric-item">
+                            <span class="metric-label">Rythme</span>
+                            <span class="metric-value" id="paraverbalRythm">--</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Expressivité</span>
+                            <span class="metric-value" id="paraverbalExpressiveness">--</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Profondeur</span>
+                            <span class="metric-value" id="paraverbalDepth">--</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Style</span>
+                            <span class="metric-value" id="paraverbalStyle">--</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1721,6 +1814,8 @@
             microExpressions: {},
             contexts: {},
             reflectionNotes: [],
+            initialTraits: null,
+            finalTraits: null,
         };
 
         // ============================================
@@ -1778,10 +1873,10 @@
         const Utils = {
             showToast(message, type = 'info', subtitle = '') {
                 const icons = {
-                    success: '✅',
-                    info: 'ℹ️',
-                    warning: '⚠️',
-                    danger: '❌'
+                    success: '',
+                    info: '',
+                    warning: '',
+                    danger: ''
                 };
 
                 const toast = document.createElement('div');
@@ -1928,7 +2023,7 @@
                     ]
                 },
                 {
-                    q: "🎨 Ta forme d'art préférée ?",
+                    q: "Ta forme d'art préférée ?",
                     options: [
                         { text: "Peinture", traits: { openness: 1, conscientiousness: 1 } },
                         { text: "Musique", traits: { openness: 1, emotionalStability: 1 } },
@@ -1937,7 +2032,7 @@
                     ]
                 },
                 {
-                    q: "💭 Ton plus grand rêve ?",
+                    q: "Ton plus grand rêve ?",
                     options: [
                         { text: "Changer le monde", traits: { extraversion: 1, agreeableness: 1 } },
                         { text: "Créer quelque chose d'unique", traits: { openness: 1, conscientiousness: 1 } },
@@ -2008,9 +2103,9 @@
                 const dominant = Object.entries(this.results).sort((a, b) => b[1] - a[1])[0][0];
                 
                 const personalities = {
-                    openness: { name: "Explorateur Créatif", emoji: "🎨", desc: "Tu es curieux, imaginatif et ouvert aux nouvelles expériences" },
+                    openness: { name: "Explorateur Créatif", emoji: "", desc: "Tu es curieux, imaginatif et ouvert aux nouvelles expériences" },
                     conscientiousness: { name: "Architecte Organisé", emoji: "📐", desc: "Tu es méthodique, fiable et tourné vers l'accomplissement" },
-                    extraversion: { name: "Catalyseur Social", emoji: "⚡", desc: "Tu es énergique, expressif et tu t'épanouis avec les autres" },
+                    extraversion: { name: "Catalyseur Social", emoji: "", desc: "Tu es énergique, expressif et tu t'épanouis avec les autres" },
                     agreeableness: { name: "Harmoniseur Empathique", emoji: "🤝", desc: "Tu es attentionné, coopératif et soucieux des autres" },
                     emotionalStability: { name: "Sage Équilibré", emoji: "🧘", desc: "Tu es calme, résilient et émotionnellement stable" }
                 };
@@ -2024,7 +2119,7 @@
                         <h2>${personality.emoji} ${personality.name}</h2>
                         <p>${personality.desc}</p>
                         <p style="margin-top: 1rem; color: #64748b;">Prêt pour l'interview approfondie ?</p>
-                        <button class="start-btn" onclick="Warmup.complete()">C'est parti ! 🚀</button>
+                        <button class="start-btn" onclick="Warmup.complete()">C'est parti !</button>
                     </div>
                 `;
 
@@ -2083,7 +2178,7 @@
                 const badges = {
                     10: { icon: "🔍", title: "Explorer", message: "Premier jalon franchi ! Tu commences à révéler ta personnalité." },
                     20: { icon: "🧠", title: "Introspectif", message: "Tu creuses en profondeur ! Tes réponses deviennent plus riches." },
-                    30: { icon: "🎯", title: "Profond", message: "Impressionnant ! Tu explores des aspects profonds de toi-même." },
+                    30: { icon: "", title: "Profond", message: "Impressionnant ! Tu explores des aspects profonds de toi-même." },
                     40: { icon: "🏆", title: "Maître", message: "Bravo ! Tu as complété un profil exceptionnel !" }
                 };
 
@@ -2105,9 +2200,9 @@
 
                 if (stage === 'early') {
                     if (avgLength > 50) {
-                        insight = "💡 Tu t'exprimes de manière détaillée et réfléchie. Continue ainsi !";
+                        insight = "Tu t'exprimes de manière détaillée et réfléchie. Continue ainsi !";
                     } else {
-                        insight = "💡 Tes réponses sont concises. N'hésite pas à développer davantage.";
+                        insight = "Tes réponses sont concises. N'hésite pas à développer davantage.";
                     }
                 }
 
@@ -2118,9 +2213,9 @@
                     }, 0);
 
                     if (emotionalCount > 5) {
-                        insight = "💡 Tu partages tes émotions avec authenticité. C'est très précieux.";
+                        insight = "Tu partages tes émotions avec authenticité. C'est très précieux.";
                     } else {
-                        insight = "💡 Tu restes factuel. Partager tes ressentis enrichirait ton profil.";
+                        insight = "Tu restes factuel. Partager tes ressentis enrichirait ton profil.";
                     }
                 }
 
@@ -2131,14 +2226,14 @@
                     }, 0);
 
                     if (exampleCount > 3) {
-                        insight = "💡 Tes exemples concrets rendent ton clone très authentique !";
+                        insight = "Tes exemples concrets rendent ton clone très authentique !";
                     } else {
-                        insight = "💡 Ajouter des exemples concrets enrichirait encore ton profil.";
+                        insight = "Ajouter des exemples concrets enrichirait encore ton profil.";
                     }
                 }
 
                 if (stage === 'final') {
-                    insight = `💡 Profil exceptionnel ! ${totalWords} mots, ${messages.length} réponses. Ton clone sera d'une fidélité remarquable.`;
+                    insight = `Profil exceptionnel ! ${totalWords} mots, ${messages.length} réponses. Ton clone sera d'une fidélité remarquable.`;
                 }
 
                 if (insight) {
@@ -2336,7 +2431,7 @@
                 intimate: { name: "Intime", icon: "❤️", questions: [] },
                 social: { name: "Social", icon: "👥", questions: [] },
                 solitary: { name: "Solitaire", icon: "🧘", questions: [] },
-                stress: { name: "Sous stress", icon: "⚡", questions: [] }
+                stress: { name: "Sous stress", icon: "", questions: [] }
             },
 
             detectContext(question) {
@@ -2406,7 +2501,7 @@
                     elements.voiceBtn.classList.add('recording');
                     elements.voiceBtn.textContent = '🔴';
                     elements.voiceBtn.title = 'Arrêter la dictée';
-                    Utils.showToast('🎤 Dictée vocale activée', 'info', 'Parlez maintenant...');
+                    Utils.showToast('Dictée vocale activée', 'info', 'Parlez maintenant...');
                 };
 
                 this.recognition.onend = () => {
@@ -2511,7 +2606,7 @@
             stop() {
                 try {
                     this.recognition.stop();
-                    Utils.showToast('🎤 Dictée vocale arrêtée', 'info');
+                    Utils.showToast('Dictée vocale arrêtée', 'info');
                 } catch (error) {
                     console.error('Failed to stop recognition:', error);
                 }
@@ -2922,8 +3017,12 @@
                     const removeBtn = document.getElementById('avatarRemoveBtn');
                     if (removeBtn) removeBtn.style.display = 'flex';
                     
-                    console.log('✅ Photo uploaded and saved');
-                    Utils.showToast('📸 Photo chargée avec succès !', 'success');
+                    // Show export button
+                    const exportBtn = document.getElementById('avatarExportBtn');
+                    if (exportBtn) exportBtn.style.display = 'block';
+                    
+                    console.log('Photo uploaded and saved');
+                    Utils.showToast('Photo chargée avec succès', 'success');
                 };
                 reader.readAsDataURL(file);
             },
@@ -2946,6 +3045,10 @@
                 const removeBtn = document.getElementById('avatarRemoveBtn');
                 if (removeBtn) removeBtn.style.display = 'none';
                 
+                // Hide export button
+                const exportBtn = document.getElementById('avatarExportBtn');
+                if (exportBtn) exportBtn.style.display = 'none';
+                
                 // Switch to generative mode
                 this.setMode('generative');
                 const modeGenerative = document.getElementById('modeGenerative');
@@ -2953,8 +3056,102 @@
                 if (modeGenerative) modeGenerative.classList.add('active');
                 if (modeHybrid) modeHybrid.classList.remove('active');
                 
-                console.log('🗑️ Photo removed');
-                Utils.showToast('🗑️ Photo supprimée', 'info');
+                console.log('Photo removed');
+                Utils.showToast('Photo supprimée', 'info');
+            },
+
+            // Export avatar as PNG
+            exportAvatar() {
+                const userName = localStorage.getItem('avatar_name') || 'Avatar';
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Canvas size
+                canvas.width = 280;
+                canvas.height = 320; // Extra space for name
+                
+                // Background (Sable)
+                ctx.fillStyle = '#E6D7C3';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                if (this.state.mode === 'hybrid' && this.state.userPhoto) {
+                    // HYBRID MODE: Photo + Effects
+                    
+                    // 1. Draw photo (circular)
+                    const photoImg = new Image();
+                    photoImg.crossOrigin = 'anonymous';
+                    photoImg.src = this.state.userPhoto;
+                    
+                    photoImg.onload = () => {
+                        // Save context
+                        ctx.save();
+                        
+                        // Create circular clipping path
+                        ctx.beginPath();
+                        ctx.arc(140, 140, 130, 0, Math.PI * 2);
+                        ctx.closePath();
+                        ctx.clip();
+                        
+                        // Draw photo
+                        ctx.drawImage(photoImg, 10, 10, 260, 260);
+                        
+                        // Restore context
+                        ctx.restore();
+                        
+                        // 2. Draw p5.js effects overlay
+                        const p5Canvas = document.querySelector('#avatar canvas');
+                        if (p5Canvas) {
+                            ctx.drawImage(p5Canvas, 0, 0, 280, 280);
+                        }
+                        
+                        // 3. Add name at bottom
+                        ctx.fillStyle = '#333';
+                        ctx.font = '16px system-ui, sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(userName, 140, 305);
+                        
+                        // Download
+                        this.downloadCanvas(canvas, userName);
+                    };
+                    
+                    photoImg.onerror = () => {
+                        Utils.showToast('Erreur lors de l\'export de la photo', 'danger');
+                    };
+                    
+                } else {
+                    // GENERATIVE MODE: p5.js only
+                    
+                    const p5Canvas = document.querySelector('#avatar canvas');
+                    if (p5Canvas) {
+                        // Draw p5.js canvas
+                        ctx.drawImage(p5Canvas, 0, 0, 280, 280);
+                        
+                        // Add name at bottom
+                        ctx.fillStyle = '#333';
+                        ctx.font = '16px system-ui, sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(userName, 140, 305);
+                        
+                        // Download
+                        this.downloadCanvas(canvas, userName);
+                    } else {
+                        Utils.showToast('Erreur lors de l\'export', 'danger');
+                    }
+                }
+            },
+
+            // Helper: Download canvas as PNG
+            downloadCanvas(canvas, name) {
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = `avatar-${name.toLowerCase().replace(/\s+/g, '-')}.png`;
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    
+                    Utils.showToast('Avatar téléchargé avec succès', 'success');
+                });
             },
 
             // Load photo from localStorage
@@ -2974,7 +3171,11 @@
                     const removeBtn = document.getElementById('avatarRemoveBtn');
                     if (removeBtn) removeBtn.style.display = 'flex';
                     
-                    console.log('✅ Photo loaded from storage');
+                    // Show export button
+                    const exportBtn = document.getElementById('avatarExportBtn');
+                    if (exportBtn) exportBtn.style.display = 'block';
+                    
+                    console.log('Photo loaded from storage');
                     return true;
                 }
                 return false;
@@ -3073,6 +3274,11 @@
             const message = elements.inputArea.value.trim();
             if (!message) return;
 
+            // Paraverbal: End capture et analyze
+            Paraverbal.endCapture();
+            Paraverbal.analyzeMessage(message);
+            Paraverbal.updateDisplay();
+
             addMessage('user', message);
             elements.inputArea.value = '';
             elements.inputArea.style.height = 'auto';
@@ -3080,6 +3286,19 @@
             // Update avatar every 3 responses
             if (state.responseCount % 3 === 0) {
                 updateAvatarTraits();
+            }
+
+            // Paraverbal insights every 5 messages
+            if (state.responseCount % 5 === 0) {
+                const insights = Paraverbal.getInsights();
+                if (insights && insights.length > 0) {
+                    insights.forEach(insight => {
+                        const insightEl = document.createElement('div');
+                        insightEl.className = 'insight-item';
+                        insightEl.textContent = insight;
+                        elements.insightsContainer.appendChild(insightEl);
+                    });
+                }
             }
 
             const response = await sendToAPI(message);
@@ -3127,6 +3346,358 @@
         }
 
         // ============================================
+        // MODULE 10: ANALYSE PARAVERBALE
+        // ============================================
+        const Paraverbal = {
+            state: {
+                // Rythme d'écriture
+                compositionTimes: [],       // durée totale par message
+                currentMessageStart: null,  // timestamp début message actuel
+                
+                // Expressivité
+                punctuation: {
+                    exclamation: 0,         // !
+                    question: 0,            // ?
+                    ellipsis: 0,            // ...
+                    allCapsWords: 0,        // MOTS EN MAJUSCULES
+                },
+                emojisUsed: {},             // emoji → count
+                sentenceLengths: [],        // longueur de chaque phrase
+                
+                // Profondeur
+                wordsPerMessage: [],        // longueur de chaque message
+                vocabularyUnique: new Set(),// mots uniques
+                exampleMarkers: 0,          // "par exemple", "comme", etc.
+                reflectionMarkers: 0,       // "je pense", "je ressens", etc.
+                nuanceMarkers: 0,           // "peut-être", "parfois", etc.
+                
+                // Patterns linguistiques
+                topWords: {},               // mot → count
+                connectors: {},             // donc, mais, car → count
+                
+                // Cohérence émotionnelle
+                emotionalWords: {},         // mot émotionnel → count
+                emotionalIntensity: [],     // 1-10 par message
+                
+                // Méta
+                messagesAnalyzed: 0,
+                totalCharacters: 0,
+            },
+
+            // Dictionnaires de référence
+            dict: {
+                exampleMarkers: ['par exemple', 'comme', 'notamment', 'tel que', 'ainsi', 'prenons'],
+                reflectionMarkers: ['je pense', 'je crois', 'je ressens', 'je trouve', 'il me semble', 'à mon avis', "j'ai l'impression"],
+                nuanceMarkers: ['peut-être', 'parfois', 'souvent', 'généralement', 'plutôt', 'assez', 'relativement', 'probablement'],
+                connectors: ['donc', 'mais', 'car', 'parce que', 'cependant', 'toutefois', 'néanmoins', 'ainsi', 'alors', 'puis'],
+                emotionalWords: {
+                    positive: ['heureux', 'content', 'joyeux', 'satisfait', 'motivé', 'enthousiaste', 'serein', 'calme', 'confiant', 'optimiste'],
+                    negative: ['triste', 'anxieux', 'stressé', 'inquiet', 'frustré', 'déçu', 'en colère', 'malheureux', 'déprimé', 'pessimiste'],
+                }
+            },
+
+            // Démarrer la capture pour un nouveau message
+            startCapture() {
+                this.state.currentMessageStart = Date.now();
+                console.log('Paraverbal: Capture started');
+            },
+
+            // Terminer la capture et enregistrer le temps
+            endCapture() {
+                if (this.state.currentMessageStart) {
+                    const duration = (Date.now() - this.state.currentMessageStart) / 1000;
+                    this.state.compositionTimes.push(duration);
+                    this.state.currentMessageStart = null;
+                    console.log(`Paraverbal: Message composed in ${duration.toFixed(1)}s`);
+                }
+            },
+
+            // Analyser un message complet
+            analyzeMessage(text) {
+                if (!text || text.trim().length === 0) return;
+
+                this.state.messagesAnalyzed++;
+                const cleanText = text.toLowerCase();
+                const words = text.match(/\b[\wàâäéèêëïîôùûüÿæœç]+\b/gi) || [];
+                const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+
+                // 1. EXPRESSIVITÉ
+                this.analyzeExpressiveness(text, sentences);
+
+                // 2. PROFONDEUR
+                this.analyzeDepth(text, cleanText, words);
+
+                // 3. PATTERNS LINGUISTIQUES
+                this.analyzePatterns(cleanText, words);
+
+                // 4. COHÉRENCE ÉMOTIONNELLE
+                this.analyzeEmotional(cleanText);
+
+                console.log('Paraverbal: Message analyzed', {
+                    words: words.length,
+                    sentences: sentences.length,
+                    messagesAnalyzed: this.state.messagesAnalyzed
+                });
+            },
+
+            // Analyser l'expressivité
+            analyzeExpressiveness(text, sentences) {
+                // Ponctuation
+                this.state.punctuation.exclamation += (text.match(/!/g) || []).length;
+                this.state.punctuation.question += (text.match(/\?/g) || []).length;
+                this.state.punctuation.ellipsis += (text.match(/\.{3,}/g) || []).length;
+
+                // Mots en majuscules
+                const capsWords = text.match(/\b[A-ZÀÂÄÉÈÊËÏÎÔÙÛÜŸÆŒÇ]{3,}\b/g) || [];
+                this.state.punctuation.allCapsWords += capsWords.length;
+
+                // Longueur des phrases
+                sentences.forEach(s => {
+                    const words = s.trim().split(/\s+/).length;
+                    this.state.sentenceLengths.push(words);
+                });
+
+                // Emojis
+                const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
+                const emojis = text.match(emojiRegex) || [];
+                emojis.forEach(emoji => {
+                    this.state.emojisUsed[emoji] = (this.state.emojisUsed[emoji] || 0) + 1;
+                });
+            },
+
+            // Analyser la profondeur
+            analyzeDepth(text, cleanText, words) {
+                this.state.wordsPerMessage.push(words.length);
+                this.state.totalCharacters += text.length;
+
+                // Vocabulaire unique
+                words.forEach(word => {
+                    if (word.length > 3) {
+                        this.state.vocabularyUnique.add(word.toLowerCase());
+                    }
+                });
+
+                // Markers
+                this.dict.exampleMarkers.forEach(marker => {
+                    const count = (cleanText.match(new RegExp(marker, 'g')) || []).length;
+                    this.state.exampleMarkers += count;
+                });
+
+                this.dict.reflectionMarkers.forEach(marker => {
+                    const count = (cleanText.match(new RegExp(marker, 'g')) || []).length;
+                    this.state.reflectionMarkers += count;
+                });
+
+                this.dict.nuanceMarkers.forEach(marker => {
+                    const count = (cleanText.match(new RegExp(marker, 'g')) || []).length;
+                    this.state.nuanceMarkers += count;
+                });
+            },
+
+            // Analyser les patterns linguistiques
+            analyzePatterns(cleanText, words) {
+                // Top words
+                words.forEach(word => {
+                    const w = word.toLowerCase();
+                    if (w.length > 3) {
+                        this.state.topWords[w] = (this.state.topWords[w] || 0) + 1;
+                    }
+                });
+
+                // Connecteurs
+                this.dict.connectors.forEach(connector => {
+                    const count = (cleanText.match(new RegExp(`\\b${connector}\\b`, 'g')) || []).length;
+                    if (count > 0) {
+                        this.state.connectors[connector] = (this.state.connectors[connector] || 0) + count;
+                    }
+                });
+            },
+
+            // Analyser la cohérence émotionnelle
+            analyzeEmotional(cleanText) {
+                let emotionalScore = 5;
+
+                this.dict.emotionalWords.positive.forEach(word => {
+                    if (cleanText.includes(word)) {
+                        this.state.emotionalWords[word] = (this.state.emotionalWords[word] || 0) + 1;
+                        emotionalScore += 0.5;
+                    }
+                });
+
+                this.dict.emotionalWords.negative.forEach(word => {
+                    if (cleanText.includes(word)) {
+                        this.state.emotionalWords[word] = (this.state.emotionalWords[word] || 0) + 1;
+                        emotionalScore -= 0.5;
+                    }
+                });
+
+                emotionalScore = Math.max(1, Math.min(10, emotionalScore));
+                this.state.emotionalIntensity.push(emotionalScore);
+            },
+
+            // Obtenir les insights
+            getInsights() {
+                if (this.state.messagesAnalyzed < 3) return null;
+
+                const insights = [];
+
+                // Rythme
+                if (this.state.compositionTimes.length > 0) {
+                    const avgTime = this.state.compositionTimes.reduce((a, b) => a + b, 0) / this.state.compositionTimes.length;
+                    if (avgTime > 60) {
+                        insights.push("Tu prends ton temps pour composer tes réponses - style réfléchi.");
+                    } else if (avgTime < 20) {
+                        insights.push("Tu réponds rapidement - style spontané.");
+                    }
+                }
+
+                // Expressivité
+                const totalPunctuation = this.state.punctuation.exclamation + this.state.punctuation.question;
+                if (totalPunctuation > this.state.messagesAnalyzed * 2) {
+                    insights.push("Tu utilises beaucoup de ponctuation expressive - style dynamique.");
+                }
+
+                // Profondeur
+                const avgWords = this.state.wordsPerMessage.reduce((a, b) => a + b, 0) / this.state.wordsPerMessage.length;
+                if (avgWords > 80) {
+                    insights.push("Tes réponses sont détaillées et développées.");
+                } else if (avgWords < 30) {
+                    insights.push("Tes réponses sont concises et directes.");
+                }
+
+                // Réflexion
+                if (this.state.reflectionMarkers > this.state.messagesAnalyzed) {
+                    insights.push("Tu utilises souvent des marqueurs de réflexion - style introspectif.");
+                }
+
+                // Nuances
+                if (this.state.nuanceMarkers > this.state.messagesAnalyzed) {
+                    insights.push("Tu nuances beaucoup tes propos - style prudent et mesuré.");
+                }
+
+                return insights.length > 0 ? insights : null;
+            },
+
+            // Générer le rapport complet
+            getReport() {
+                const avgCompositionTime = this.state.compositionTimes.length > 0
+                    ? this.state.compositionTimes.reduce((a, b) => a + b, 0) / this.state.compositionTimes.length
+                    : 0;
+
+                const avgWordsPerMessage = this.state.wordsPerMessage.length > 0
+                    ? this.state.wordsPerMessage.reduce((a, b) => a + b, 0) / this.state.wordsPerMessage.length
+                    : 0;
+
+                const avgSentenceLength = this.state.sentenceLengths.length > 0
+                    ? this.state.sentenceLengths.reduce((a, b) => a + b, 0) / this.state.sentenceLengths.length
+                    : 0;
+
+                const avgEmotionalIntensity = this.state.emotionalIntensity.length > 0
+                    ? this.state.emotionalIntensity.reduce((a, b) => a + b, 0) / this.state.emotionalIntensity.length
+                    : 5;
+
+                // Top 10 mots
+                const topWordsArray = Object.entries(this.state.topWords)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 10)
+                    .map(([word, count]) => ({ word, count }));
+
+                // Style linguistique
+                let linguisticStyle = 'neutral';
+                if (this.state.reflectionMarkers > this.state.messagesAnalyzed) {
+                    linguisticStyle = 'reflective';
+                }
+                if (this.state.nuanceMarkers > this.state.messagesAnalyzed) {
+                    linguisticStyle += '_nuanced';
+                }
+
+                return {
+                    rhythm: {
+                        averageCompositionTime: parseFloat(avgCompositionTime.toFixed(1)),
+                        totalMessages: this.state.compositionTimes.length,
+                        pattern: avgCompositionTime > 60 ? 'thoughtful' : avgCompositionTime < 20 ? 'spontaneous' : 'balanced'
+                    },
+                    expressiveness: {
+                        punctuation: { ...this.state.punctuation },
+                        emojis: { ...this.state.emojisUsed },
+                        averageSentenceLength: parseFloat(avgSentenceLength.toFixed(1)),
+                        emphasisLevel: this.state.punctuation.exclamation > this.state.messagesAnalyzed ? 'high' : 'moderate'
+                    },
+                    depth: {
+                        averageWordsPerMessage: parseFloat(avgWordsPerMessage.toFixed(1)),
+                        uniqueVocabularySize: this.state.vocabularyUnique.size,
+                        totalCharacters: this.state.totalCharacters,
+                        exampleMarkers: this.state.exampleMarkers,
+                        reflectionMarkers: this.state.reflectionMarkers,
+                        nuanceMarkers: this.state.nuanceMarkers,
+                        lexicalRichness: parseFloat((this.state.vocabularyUnique.size / Math.max(this.state.totalCharacters, 1) * 100).toFixed(2))
+                    },
+                    patterns: {
+                        topWords: topWordsArray,
+                        connectors: { ...this.state.connectors },
+                        linguisticStyle: linguisticStyle
+                    },
+                    emotional: {
+                        vocabulary: { ...this.state.emotionalWords },
+                        averageIntensity: parseFloat(avgEmotionalIntensity.toFixed(1)),
+                        coherence: this.state.emotionalIntensity.length > 2 ? 'analyzable' : 'insufficient_data'
+                    },
+                    meta: {
+                        messagesAnalyzed: this.state.messagesAnalyzed
+                    }
+                };
+            },
+
+            // Mettre à jour l'affichage dans l'interface
+            updateDisplay() {
+                if (this.state.messagesAnalyzed < 3) return;
+
+                const report = this.getReport();
+
+                // Rythme
+                const rythmEl = document.getElementById('paraverbalRythm');
+                if (rythmEl) {
+                    const avgTime = report.rhythm.averageCompositionTime;
+                    let rythmText = `${avgTime.toFixed(0)}s/msg`;
+                    if (report.rhythm.pattern === 'thoughtful') rythmText += ' (réfléchi)';
+                    else if (report.rhythm.pattern === 'spontaneous') rythmText += ' (spontané)';
+                    rythmEl.textContent = rythmText;
+                }
+
+                // Expressivité
+                const expEl = document.getElementById('paraverbalExpressiveness');
+                if (expEl) {
+                    const emphasisLevel = report.expressiveness.emphasisLevel;
+                    const emojiCount = Object.keys(report.expressiveness.emojis).length;
+                    let expText = emphasisLevel === 'high' ? 'Élevée' : 'Modérée';
+                    if (emojiCount > 0) expText += ` (${emojiCount} emojis)`;
+                    expEl.textContent = expText;
+                }
+
+                // Profondeur
+                const depthEl = document.getElementById('paraverbalDepth');
+                if (depthEl) {
+                    const avgWords = report.depth.averageWordsPerMessage;
+                    const vocabSize = report.depth.uniqueVocabularySize;
+                    depthEl.textContent = `${avgWords.toFixed(0)} mots (${vocabSize} uniques)`;
+                }
+
+                // Style
+                const styleEl = document.getElementById('paraverbalStyle');
+                if (styleEl) {
+                    let styleText = 'Équilibré';
+                    if (report.patterns.linguisticStyle.includes('reflective')) {
+                        styleText = 'Réflexif';
+                    }
+                    if (report.patterns.linguisticStyle.includes('nuanced')) {
+                        styleText += ' & Nuancé';
+                    }
+                    styleEl.textContent = styleText;
+                }
+            }
+        };
+
+        // ============================================
         // INITIALIZATION
         // ============================================
         async function init() {
@@ -3146,7 +3717,7 @@
                     if (file) {
                         // Check file size (max 5MB)
                         if (file.size > 5 * 1024 * 1024) {
-                            Utils.showToast('⚠️ Photo trop grande ! Maximum 5MB', 'danger');
+                            Utils.showToast('Photo trop grande ! Maximum 5MB', 'danger');
                             return;
                         }
                         Avatar.loadUserPhoto(file);
@@ -3161,6 +3732,14 @@
                     if (confirm('Êtes-vous sûr de vouloir supprimer votre photo ?')) {
                         Avatar.removeUserPhoto();
                     }
+                });
+            }
+
+            // Avatar export
+            const avatarExportBtn = document.getElementById('avatarExportBtn');
+            if (avatarExportBtn) {
+                avatarExportBtn.addEventListener('click', () => {
+                    Avatar.exportAvatar();
                 });
             }
 
@@ -3248,6 +3827,13 @@
                 this.style.height = (this.scrollHeight) + 'px';
             });
 
+            // Paraverbal: Start capture when user starts typing
+            elements.inputArea.addEventListener('focus', () => {
+                if (!Paraverbal.state.currentMessageStart) {
+                    Paraverbal.startCapture();
+                }
+            });
+
             // Revelations panel
             elements.revelationsToggle.addEventListener('click', () => {
                 elements.revelationsPanel.classList.toggle('open');
@@ -3280,9 +3866,20 @@
         function startInterview() {
             elements.chatContainer.style.display = 'flex';
             
+            // Capture initial traits
+            state.initialTraits = {
+                openness: Avatar.state.traits.openness,
+                conscientiousness: Avatar.state.traits.conscientiousness,
+                extraversion: Avatar.state.traits.extraversion,
+                agreeableness: Avatar.state.traits.agreeableness,
+                emotionalStability: Avatar.state.traits.emotionalStability,
+                timestamp: new Date().toISOString()
+            };
+            console.log('Initial traits captured:', state.initialTraits);
+            
             // Get user name if provided
             const userName = localStorage.getItem('avatar_name');
-            const greeting = userName ? `Bonjour ${userName} ! 👋` : 'Bonjour ! 👋';
+            const greeting = userName ? `Bonjour ${userName} !` : 'Bonjour !';
             
             // Initial message (personnalisé)
             const initialMessage = `${greeting} Je suis ravi de créer ton clone de personnalité. Cette interview va nous permettre de capturer ton essence unique en 45-65 minutes.\n\nJe vais te poser des questions sur différents aspects de ta personnalité. Réponds spontanément et honnêtement - il n'y a pas de bonne ou mauvaise réponse.\n\nCommençons : Peux-tu te présenter en quelques lignes ? Qui es-tu ?`;
@@ -3295,7 +3892,7 @@
             state.timerInterval = setInterval(() => {
                 if (!state.isPaused) {
                     state.elapsedSeconds++;
-                    elements.timer.textContent = `⏱️ ${Utils.formatTime(state.elapsedSeconds)}`;
+                    elements.timer.textContent = `${Utils.formatTime(state.elapsedSeconds)}`;
                     Utils.updateStats();
                 }
             }, 1000);
@@ -3329,6 +3926,28 @@
             elements.loadingOverlay.classList.add('active');
 
             try {
+                // Capture final traits
+                state.finalTraits = {
+                    openness: Avatar.state.traits.openness,
+                    conscientiousness: Avatar.state.traits.conscientiousness,
+                    extraversion: Avatar.state.traits.extraversion,
+                    agreeableness: Avatar.state.traits.agreeableness,
+                    emotionalStability: Avatar.state.traits.emotionalStability,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Calculate evolution
+                const traitsEvolution = state.initialTraits ? {
+                    openness: (state.finalTraits.openness - state.initialTraits.openness).toFixed(1),
+                    conscientiousness: (state.finalTraits.conscientiousness - state.initialTraits.conscientiousness).toFixed(1),
+                    extraversion: (state.finalTraits.extraversion - state.initialTraits.extraversion).toFixed(1),
+                    agreeableness: (state.finalTraits.agreeableness - state.initialTraits.agreeableness).toFixed(1),
+                    emotionalStability: (state.finalTraits.emotionalStability - state.initialTraits.emotionalStability).toFixed(1),
+                } : null;
+                
+                console.log('Final traits captured:', state.finalTraits);
+                console.log('Traits evolution:', traitsEvolution);
+                
                 // Generate comprehensive profile
                 const profile = {
                     metadata: {
@@ -3338,6 +3957,11 @@
                         questionCount: state.questionCount,
                         responseCount: state.responseCount,
                         totalWords: state.totalWords
+                    },
+                    bigFiveTraits: {
+                        initial: state.initialTraits,
+                        final: state.finalTraits,
+                        evolution: traitsEvolution
                     },
                     warmup: state.warmupResults,
                     messages: state.messages,
@@ -3352,7 +3976,8 @@
                     microExpressions: MicroExpressions.analyze(),
                     contexts: state.contexts,
                     contradictions: state.contradictions,
-                    reflectionNotes: state.reflectionNotes
+                    reflectionNotes: state.reflectionNotes,
+                    paraverbal: Paraverbal.getReport()
                 };
 
                 // Export JSON
@@ -3364,6 +3989,19 @@
                 jsonA.click();
 
                 Utils.showToast('Profil exporté avec succès !', 'success', 'Fichier JSON téléchargé');
+                
+                // Show traits evolution
+                if (traitsEvolution) {
+                    const totalEvolution = Object.values(traitsEvolution)
+                        .reduce((sum, val) => sum + Math.abs(parseFloat(val)), 0);
+                    
+                    if (totalEvolution > 0.5) {
+                        setTimeout(() => {
+                            const evolutionMsg = `Évolution des traits pendant l'interview : ${totalEvolution.toFixed(1)} points au total`;
+                            Utils.showToast(evolutionMsg, 'info');
+                        }, 2000);
+                    }
+                }
             } catch (error) {
                 console.error('Export error:', error);
                 Utils.showToast('Erreur lors de l\'export', 'danger');
