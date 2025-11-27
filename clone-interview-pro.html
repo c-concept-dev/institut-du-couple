@@ -496,7 +496,23 @@
 
         .voice-btn.recording {
             background: var(--danger);
-            animation: pulse 1.5s infinite;
+            animation: pulse-record 1s infinite;
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+        }
+
+        @keyframes pulse-record {
+            0% { 
+                transform: scale(1); 
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            50% { 
+                transform: scale(1.05); 
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% { 
+                transform: scale(1); 
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
         }
 
         @keyframes pulse {
@@ -1976,6 +1992,140 @@
         };
 
         // ============================================
+        // MODULE 8: VOICE RECOGNITION
+        // ============================================
+        const VoiceRecognition = {
+            recognition: null,
+            isListening: false,
+            finalTranscript: '',
+            interimTranscript: '',
+
+            init() {
+                // Check browser support
+                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                    console.warn('Speech recognition not supported');
+                    elements.voiceBtn.style.display = 'none';
+                    return false;
+                }
+
+                // Initialize recognition
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                this.recognition = new SpeechRecognition();
+                
+                this.recognition.continuous = true;
+                this.recognition.interimResults = true;
+                this.recognition.lang = 'fr-FR';
+                this.recognition.maxAlternatives = 1;
+
+                // Event handlers
+                this.recognition.onstart = () => {
+                    this.isListening = true;
+                    elements.voiceBtn.classList.add('recording');
+                    elements.voiceBtn.textContent = '🔴';
+                    elements.voiceBtn.title = 'Arrêter la dictée';
+                    Utils.showToast('🎤 Dictée vocale activée', 'info', 'Parlez maintenant...');
+                };
+
+                this.recognition.onend = () => {
+                    this.isListening = false;
+                    elements.voiceBtn.classList.remove('recording');
+                    elements.voiceBtn.textContent = '🎤';
+                    elements.voiceBtn.title = 'Dictée vocale';
+                };
+
+                this.recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    this.isListening = false;
+                    elements.voiceBtn.classList.remove('recording');
+                    elements.voiceBtn.textContent = '🎤';
+                    
+                    let errorMessage = 'Erreur de reconnaissance vocale';
+                    
+                    switch(event.error) {
+                        case 'no-speech':
+                            errorMessage = 'Aucune parole détectée. Réessayez.';
+                            break;
+                        case 'audio-capture':
+                            errorMessage = 'Microphone non accessible. Vérifiez les permissions.';
+                            break;
+                        case 'not-allowed':
+                            errorMessage = 'Permission microphone refusée. Autorisez l\'accès dans votre navigateur.';
+                            break;
+                        case 'network':
+                            errorMessage = 'Erreur réseau. Vérifiez votre connexion.';
+                            break;
+                    }
+                    
+                    Utils.showToast(errorMessage, 'danger');
+                };
+
+                this.recognition.onresult = (event) => {
+                    this.interimTranscript = '';
+                    this.finalTranscript = elements.inputArea.value;
+
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        const transcript = event.results[i][0].transcript;
+                        
+                        if (event.results[i].isFinal) {
+                            this.finalTranscript += transcript + ' ';
+                        } else {
+                            this.interimTranscript += transcript;
+                        }
+                    }
+
+                    // Update textarea
+                    elements.inputArea.value = (this.finalTranscript + this.interimTranscript).trim();
+                    
+                    // Auto-resize
+                    elements.inputArea.style.height = 'auto';
+                    elements.inputArea.style.height = (elements.inputArea.scrollHeight) + 'px';
+                    
+                    // Visual feedback
+                    if (this.interimTranscript) {
+                        elements.inputArea.style.borderColor = 'var(--primary)';
+                    } else {
+                        elements.inputArea.style.borderColor = '';
+                    }
+                };
+
+                return true;
+            },
+
+            toggle() {
+                if (!this.recognition) {
+                    Utils.showToast('Reconnaissance vocale non disponible', 'danger', 'Votre navigateur ne supporte pas cette fonctionnalité');
+                    return;
+                }
+
+                if (this.isListening) {
+                    this.stop();
+                } else {
+                    this.start();
+                }
+            },
+
+            start() {
+                try {
+                    this.finalTranscript = elements.inputArea.value;
+                    this.interimTranscript = '';
+                    this.recognition.start();
+                } catch (error) {
+                    console.error('Failed to start recognition:', error);
+                    Utils.showToast('Impossible de démarrer la dictée', 'danger');
+                }
+            },
+
+            stop() {
+                try {
+                    this.recognition.stop();
+                    Utils.showToast('🎤 Dictée vocale arrêtée', 'info');
+                } catch (error) {
+                    console.error('Failed to stop recognition:', error);
+                }
+            }
+        };
+
+        // ============================================
         // API COMMUNICATION
         // ============================================
         async function sendToAPI(userMessage) {
@@ -2073,6 +2223,9 @@
         // INITIALIZATION
         // ============================================
         async function init() {
+            // Initialize voice recognition
+            VoiceRecognition.init();
+
             // Event listeners
             elements.startBtn.addEventListener('click', () => {
                 elements.welcomeScreen.classList.add('hidden');
@@ -2085,6 +2238,11 @@
                     e.preventDefault();
                     sendMessage();
                 }
+            });
+
+            // Voice button
+            elements.voiceBtn.addEventListener('click', () => {
+                VoiceRecognition.toggle();
             });
 
             // Auto-resize textarea
