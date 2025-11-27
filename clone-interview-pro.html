@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clone Interview Pro v10.1 POLISHED - Optimisé Performance + UX</title>
+    <title>Clone Interview Pro v10.1 POLISHED - Performance + UX + Animations</title>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -859,6 +859,1957 @@ if (document.readyState === 'loading') {
 
 // Expose globally
 window.UXEnhancements = UXEnhancements;
+
+        // ============================================================================
+        // ANIMATIONS MANAGER v10.1 - SESSION 2
+        // ============================================================================
+        
+        // ============================================================================
+// ANIMATIONS MANAGER v10.1 - SESSION 2
+// ============================================================================
+// Gestion automatique animations :
+// 1. Fade-in messages
+// 2. Smooth scroll automatique
+// 3. Skeleton screens
+// 4. Messages d'erreur clairs
+// 5. Transitions phases
+// ============================================================================
+
+const AnimationsManager = {
+    
+    // ========================================
+    // CONFIGURATION
+    // ========================================
+    
+    config: {
+        enableAnimations: true,
+        enableSmoothScroll: true,
+        enableSkeletons: true,
+        scrollDelay: 100,              // Délai avant scroll (ms)
+        skeletonDuration: 1000,        // Durée min affichage skeleton (ms)
+        messageAnimationDelay: 50      // Délai entre messages animés (ms)
+    },
+    
+    state: {
+        isScrolling: false,
+        activeSkeletons: new Map(),
+        lastMessageCount: 0
+    },
+    
+    // ========================================
+    // 1. ANIMATIONS MESSAGES
+    // ========================================
+    
+    /**
+     * Appliquer animation fade-in à un nouveau message
+     */
+    animateMessage(messageElement, isClone = true) {
+        if (!this.config.enableAnimations) return;
+        
+        // Ajouter classe animation appropriée
+        const animClass = isClone ? 'message-clone' : 'message-user';
+        messageElement.classList.add(animClass);
+        
+        // Auto-cleanup après animation
+        setTimeout(() => {
+            messageElement.classList.remove(animClass);
+        }, 500);
+    },
+    
+    /**
+     * Observer nouveaux messages et appliquer animations
+     */
+    observeMessages() {
+        // Observer le container de messages
+        const messagesContainer = document.getElementById('chatMessages') || 
+                                 document.querySelector('.messages-container');
+        
+        if (!messagesContainer) {
+            console.warn('[Anim] Messages container not found');
+            return;
+        }
+        
+        // MutationObserver pour détecter nouveaux messages
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === 1 && node.classList) {
+                        // Détecter si c'est un message
+                        const isCloneMessage = node.classList.contains('clone-message') || 
+                                             node.querySelector('.clone-message');
+                        const isUserMessage = node.classList.contains('user-message') || 
+                                            node.querySelector('.user-message');
+                        
+                        if (isCloneMessage || isUserMessage) {
+                            // Animer le message
+                            this.animateMessage(node, isCloneMessage);
+                            
+                            // Scroll vers le message
+                            if (this.config.enableSmoothScroll) {
+                                this.scrollToMessage(node);
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        
+        // Observer
+        observer.observe(messagesContainer, {
+            childList: true,
+            subtree: true
+        });
+        
+        console.log('[Anim] ✅ Messages observer active');
+    },
+    
+    // ========================================
+    // 2. SMOOTH SCROLL AUTOMATIQUE
+    // ========================================
+    
+    /**
+     * Scroll smooth vers un message
+     */
+    scrollToMessage(messageElement) {
+        if (this.state.isScrolling) return;
+        
+        this.state.isScrolling = true;
+        
+        setTimeout(() => {
+            messageElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'end',
+                inline: 'nearest'
+            });
+            
+            this.state.isScrolling = false;
+        }, this.config.scrollDelay);
+    },
+    
+    /**
+     * Scroll vers le bas du container messages
+     */
+    scrollToBottom(containerId = 'chatMessages') {
+        const container = document.getElementById(containerId);
+        
+        if (!container) return;
+        
+        setTimeout(() => {
+            container.scrollTo({
+                top: container.scrollHeight,
+                behavior: 'smooth'
+            });
+        }, this.config.scrollDelay);
+    },
+    
+    // ========================================
+    // 3. SKELETON SCREENS
+    // ========================================
+    
+    /**
+     * Afficher skeleton pendant chargement réponse
+     */
+    showSkeletonMessage(containerId = 'chatMessages') {
+        if (!this.config.enableSkeletons) return null;
+        
+        const container = document.getElementById(containerId);
+        if (!container) return null;
+        
+        // Créer skeleton
+        const skeleton = document.createElement('div');
+        skeleton.className = 'skeleton-message';
+        skeleton.id = 'skeleton-' + Date.now();
+        skeleton.innerHTML = `
+            <div class="skeleton-avatar"></div>
+            <div class="skeleton-content">
+                <div class="skeleton-line medium"></div>
+                <div class="skeleton-line long"></div>
+                <div class="skeleton-line short"></div>
+            </div>
+        `;
+        
+        // Ajouter au container
+        container.appendChild(skeleton);
+        
+        // Scroll vers skeleton
+        this.scrollToBottom(containerId);
+        
+        // Tracker
+        this.state.activeSkeletons.set(skeleton.id, {
+            element: skeleton,
+            startTime: Date.now()
+        });
+        
+        return skeleton.id;
+    },
+    
+    /**
+     * Masquer skeleton (remplacer par vrai message)
+     */
+    hideSkeletonMessage(skeletonId) {
+        const skeletonData = this.state.activeSkeletons.get(skeletonId);
+        
+        if (!skeletonData) return;
+        
+        const { element, startTime } = skeletonData;
+        const elapsed = Date.now() - startTime;
+        const minDuration = this.config.skeletonDuration;
+        
+        // Attendre durée minimum pour éviter flash
+        const delay = Math.max(0, minDuration - elapsed);
+        
+        setTimeout(() => {
+            // Fade out
+            element.style.opacity = '0';
+            element.style.transition = 'opacity 0.3s';
+            
+            // Remove après transition
+            setTimeout(() => {
+                if (element.parentNode) {
+                    element.parentNode.removeChild(element);
+                }
+                this.state.activeSkeletons.delete(skeletonId);
+            }, 300);
+        }, delay);
+    },
+    
+    // ========================================
+    // 4. MESSAGES D'ERREUR AMÉLIORÉS
+    // ========================================
+    
+    /**
+     * Afficher message d'erreur friendly
+     */
+    showFriendlyError(technicalError, userMessage = null, suggestions = []) {
+        // Messages d'erreur user-friendly
+        const friendlyMessages = {
+            'CDN': {
+                message: "La mémoire sémantique se charge, veuillez patienter...",
+                icon: '⏳',
+                type: 'warning'
+            },
+            'undefined': {
+                message: "Une petite erreur technique est survenue. Pas de panique, le système continue de fonctionner !",
+                icon: 'ℹ️',
+                type: 'info'
+            },
+            'network': {
+                message: "Connexion internet lente détectée. Le chargement peut prendre quelques secondes...",
+                icon: '🌐',
+                type: 'warning'
+            },
+            'quota': {
+                message: "Mémoire du navigateur presque pleine. Certaines fonctionnalités avancées sont désactivées.",
+                icon: '💾',
+                type: 'warning'
+            },
+            'timeout': {
+                message: "L'opération prend plus de temps que prévu. Nouvelle tentative en cours...",
+                icon: '⏱️',
+                type: 'info'
+            }
+        };
+        
+        // Détecter type d'erreur
+        let errorType = 'undefined';
+        const errorStr = String(technicalError).toLowerCase();
+        
+        if (errorStr.includes('cdn') || errorStr.includes('load')) errorType = 'CDN';
+        if (errorStr.includes('network') || errorStr.includes('fetch')) errorType = 'network';
+        if (errorStr.includes('quota') || errorStr.includes('storage')) errorType = 'quota';
+        if (errorStr.includes('timeout')) errorType = 'timeout';
+        
+        const errorConfig = friendlyMessages[errorType] || friendlyMessages['undefined'];
+        
+        // Message final
+        const finalMessage = userMessage || errorConfig.message;
+        
+        // Afficher toast amélioré
+        if (typeof UXEnhancements !== 'undefined') {
+            UXEnhancements.showEnhancedToast(
+                finalMessage,
+                errorConfig.type,
+                5000
+            );
+        } else {
+            console.log(`${errorConfig.icon} ${finalMessage}`);
+        }
+        
+        // Log technique pour debug
+        console.error('[Error]', technicalError);
+        
+        // Afficher suggestions si fournies
+        if (suggestions.length > 0) {
+            console.log('[Suggestions]', suggestions);
+        }
+    },
+    
+    // ========================================
+    // 5. TRANSITIONS PHASES INTERVIEW
+    // ========================================
+    
+    /**
+     * Animer transition entre phases
+     */
+    transitionPhase(fromPhase, toPhase) {
+        console.log(`[Anim] Transition: ${fromPhase} → ${toPhase}`);
+        
+        // Trouver container phase actuelle
+        const currentPhaseEl = document.querySelector(`[data-phase="${fromPhase}"]`);
+        const nextPhaseEl = document.querySelector(`[data-phase="${toPhase}"]`);
+        
+        if (currentPhaseEl) {
+            // Fade out phase actuelle
+            currentPhaseEl.classList.add('phase-transition');
+            
+            setTimeout(() => {
+                currentPhaseEl.style.display = 'none';
+                currentPhaseEl.classList.remove('phase-transition');
+            }, 500);
+        }
+        
+        if (nextPhaseEl) {
+            // Fade in nouvelle phase
+            nextPhaseEl.style.display = 'block';
+            nextPhaseEl.classList.add('phase-transition');
+            
+            setTimeout(() => {
+                nextPhaseEl.classList.remove('phase-transition');
+            }, 500);
+        }
+        
+        // Toast notification changement phase
+        if (typeof UXEnhancements !== 'undefined') {
+            const phaseNames = {
+                1: 'Données de base',
+                2: 'Personnalité (Big Five)',
+                3: 'Émotions (Plutchik)',
+                4: 'Contexte & Expériences'
+            };
+            
+            const phaseName = phaseNames[toPhase] || `Phase ${toPhase}`;
+            UXEnhancements.showEnhancedToast(
+                `📋 ${phaseName}`,
+                'info',
+                2000
+            );
+        }
+    },
+    
+    /**
+     * Mettre à jour badge phase avec pulse
+     */
+    updatePhaseBadge(currentPhase, totalPhases = 4) {
+        let badge = document.getElementById('phase-badge');
+        
+        if (!badge) {
+            // Créer badge si n'existe pas
+            badge = document.createElement('div');
+            badge.id = 'phase-badge';
+            badge.className = 'phase-badge';
+            badge.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: white;
+                padding: 8px 16px;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 600;
+                color: #667eea;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                z-index: 9998;
+            `;
+            document.body.appendChild(badge);
+        }
+        
+        // Mettre à jour texte
+        badge.textContent = `Phase ${currentPhase}/${totalPhases}`;
+        
+        // Trigger pulse animation
+        badge.classList.remove('phase-badge');
+        void badge.offsetWidth; // Force reflow
+        badge.classList.add('phase-badge');
+    },
+    
+    // ========================================
+    // 6. ANIMATIONS BOUTONS
+    // ========================================
+    
+    /**
+     * Appliquer micro-animations à tous les boutons
+     */
+    enhanceButtons() {
+        const buttons = document.querySelectorAll('button, .btn');
+        
+        buttons.forEach(button => {
+            // Ajouter ripple effect on click
+            button.addEventListener('click', (e) => {
+                this.createRipple(e, button);
+            });
+        });
+        
+        console.log(`[Anim] ✅ Enhanced ${buttons.length} buttons`);
+    },
+    
+    /**
+     * Créer effet ripple sur click
+     */
+    createRipple(event, button) {
+        const ripple = document.createElement('span');
+        const rect = button.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+            position: absolute;
+            width: ${size}px;
+            height: ${size}px;
+            left: ${x}px;
+            top: ${y}px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.6s ease-out;
+            pointer-events: none;
+        `;
+        
+        // Ajouter animation
+        if (!document.querySelector('#ripple-animation-style')) {
+            const style = document.createElement('style');
+            style.id = 'ripple-animation-style';
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(2);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        button.style.position = 'relative';
+        button.style.overflow = 'hidden';
+        button.appendChild(ripple);
+        
+        setTimeout(() => ripple.remove(), 600);
+    },
+    
+    // ========================================
+    // 7. UTILITIES
+    // ========================================
+    
+    /**
+     * Hook fonction pour ajouter animations automatiques
+     */
+    hookFunction(obj, funcName, beforeFunc, afterFunc) {
+        const original = obj[funcName];
+        
+        obj[funcName] = function(...args) {
+            if (beforeFunc) beforeFunc.apply(this, args);
+            const result = original.apply(this, args);
+            if (afterFunc) afterFunc.apply(this, args);
+            return result;
+        };
+    },
+    
+    // ========================================
+    // 8. INITIALIZATION
+    // ========================================
+    
+    /**
+     * Initialiser toutes les animations
+     */
+    init() {
+        console.log('[Anim] 🎨 Initializing Animations Manager...');
+        
+        try {
+            // 1. Observer messages pour animations
+            this.observeMessages();
+            
+            // 2. Améliorer boutons
+            this.enhanceButtons();
+            
+            // 3. Hook fonctions clés pour animations auto
+            // Par exemple : addMessage, showError, etc.
+            
+            console.log('[Anim] ✅ Animations Manager initialized');
+            
+        } catch (error) {
+            console.error('[Anim] ❌ Initialization failed:', error);
+        }
+    }
+};
+
+// Auto-initialize when DOM ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        AnimationsManager.init();
+    });
+} else {
+    AnimationsManager.init();
+}
+
+// Expose globally
+window.AnimationsManager = AnimationsManager;
+
+        // ============================================================================
+        // ERROR MESSAGES v10.1 - SESSION 2
+        // ============================================================================
+        
+        // ============================================================================
+// ERROR MESSAGES v10.1 - SESSION 2
+// ============================================================================
+// Messages d'erreur user-friendly avec solutions
+// ============================================================================
+
+const ErrorMessages = {
+    
+    // Catalogue messages friendly
+    messages: {
+        // Erreurs USE/TensorFlow
+        'use_loading': {
+            title: "🧠 Chargement de la mémoire sémantique",
+            message: "La mémoire sémantique se charge depuis le cloud. Cela peut prendre 10-30 secondes selon votre connexion.",
+            solution: "Veuillez patienter quelques instants...",
+            type: "info"
+        },
+        'use_failed': {
+            title: "⚠️ Mémoire sémantique indisponible",
+            message: "Impossible de charger l'IA sémantique. Le système continue avec la recherche classique (légèrement moins précise).",
+            solution: "Vérifiez votre connexion internet et rechargez la page.",
+            type: "warning"
+        },
+        'cdn_failed': {
+            title: "🌐 Problème de connexion",
+            message: "Impossible de charger certaines bibliothèques depuis internet.",
+            solution: "Vérifiez votre connexion et rechargez la page.",
+            type: "error"
+        },
+        
+        // Erreurs Cache/Storage
+        'quota_exceeded': {
+            title: "💾 Mémoire du navigateur saturée",
+            message: "Le cache du navigateur est plein. Certaines fonctionnalités avancées sont désactivées.",
+            solution: "Videz le cache de votre navigateur ou utilisez un mode privé.",
+            type: "warning"
+        },
+        'indexeddb_failed': {
+            title: "💾 Stockage local indisponible",
+            message: "Le cache persistant ne peut pas être utilisé. Le système continue avec la mémoire RAM uniquement.",
+            solution: "Normal en mode navigation privée.",
+            type: "info"
+        },
+        
+        // Erreurs Network
+        'network_slow': {
+            title: "🐌 Connexion lente détectée",
+            message: "Votre connexion internet semble lente. Le chargement peut prendre plus de temps.",
+            solution: "Soyez patient, l'application continue de fonctionner.",
+            type: "warning"
+        },
+        'timeout': {
+            title: "⏱️ Timeout",
+            message: "L'opération prend plus de temps que prévu.",
+            solution: "Nouvelle tentative automatique en cours...",
+            type: "warning"
+        },
+        
+        // Erreurs Data
+        'invalid_data': {
+            title: "❌ Données invalides",
+            message: "Les données fournies ne sont pas au bon format.",
+            solution: "Vérifiez vos entrées et réessayez.",
+            type: "error"
+        },
+        'missing_data': {
+            title: "📭 Données manquantes",
+            message: "Certaines informations requises sont manquantes.",
+            solution: "Complétez tous les champs obligatoires.",
+            type: "warning"
+        },
+        
+        // Erreurs générales
+        'unknown': {
+            title: "⚠️ Erreur inattendue",
+            message: "Une erreur technique est survenue. Pas de panique, le système continue de fonctionner !",
+            solution: "Si le problème persiste, rechargez la page.",
+            type: "error"
+        }
+    },
+    
+    /**
+     * Détecter type d'erreur depuis message technique
+     */
+    detectErrorType(technicalError) {
+        const errorStr = String(technicalError).toLowerCase();
+        
+        // USE/TensorFlow
+        if (errorStr.includes('use') && errorStr.includes('load')) return 'use_loading';
+        if (errorStr.includes('tensorflow') || errorStr.includes('use')) return 'use_failed';
+        if (errorStr.includes('cdn') || errorStr.includes('script')) return 'cdn_failed';
+        
+        // Cache/Storage
+        if (errorStr.includes('quota')) return 'quota_exceeded';
+        if (errorStr.includes('indexeddb') || errorStr.includes('storage')) return 'indexeddb_failed';
+        
+        // Network
+        if (errorStr.includes('network') || errorStr.includes('fetch')) return 'network_slow';
+        if (errorStr.includes('timeout')) return 'timeout';
+        
+        // Data
+        if (errorStr.includes('invalid')) return 'invalid_data';
+        if (errorStr.includes('missing') || errorStr.includes('required')) return 'missing_data';
+        
+        return 'unknown';
+    },
+    
+    /**
+     * Afficher message d'erreur friendly
+     */
+    show(technicalError, customMessage = null) {
+        const errorType = this.detectErrorType(technicalError);
+        const errorConfig = this.messages[errorType];
+        
+        // Log technique pour debug
+        console.error('[Error Technical]', technicalError);
+        console.log('[Error Friendly]', errorConfig.title);
+        
+        // Message utilisateur
+        const displayMessage = customMessage || errorConfig.message;
+        
+        // Afficher toast si disponible
+        if (typeof UXEnhancements !== 'undefined') {
+            UXEnhancements.showEnhancedToast(
+                `${errorConfig.title}\n${displayMessage}`,
+                errorConfig.type,
+                5000
+            );
+        } else if (typeof AnimationsManager !== 'undefined') {
+            AnimationsManager.showFriendlyError(
+                technicalError,
+                displayMessage,
+                [errorConfig.solution]
+            );
+        } else {
+            // Fallback : alert
+            alert(`${errorConfig.title}\n\n${displayMessage}\n\n💡 ${errorConfig.solution}`);
+        }
+        
+        return errorConfig;
+    },
+    
+    /**
+     * Wrapper console.error pour intercepter erreurs
+     */
+    interceptConsoleErrors() {
+        const originalError = console.error;
+        
+        console.error = (...args) => {
+            // Appeler original
+            originalError.apply(console, args);
+            
+            // Afficher message friendly si erreur critique
+            const errorStr = String(args[0]).toLowerCase();
+            
+            // Erreurs à intercepter
+            if (errorStr.includes('use') || 
+                errorStr.includes('tensorflow') ||
+                errorStr.includes('cdn') ||
+                errorStr.includes('quota')) {
+                
+                this.show(args[0]);
+            }
+        };
+        
+        console.log('[ErrorMessages] ✅ Console errors intercepted');
+    }
+};
+
+// Auto-initialize
+ErrorMessages.interceptConsoleErrors();
+
+// Expose globally
+window.ErrorMessages = ErrorMessages;
+
+        // ============================================================================
+        // MOBILE OPTIMIZER v10.1 - SESSION 3
+        // ============================================================================
+        
+        // ============================================================================
+// MOBILE OPTIMIZATIONS v10.1 - SESSION 3
+// ============================================================================
+// Optimisations JavaScript mobile :
+// 1. Détection device
+// 2. Clavier virtuel gestion
+// 3. Lazy loading images
+// 4. Throttling animations
+// 5. Performance monitoring
+// ============================================================================
+
+const MobileOptimizer = {
+    
+    // ========================================
+    // CONFIGURATION
+    // ========================================
+    
+    config: {
+        isMobile: false,
+        isTablet: false,
+        isIOS: false,
+        isAndroid: false,
+        screenWidth: window.innerWidth,
+        screenHeight: window.innerHeight,
+        orientation: window.innerWidth > window.innerHeight ? 'landscape' : 'portrait',
+        hasNotch: false,
+        
+        // Features
+        lazyLoadImages: true,
+        keyboardManagement: true,
+        throttleAnimations: true,
+        reducedMotion: false
+    },
+    
+    state: {
+        keyboardOpen: false,
+        keyboardHeight: 0,
+        originalViewportHeight: window.innerHeight,
+        lastScrollPosition: 0,
+        lazyImages: []
+    },
+    
+    // ========================================
+    // 1. DÉTECTION DEVICE
+    // ========================================
+    
+    /**
+     * Détecter type de device et OS
+     */
+    detectDevice() {
+        const ua = navigator.userAgent || navigator.vendor || window.opera;
+        
+        // Mobile
+        this.config.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+        
+        // Tablet
+        this.config.isTablet = /iPad|Android(?!.*Mobile)/i.test(ua) ||
+                              (this.config.isMobile && window.innerWidth >= 768);
+        
+        // OS
+        this.config.isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+        this.config.isAndroid = /Android/i.test(ua);
+        
+        // Notch detection (approximation)
+        this.config.hasNotch = this.config.isIOS && 
+                               window.screen.height >= 812; // iPhone X+
+        
+        // Reduced motion preference
+        this.config.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        // Screen size
+        this.config.screenWidth = window.innerWidth;
+        this.config.screenHeight = window.innerHeight;
+        
+        console.log('[Mobile] Device detected:', {
+            mobile: this.config.isMobile,
+            tablet: this.config.isTablet,
+            ios: this.config.isIOS,
+            android: this.config.isAndroid,
+            notch: this.config.hasNotch,
+            reducedMotion: this.config.reducedMotion,
+            size: `${this.config.screenWidth}x${this.config.screenHeight}`
+        });
+    },
+    
+    // ========================================
+    // 2. CLAVIER VIRTUEL - GESTION
+    // ========================================
+    
+    /**
+     * Observer ouverture/fermeture clavier virtuel
+     */
+    setupKeyboardManagement() {
+        if (!this.config.keyboardManagement || !this.config.isMobile) return;
+        
+        // Stocker hauteur viewport originale
+        this.state.originalViewportHeight = window.innerHeight;
+        
+        // Observer resize (clavier ouvre/ferme)
+        window.addEventListener('resize', () => {
+            this.handleKeyboardChange();
+        });
+        
+        // Focus input : scroll vers input
+        document.addEventListener('focusin', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                this.handleInputFocus(e.target);
+            }
+        });
+        
+        // Blur input : restore scroll
+        document.addEventListener('focusout', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                this.handleInputBlur(e.target);
+            }
+        });
+        
+        console.log('[Mobile] ✅ Keyboard management active');
+    },
+    
+    /**
+     * Détecter changement clavier (ouvert/fermé)
+     */
+    handleKeyboardChange() {
+        const currentHeight = window.innerHeight;
+        const heightDiff = this.state.originalViewportHeight - currentHeight;
+        
+        // Clavier ouvert si différence > 150px
+        if (heightDiff > 150) {
+            if (!this.state.keyboardOpen) {
+                this.state.keyboardOpen = true;
+                this.state.keyboardHeight = heightDiff;
+                this.onKeyboardOpen();
+            }
+        } else {
+            if (this.state.keyboardOpen) {
+                this.state.keyboardOpen = false;
+                this.state.keyboardHeight = 0;
+                this.onKeyboardClose();
+            }
+        }
+    },
+    
+    /**
+     * Callback : clavier ouvert
+     */
+    onKeyboardOpen() {
+        console.log('[Mobile] ⌨️ Keyboard opened', this.state.keyboardHeight + 'px');
+        
+        // Ajouter classe au body
+        document.body.classList.add('keyboard-open');
+        
+        // Ajuster padding container messages
+        const messagesContainer = document.getElementById('chatMessages') ||
+                                 document.querySelector('.messages-container');
+        if (messagesContainer) {
+            messagesContainer.style.paddingBottom = (this.state.keyboardHeight + 20) + 'px';
+        }
+    },
+    
+    /**
+     * Callback : clavier fermé
+     */
+    onKeyboardClose() {
+        console.log('[Mobile] ⌨️ Keyboard closed');
+        
+        // Retirer classe body
+        document.body.classList.remove('keyboard-open');
+        
+        // Restaurer padding
+        const messagesContainer = document.getElementById('chatMessages') ||
+                                 document.querySelector('.messages-container');
+        if (messagesContainer) {
+            messagesContainer.style.paddingBottom = '100px';
+        }
+    },
+    
+    /**
+     * Focus input : scroll vers input
+     */
+    handleInputFocus(input) {
+        // Attendre que clavier soit ouvert
+        setTimeout(() => {
+            // Scroll vers input avec offset pour clavier
+            const rect = input.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const targetScroll = scrollTop + rect.top - 100; // 100px offset
+            
+            window.scrollTo({
+                top: targetScroll,
+                behavior: 'smooth'
+            });
+        }, 300);
+    },
+    
+    /**
+     * Blur input : restaurer scroll
+     */
+    handleInputBlur(input) {
+        // Rien pour l'instant
+    },
+    
+    // ========================================
+    // 3. LAZY LOADING IMAGES
+    // ========================================
+    
+    /**
+     * Setup lazy loading pour toutes les images
+     */
+    setupLazyLoading() {
+        if (!this.config.lazyLoadImages) return;
+        
+        // Trouver toutes les images
+        const images = document.querySelectorAll('img[data-src], img[loading="lazy"]');
+        
+        // IntersectionObserver pour lazy load
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        this.loadImage(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                rootMargin: '50px' // Charger 50px avant visible
+            });
+            
+            images.forEach(img => {
+                observer.observe(img);
+                this.state.lazyImages.push(img);
+            });
+            
+            console.log(`[Mobile] ✅ Lazy loading ${images.length} images`);
+        } else {
+            // Fallback : charger toutes les images immédiatement
+            images.forEach(img => this.loadImage(img));
+        }
+    },
+    
+    /**
+     * Charger une image lazy
+     */
+    loadImage(img) {
+        const src = img.getAttribute('data-src') || img.src;
+        
+        if (!src) return;
+        
+        // Créer placeholder si pas déjà présent
+        if (!img.classList.contains('loaded')) {
+            img.style.background = 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)';
+            img.style.backgroundSize = '200% 100%';
+        }
+        
+        // Charger image
+        const tempImg = new Image();
+        tempImg.onload = () => {
+            img.src = src;
+            img.classList.add('loaded');
+            img.style.background = 'none';
+        };
+        tempImg.onerror = () => {
+            console.error('[Mobile] ❌ Failed to load image:', src);
+            img.alt = 'Image non disponible';
+        };
+        tempImg.src = src;
+    },
+    
+    /**
+     * Lazy load avatar spécifique
+     */
+    lazyLoadAvatar(avatarElement) {
+        if (!avatarElement) return;
+        
+        const src = avatarElement.getAttribute('data-src') || avatarElement.src;
+        
+        if (src && src !== '') {
+            this.loadImage(avatarElement);
+        } else {
+            // Afficher placeholder avec initiale
+            const initial = avatarElement.getAttribute('data-initial') || '👤';
+            avatarElement.innerHTML = `<div class="avatar-placeholder">${initial}</div>`;
+        }
+    },
+    
+    // ========================================
+    // 4. THROTTLING ANIMATIONS
+    // ========================================
+    
+    /**
+     * Throttler pour animations (évite surcharge CPU)
+     */
+    throttle(func, delay) {
+        let lastCall = 0;
+        return function(...args) {
+            const now = Date.now();
+            if (now - lastCall >= delay) {
+                lastCall = now;
+                return func.apply(this, args);
+            }
+        };
+    },
+    
+    /**
+     * Throttler animations scroll
+     */
+    setupScrollThrottling() {
+        if (!this.config.isMobile) return;
+        
+        // Throttle scroll events (60fps max)
+        const throttledScroll = this.throttle(() => {
+            this.state.lastScrollPosition = window.pageYOffset;
+        }, 16); // ~60fps
+        
+        window.addEventListener('scroll', throttledScroll, { passive: true });
+        
+        console.log('[Mobile] ✅ Scroll throttling active (60fps)');
+    },
+    
+    /**
+     * Désactiver animations complexes sur mobile si nécessaire
+     */
+    optimizeAnimations() {
+        if (!this.config.isMobile || this.config.reducedMotion) return;
+        
+        // Réduire durée animations
+        if (typeof AnimationsManager !== 'undefined') {
+            AnimationsManager.config.messageAnimationDelay = 20; // 50ms → 20ms
+        }
+        
+        console.log('[Mobile] ✅ Animations optimized for mobile');
+    },
+    
+    // ========================================
+    // 5. ORIENTATION CHANGE
+    // ========================================
+    
+    /**
+     * Observer changements orientation
+     */
+    setupOrientationMonitoring() {
+        window.addEventListener('orientationchange', () => {
+            this.handleOrientationChange();
+        });
+        
+        // Fallback resize
+        window.addEventListener('resize', this.throttle(() => {
+            const newOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+            if (newOrientation !== this.config.orientation) {
+                this.config.orientation = newOrientation;
+                this.handleOrientationChange();
+            }
+        }, 200));
+        
+        console.log('[Mobile] ✅ Orientation monitoring active');
+    },
+    
+    /**
+     * Callback : orientation changée
+     */
+    handleOrientationChange() {
+        const newOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+        const changed = newOrientation !== this.config.orientation;
+        
+        if (changed) {
+            console.log('[Mobile] 🔄 Orientation changed:', newOrientation);
+            this.config.orientation = newOrientation;
+            
+            // Mettre à jour dimensions
+            this.config.screenWidth = window.innerWidth;
+            this.config.screenHeight = window.innerHeight;
+            this.state.originalViewportHeight = window.innerHeight;
+            
+            // Toast notification
+            if (typeof UXEnhancements !== 'undefined') {
+                UXEnhancements.showEnhancedToast(
+                    newOrientation === 'landscape' ? '📱 Mode paysage' : '📱 Mode portrait',
+                    'info',
+                    1500
+                );
+            }
+            
+            // Trigger resize event pour autres modules
+            window.dispatchEvent(new Event('resize'));
+        }
+    },
+    
+    // ========================================
+    // 6. PERFORMANCE MONITORING
+    // ========================================
+    
+    /**
+     * Monitor performance mobile
+     */
+    monitorPerformance() {
+        if (!this.config.isMobile) return;
+        
+        // FPS counter (simple)
+        let lastTime = performance.now();
+        let frames = 0;
+        let fps = 60;
+        
+        const measureFPS = () => {
+            frames++;
+            const currentTime = performance.now();
+            
+            if (currentTime >= lastTime + 1000) {
+                fps = Math.round((frames * 1000) / (currentTime - lastTime));
+                frames = 0;
+                lastTime = currentTime;
+                
+                // Log si FPS bas
+                if (fps < 30) {
+                    console.warn(`[Mobile] ⚠️ Low FPS detected: ${fps}fps`);
+                }
+            }
+            
+            requestAnimationFrame(measureFPS);
+        };
+        
+        measureFPS();
+    },
+    
+    /**
+     * Obtenir stats performance
+     */
+    getPerformanceStats() {
+        return {
+            device: {
+                mobile: this.config.isMobile,
+                tablet: this.config.isTablet,
+                os: this.config.isIOS ? 'iOS' : this.config.isAndroid ? 'Android' : 'Other'
+            },
+            screen: {
+                width: this.config.screenWidth,
+                height: this.config.screenHeight,
+                orientation: this.config.orientation
+            },
+            keyboard: {
+                open: this.state.keyboardOpen,
+                height: this.state.keyboardHeight
+            },
+            images: {
+                total: this.state.lazyImages.length,
+                loaded: this.state.lazyImages.filter(img => img.classList.contains('loaded')).length
+            }
+        };
+    },
+    
+    // ========================================
+    // 7. UTILITIES
+    // ========================================
+    
+    /**
+     * Vérifier si mobile
+     */
+    isMobileDevice() {
+        return this.config.isMobile;
+    },
+    
+    /**
+     * Vérifier si tablet
+     */
+    isTabletDevice() {
+        return this.config.isTablet;
+    },
+    
+    /**
+     * Empêcher zoom iOS sur double-tap
+     */
+    preventDoubleTapZoom() {
+        if (!this.config.isIOS) return;
+        
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        console.log('[Mobile] ✅ Double-tap zoom prevented (iOS)');
+    },
+    
+    // ========================================
+    // 8. INITIALIZATION
+    // ========================================
+    
+    /**
+     * Initialiser toutes les optimisations mobile
+     */
+    init() {
+        console.log('[Mobile] 📱 Initializing Mobile Optimizations...');
+        
+        try {
+            // 1. Détecter device
+            this.detectDevice();
+            
+            // Si pas mobile, skip optimisations
+            if (!this.config.isMobile) {
+                console.log('[Mobile] ℹ️ Desktop detected, mobile optimizations skipped');
+                return;
+            }
+            
+            // 2. Clavier virtuel
+            this.setupKeyboardManagement();
+            
+            // 3. Lazy loading images
+            this.setupLazyLoading();
+            
+            // 4. Throttling scroll
+            this.setupScrollThrottling();
+            
+            // 5. Optimiser animations
+            this.optimizeAnimations();
+            
+            // 6. Orientation monitoring
+            this.setupOrientationMonitoring();
+            
+            // 7. Performance monitoring
+            this.monitorPerformance();
+            
+            // 8. Prevent double-tap zoom (iOS)
+            this.preventDoubleTapZoom();
+            
+            // 9. Add mobile class to body
+            document.body.classList.add('mobile-device');
+            if (this.config.isIOS) document.body.classList.add('ios-device');
+            if (this.config.isAndroid) document.body.classList.add('android-device');
+            
+            console.log('[Mobile] ✅ Mobile Optimizations initialized');
+            
+        } catch (error) {
+            console.error('[Mobile] ❌ Initialization failed:', error);
+        }
+    }
+};
+
+// Auto-initialize when DOM ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        MobileOptimizer.init();
+    });
+} else {
+    MobileOptimizer.init();
+}
+
+// Expose globally
+window.MobileOptimizer = MobileOptimizer;
+
+        
+
+        
+
+        
+
+        // ============================================================================
+        // UI ANIMATIONS v10.1 - SESSION 2
+        // ============================================================================
+        
+        // ============================================================================
+// ANIMATIONS & UI POLISH v10.1 - SESSION 2
+// ============================================================================
+// Améliorations :
+// 1. Fade-in messages clone
+// 2. Smooth scroll automatique
+// 3. Micro-animations boutons
+// 4. Messages d'erreur contextuels
+// 5. Transitions phases interview
+// 6. Skeleton screens
+// ============================================================================
+
+const UIAnimations = {
+    
+    // ========================================
+    // CONFIGURATION
+    // ========================================
+    
+    config: {
+        messageAnimationDuration: 300,      // ms
+        smoothScrollDuration: 500,          // ms
+        buttonAnimationDuration: 200,       // ms
+        skeletonEnabled: true,
+        autoScrollEnabled: true,
+        animationsEnabled: true
+    },
+    
+    state: {
+        lastMessageId: null,
+        animationQueue: []
+    },
+    
+    // ========================================
+    // 1. FADE-IN MESSAGES
+    // ========================================
+    
+    /**
+     * Animer l'apparition d'un nouveau message
+     */
+    animateMessageAppearance(messageElement) {
+        if (!this.config.animationsEnabled) return;
+        
+        // Classe pour animation
+        messageElement.classList.add('message-fade-in');
+        
+        // Retirer classe après animation
+        setTimeout(() => {
+            messageElement.classList.remove('message-fade-in');
+            messageElement.classList.add('message-visible');
+        }, this.config.messageAnimationDuration);
+    },
+    
+    /**
+     * Observer nouveaux messages pour animer
+     */
+    observeNewMessages() {
+        // Observer le container de messages
+        const messagesContainer = document.getElementById('messages') || 
+                                  document.querySelector('.messages-container') ||
+                                  document.querySelector('#chat-messages');
+        
+        if (!messagesContainer) {
+            console.warn('[Animations] Messages container not found');
+            return;
+        }
+        
+        // MutationObserver pour détecter nouveaux messages
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                mutation.addedNodes.forEach((node) => {
+                    // Si c'est un élément message
+                    if (node.nodeType === 1 && 
+                        (node.classList.contains('message') ||
+                         node.classList.contains('clone-message') ||
+                         node.classList.contains('user-message'))) {
+                        
+                        this.animateMessageAppearance(node);
+                        
+                        // Scroll automatique vers le nouveau message
+                        if (this.config.autoScrollEnabled) {
+                            this.smoothScrollToMessage(node);
+                        }
+                    }
+                });
+            });
+        });
+        
+        observer.observe(messagesContainer, {
+            childList: true,
+            subtree: true
+        });
+        
+        console.log('[Animations] ✅ Message observer activated');
+    },
+    
+    // ========================================
+    // 2. SMOOTH SCROLL
+    // ========================================
+    
+    /**
+     * Scroll fluide vers un message
+     */
+    smoothScrollToMessage(messageElement) {
+        if (!this.config.autoScrollEnabled) return;
+        
+        // Attendre que le message soit rendu
+        setTimeout(() => {
+            messageElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'end',
+                inline: 'nearest'
+            });
+        }, 100);
+    },
+    
+    /**
+     * Scroll vers le bas du chat
+     */
+    smoothScrollToBottom() {
+        const messagesContainer = document.getElementById('messages') || 
+                                  document.querySelector('.messages-container') ||
+                                  document.querySelector('#chat-messages');
+        
+        if (messagesContainer) {
+            messagesContainer.scrollTo({
+                top: messagesContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    },
+    
+    // ========================================
+    // 3. MICRO-ANIMATIONS BOUTONS
+    // ========================================
+    
+    /**
+     * Ajouter animations sur tous les boutons
+     */
+    enhanceButtonAnimations() {
+        const buttons = document.querySelectorAll('button, .btn, input[type="submit"]');
+        
+        buttons.forEach(button => {
+            // Skip si déjà enhancé
+            if (button.dataset.animationEnhanced) return;
+            
+            // Animation click (ripple effect)
+            button.addEventListener('click', (e) => {
+                this.createRippleEffect(e, button);
+            });
+            
+            // Animation hover (lift)
+            button.addEventListener('mouseenter', () => {
+                if (!button.disabled) {
+                    button.style.transform = 'translateY(-2px)';
+                    button.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                }
+            });
+            
+            button.addEventListener('mouseleave', () => {
+                button.style.transform = 'translateY(0)';
+                button.style.boxShadow = '';
+            });
+            
+            // Marquer comme enhancé
+            button.dataset.animationEnhanced = 'true';
+        });
+        
+        console.log(`[Animations] ✅ Enhanced ${buttons.length} buttons`);
+    },
+    
+    /**
+     * Créer effet ripple sur click
+     */
+    createRippleEffect(event, button) {
+        const ripple = document.createElement('span');
+        const rect = button.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+            position: absolute;
+            width: ${size}px;
+            height: ${size}px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            left: ${x}px;
+            top: ${y}px;
+            pointer-events: none;
+            transform: scale(0);
+            animation: ripple 0.6s ease-out;
+        `;
+        
+        ripple.className = 'button-ripple';
+        
+        // Position relative pour le bouton
+        const originalPosition = button.style.position;
+        if (originalPosition !== 'relative' && originalPosition !== 'absolute') {
+            button.style.position = 'relative';
+        }
+        button.style.overflow = 'hidden';
+        
+        button.appendChild(ripple);
+        
+        // Retirer après animation
+        setTimeout(() => ripple.remove(), 600);
+    },
+    
+    /**
+     * Animation pulse pour bouton important
+     */
+    addPulseAnimation(buttonElement) {
+        buttonElement.classList.add('pulse-animation');
+        
+        // Retirer après 3 pulses
+        setTimeout(() => {
+            buttonElement.classList.remove('pulse-animation');
+        }, 3000);
+    },
+    
+    // ========================================
+    // 4. MESSAGES D'ERREUR AMÉLIORÉS
+    // ========================================
+    
+    /**
+     * Afficher message d'erreur contextuel
+     */
+    showErrorMessage(message, context = {}) {
+        const errorContainer = document.createElement('div');
+        errorContainer.className = 'error-message-enhanced';
+        
+        // Icône selon type
+        const icon = context.type === 'warning' ? '⚠️' : 
+                     context.type === 'info' ? 'ℹ️' : '❌';
+        
+        // Solution suggérée si disponible
+        const solutionHTML = context.solution ? 
+            `<div class="error-solution">💡 ${context.solution}</div>` : '';
+        
+        errorContainer.innerHTML = `
+            <div class="error-header">
+                <span class="error-icon">${icon}</span>
+                <span class="error-title">${message}</span>
+                <button class="error-close" onclick="this.parentElement.parentElement.remove()">×</button>
+            </div>
+            ${solutionHTML}
+        `;
+        
+        errorContainer.style.cssText = `
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            max-width: 400px;
+            background: white;
+            border-left: 4px solid ${context.type === 'warning' ? '#FF9800' : '#F44336'};
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            z-index: 10000;
+            animation: slideInRight 0.3s ease-out;
+        `;
+        
+        document.body.appendChild(errorContainer);
+        
+        // Auto-remove après 7s
+        setTimeout(() => {
+            errorContainer.style.opacity = '0';
+            errorContainer.style.transition = 'opacity 0.3s';
+            setTimeout(() => errorContainer.remove(), 300);
+        }, 7000);
+    },
+    
+    /**
+     * Remplacer messages d'erreur techniques par des messages clairs
+     */
+    enhanceErrorMessages() {
+        // Intercepter console.error pour afficher messages clairs
+        const originalError = console.error;
+        
+        console.error = (...args) => {
+            // Appeler original
+            originalError.apply(console, args);
+            
+            // Analyser erreur pour message utilisateur
+            const errorStr = args.join(' ');
+            
+            if (errorStr.includes('USE') || errorStr.includes('TensorFlow')) {
+                this.showErrorMessage(
+                    'La mémoire sémantique avancée est temporairement indisponible',
+                    {
+                        type: 'warning',
+                        solution: 'Le clone continue avec le mode classique. Vérifiez votre connexion internet.'
+                    }
+                );
+            } else if (errorStr.includes('IndexedDB') || errorStr.includes('quota')) {
+                this.showErrorMessage(
+                    'Espace de stockage local limité',
+                    {
+                        type: 'warning',
+                        solution: 'Le cache fonctionne en mémoire uniquement. Performances légèrement réduites.'
+                    }
+                );
+            }
+        };
+    },
+    
+    // ========================================
+    // 5. TRANSITIONS PHASES INTERVIEW
+    // ========================================
+    
+    /**
+     * Animer transition entre phases de l'interview
+     */
+    animatePhaseTransition(fromPhase, toPhase) {
+        console.log(`[Animations] 🔄 Transition: ${fromPhase} → ${toPhase}`);
+        
+        // Créer overlay transition
+        const overlay = document.createElement('div');
+        overlay.className = 'phase-transition-overlay';
+        overlay.innerHTML = `
+            <div class="phase-transition-content">
+                <div class="phase-icon">✨</div>
+                <div class="phase-text">Passage à la phase suivante...</div>
+                <div class="phase-progress">
+                    <div class="phase-progress-bar"></div>
+                </div>
+            </div>
+        `;
+        
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            animation: fadeIn 0.3s ease-out;
+        `;
+        
+        document.body.appendChild(overlay);
+        
+        // Animer progress bar
+        const progressBar = overlay.querySelector('.phase-progress-bar');
+        if (progressBar) {
+            setTimeout(() => {
+                progressBar.style.width = '100%';
+                progressBar.style.transition = 'width 1s ease-in-out';
+            }, 100);
+        }
+        
+        // Retirer après 1.5s
+        setTimeout(() => {
+            overlay.style.opacity = '0';
+            overlay.style.transition = 'opacity 0.3s';
+            setTimeout(() => overlay.remove(), 300);
+        }, 1500);
+    },
+    
+    // ========================================
+    // 6. SKELETON SCREENS
+    // ========================================
+    
+    /**
+     * Afficher skeleton pendant chargement clone response
+     */
+    showMessageSkeleton() {
+        if (!this.config.skeletonEnabled) return null;
+        
+        const skeleton = document.createElement('div');
+        skeleton.className = 'message-skeleton';
+        skeleton.innerHTML = `
+            <div class="skeleton-avatar"></div>
+            <div class="skeleton-content">
+                <div class="skeleton-line skeleton-line-1"></div>
+                <div class="skeleton-line skeleton-line-2"></div>
+                <div class="skeleton-line skeleton-line-3"></div>
+            </div>
+        `;
+        
+        skeleton.style.cssText = `
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            animation: pulse 1.5s ease-in-out infinite;
+        `;
+        
+        return skeleton;
+    },
+    
+    /**
+     * Retirer skeleton et afficher message réel
+     */
+    replaceSkeleton(skeleton, messageElement) {
+        if (!skeleton) return;
+        
+        skeleton.style.opacity = '0';
+        skeleton.style.transition = 'opacity 0.3s';
+        
+        setTimeout(() => {
+            skeleton.replaceWith(messageElement);
+            this.animateMessageAppearance(messageElement);
+        }, 300);
+    },
+    
+    // ========================================
+    // 7. INJECT CSS ANIMATIONS
+    // ========================================
+    
+    /**
+     * Injecter styles CSS pour toutes les animations
+     */
+    injectAnimationStyles() {
+        const style = document.createElement('style');
+        style.id = 'ui-animations-styles';
+        style.textContent = `
+            /* ============================================ */
+            /* ANIMATIONS v10.1 POLISHED */
+            /* ============================================ */
+            
+            /* 1. Fade-in messages */
+            .message-fade-in {
+                animation: messageFadeIn 0.3s ease-out;
+                opacity: 0;
+                animation-fill-mode: forwards;
+            }
+            
+            @keyframes messageFadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .message-visible {
+                opacity: 1;
+            }
+            
+            /* 2. Ripple effect */
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+            
+            /* 3. Pulse animation */
+            .pulse-animation {
+                animation: pulse 1s ease-in-out 3;
+            }
+            
+            @keyframes pulse {
+                0%, 100% {
+                    transform: scale(1);
+                    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+                }
+                50% {
+                    transform: scale(1.05);
+                    box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+                }
+            }
+            
+            /* 4. Button hover transitions */
+            button, .btn, input[type="submit"] {
+                transition: all 0.2s ease;
+            }
+            
+            button:not(:disabled):hover, 
+            .btn:not(:disabled):hover {
+                transform: translateY(-2px);
+            }
+            
+            button:not(:disabled):active,
+            .btn:not(:disabled):active {
+                transform: translateY(0);
+            }
+            
+            /* 5. Error message styles */
+            .error-message-enhanced {
+                animation: slideInRight 0.3s ease-out;
+            }
+            
+            @keyframes slideInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            .error-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 8px;
+            }
+            
+            .error-icon {
+                font-size: 24px;
+            }
+            
+            .error-title {
+                flex: 1;
+                font-weight: 600;
+                color: #333;
+            }
+            
+            .error-close {
+                background: none;
+                border: none;
+                font-size: 24px;
+                color: #999;
+                cursor: pointer;
+                padding: 0;
+                width: 24px;
+                height: 24px;
+                line-height: 1;
+            }
+            
+            .error-close:hover {
+                color: #333;
+            }
+            
+            .error-solution {
+                background: #FFF3CD;
+                padding: 10px;
+                border-radius: 6px;
+                font-size: 14px;
+                color: #856404;
+            }
+            
+            /* 6. Phase transition */
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            .phase-transition-content {
+                text-align: center;
+            }
+            
+            .phase-icon {
+                font-size: 48px;
+                margin-bottom: 16px;
+                animation: pulse 1s ease-in-out infinite;
+            }
+            
+            .phase-text {
+                font-size: 18px;
+                font-weight: 600;
+                color: #667eea;
+                margin-bottom: 24px;
+            }
+            
+            .phase-progress {
+                width: 300px;
+                height: 4px;
+                background: rgba(0,0,0,0.1);
+                border-radius: 2px;
+                overflow: hidden;
+            }
+            
+            .phase-progress-bar {
+                height: 100%;
+                width: 0%;
+                background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            }
+            
+            /* 7. Skeleton screens */
+            .message-skeleton {
+                animation: skeletonPulse 1.5s ease-in-out infinite;
+            }
+            
+            @keyframes skeletonPulse {
+                0%, 100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.5;
+                }
+            }
+            
+            .skeleton-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                background-size: 200% 100%;
+                animation: shimmer 2s infinite;
+            }
+            
+            .skeleton-content {
+                flex: 1;
+            }
+            
+            .skeleton-line {
+                height: 12px;
+                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                background-size: 200% 100%;
+                animation: shimmer 2s infinite;
+                border-radius: 6px;
+                margin-bottom: 8px;
+            }
+            
+            .skeleton-line-1 {
+                width: 90%;
+            }
+            
+            .skeleton-line-2 {
+                width: 75%;
+            }
+            
+            .skeleton-line-3 {
+                width: 85%;
+            }
+            
+            @keyframes shimmer {
+                0% {
+                    background-position: -200% 0;
+                }
+                100% {
+                    background-position: 200% 0;
+                }
+            }
+            
+            /* 8. Smooth transitions globales */
+            * {
+                transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            /* 9. Focus states accessibles */
+            button:focus-visible,
+            input:focus-visible,
+            textarea:focus-visible {
+                outline: 2px solid #667eea;
+                outline-offset: 2px;
+            }
+        `;
+        
+        // Retirer ancien style si existe
+        const oldStyle = document.getElementById('ui-animations-styles');
+        if (oldStyle) oldStyle.remove();
+        
+        document.head.appendChild(style);
+        console.log('[Animations] ✅ CSS styles injected');
+    },
+    
+    // ========================================
+    // INITIALIZATION
+    // ========================================
+    
+    /**
+     * Initialiser toutes les animations
+     */
+    init() {
+        console.log('[Animations] 🎨 Initializing UI Animations...');
+        
+        try {
+            // 1. Injecter styles CSS
+            this.injectAnimationStyles();
+            
+            // 2. Observer nouveaux messages
+            this.observeNewMessages();
+            
+            // 3. Enhance boutons existants
+            this.enhanceButtonAnimations();
+            
+            // 4. Améliorer messages d'erreur
+            this.enhanceErrorMessages();
+            
+            // 5. Re-enhance boutons quand DOM change
+            const observer = new MutationObserver(() => {
+                this.enhanceButtonAnimations();
+            });
+            
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+            
+            console.log('[Animations] ✅ UI Animations initialized');
+            
+        } catch (error) {
+            console.error('[Animations] ❌ Initialization failed:', error);
+        }
+    }
+};
+
+// Auto-initialize
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        UIAnimations.init();
+    });
+} else {
+    UIAnimations.init();
+}
+
+// Expose globally
+window.UIAnimations = UIAnimations;
+
+        
 
         
         </script>
@@ -2673,6 +4624,1174 @@ window.UXEnhancements = UXEnhancements;
                 display: flex;
             }
         }
+    
+
+        /* ====================================================================
+           ANIMATIONS v10.1 - SESSION 2
+           ==================================================================== */
+        
+        /* ============================================================================
+   ANIMATIONS v10.1 - SESSION 2
+   ============================================================================
+   Améliorations visuelles :
+   1. Fade-in messages
+   2. Smooth scroll
+   3. Micro-animations boutons
+   4. Transitions phases
+   5. Skeleton screens
+   ============================================================================ */
+
+/* ============================================================================
+   1. ANIMATIONS MESSAGES - FADE IN
+   ============================================================================ */
+
+/* Animation fade-in pour messages du clone */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animation fade-in pour messages utilisateur */
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Classes pour appliquer animations */
+.message-clone {
+    animation: fadeInUp 0.4s ease-out;
+    animation-fill-mode: both;
+}
+
+.message-user {
+    animation: fadeInRight 0.3s ease-out;
+    animation-fill-mode: both;
+}
+
+/* Délai progressif pour messages successifs */
+.message-clone:nth-child(1) { animation-delay: 0s; }
+.message-clone:nth-child(2) { animation-delay: 0.1s; }
+.message-clone:nth-child(3) { animation-delay: 0.2s; }
+.message-clone:nth-child(4) { animation-delay: 0.3s; }
+
+/* ============================================================================
+   2. MICRO-ANIMATIONS BOUTONS
+   ============================================================================ */
+
+/* Boutons principaux */
+.btn, button {
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover effect - légère élévation */
+.btn:hover, button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Active effect - press down */
+.btn:active, button:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.1s ease;
+}
+
+/* Ripple effect on click */
+.btn::before, button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:active::before, button:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Boutons primaires - effet brillant */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transform: rotate(45deg);
+    transition: all 0.6s;
+}
+
+.btn-primary:hover::after {
+    left: 100%;
+}
+
+/* ============================================================================
+   3. SMOOTH SCROLL
+   ============================================================================ */
+
+/* Scroll behavior smooth pour toute la page */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Container messages avec scroll smooth */
+.messages-container, #chatMessages {
+    scroll-behavior: smooth;
+    overflow-y: auto;
+    transition: scroll-position 0.3s ease;
+}
+
+/* ============================================================================
+   4. SKELETON SCREENS - LOADING STATES
+   ============================================================================ */
+
+/* Skeleton base */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        #f0f0f0 25%,
+        #e0e0e0 50%,
+        #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Skeleton message */
+.skeleton-message {
+    display: flex;
+    gap: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.skeleton-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(
+        90deg,
+        #f0f0f0 25%,
+        #e0e0e0 50%,
+        #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    flex-shrink: 0;
+}
+
+.skeleton-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.skeleton-line {
+    height: 16px;
+    background: linear-gradient(
+        90deg,
+        #f0f0f0 25%,
+        #e0e0e0 50%,
+        #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+.skeleton-line.short {
+    width: 60%;
+}
+
+.skeleton-line.medium {
+    width: 80%;
+}
+
+.skeleton-line.long {
+    width: 100%;
+}
+
+/* ============================================================================
+   5. TRANSITIONS PHASES INTERVIEW
+   ============================================================================ */
+
+/* Transition smooth entre phases */
+.phase-transition {
+    animation: phaseTransition 0.5s ease-in-out;
+}
+
+@keyframes phaseTransition {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    50% {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Badge phase avec pulse */
+.phase-badge {
+    animation: pulseBadge 2s infinite;
+}
+
+@keyframes pulseBadge {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+    }
+}
+
+/* ============================================================================
+   6. ANIMATIONS CARDS / CONTAINERS
+   ============================================================================ */
+
+/* Cards avec hover effect */
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* ============================================================================
+   7. INPUTS & FORMS ANIMATIONS
+   ============================================================================ */
+
+/* Input focus effect */
+input, textarea {
+    transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: scale(1.01);
+}
+
+/* Label float effect */
+.form-floating label {
+    transition: all 0.3s ease;
+}
+
+/* ============================================================================
+   8. MODAL ANIMATIONS
+   ============================================================================ */
+
+/* Modal fade in */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal.show .modal-dialog {
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+/* ============================================================================
+   9. TOAST ANIMATIONS
+   ============================================================================ */
+
+/* Toast slide up */
+@keyframes toastSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.toast {
+    animation: toastSlideUp 0.3s ease-out;
+}
+
+/* ============================================================================
+   10. LOADING SPINNER ANIMATIONS
+   ============================================================================ */
+
+/* Spinner custom */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* Dots loading */
+@keyframes dotPulse {
+    0%, 80%, 100% {
+        transform: scale(0.6);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.dot-pulse span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #667eea;
+    margin: 0 3px;
+    animation: dotPulse 1.4s infinite ease-in-out;
+}
+
+.dot-pulse span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.dot-pulse span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dot-pulse span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* ============================================================================
+   11. PROGRESS BAR ANIMATIONS
+   ============================================================================ */
+
+/* Progress bar fill animation */
+@keyframes progressFill {
+    from {
+        width: 0%;
+    }
+}
+
+.progress-bar {
+    animation: progressFill 0.8s ease-out;
+}
+
+/* Progress bar stripe animation */
+@keyframes progressStripe {
+    from {
+        background-position: 1rem 0;
+    }
+    to {
+        background-position: 0 0;
+    }
+}
+
+.progress-bar-striped {
+    background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.15) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 1rem 1rem;
+    animation: progressStripe 1s linear infinite;
+}
+
+/* ============================================================================
+   12. ACCESSIBILITY - RESPECT PREFERS-REDUCED-MOTION
+   ============================================================================ */
+
+/* Désactiver animations si utilisateur préfère mouvement réduit */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ============================================================================
+   13. MOBILE OPTIMIZATIONS
+   ============================================================================ */
+
+/* Animations plus légères sur mobile */
+@media (max-width: 768px) {
+    .btn:hover, button:hover {
+        transform: none; /* Désactiver hover sur mobile */
+    }
+    
+    /* Animations plus rapides sur mobile */
+    .message-clone, .message-user {
+        animation-duration: 0.2s;
+    }
+}
+
+/* ============================================================================
+   14. CUSTOM ANIMATIONS POUR PHASES SPÉCIFIQUES
+   ============================================================================ */
+
+/* Animation pour résultats Big Five */
+.big-five-bar {
+    animation: barGrow 0.8s ease-out;
+    animation-fill-mode: both;
+}
+
+@keyframes barGrow {
+    from {
+        width: 0%;
+    }
+}
+
+/* Délai progressif pour chaque barre */
+.big-five-bar:nth-child(1) { animation-delay: 0s; }
+.big-five-bar:nth-child(2) { animation-delay: 0.1s; }
+.big-five-bar:nth-child(3) { animation-delay: 0.2s; }
+.big-five-bar:nth-child(4) { animation-delay: 0.3s; }
+.big-five-bar:nth-child(5) { animation-delay: 0.4s; }
+
+/* Animation pour radar émotions */
+.emotion-chart {
+    animation: chartReveal 1s ease-out;
+}
+
+@keyframes chartReveal {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ============================================================================
+   15. UTILITY CLASSES
+   ============================================================================ */
+
+/* Fade utilities */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-out {
+    animation: fadeOut 0.3s ease-out;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Slide utilities */
+.slide-down {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scale utilities */
+.scale-in {
+    animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Bounce effect */
+.bounce {
+    animation: bounce 0.6s ease-out;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+        
+    
+
+        /* ====================================================================
+           MOBILE OPTIMIZATIONS v10.1 - SESSION 3
+           ==================================================================== */
+        
+        /* ============================================================================
+   MOBILE OPTIMIZATIONS v10.1 - SESSION 3
+   ============================================================================
+   Optimisations spécifiques mobile :
+   1. Touch-friendly (44px min)
+   2. Responsive amélioré
+   3. Clavier virtuel
+   4. Orientations
+   5. Performance
+   ============================================================================ */
+
+/* ============================================================================
+   1. TOUCH-FRIENDLY - TAILLES MINIMALES
+   ============================================================================ */
+
+/* Boutons : minimum 44x44px (Apple HIG / Material Design) */
+@media (max-width: 768px) {
+    button, .btn, a.btn {
+        min-height: 44px !important;
+        min-width: 44px !important;
+        padding: 12px 20px !important;
+        font-size: 16px !important; /* Évite zoom auto iOS */
+    }
+    
+    /* Boutons petits (icônes) */
+    .btn-sm, button.small {
+        min-height: 44px !important;
+        min-width: 44px !important;
+        padding: 10px !important;
+    }
+    
+    /* Inputs : minimum 44px hauteur */
+    input, textarea, select {
+        min-height: 44px !important;
+        padding: 12px 16px !important;
+        font-size: 16px !important; /* Évite zoom auto iOS */
+    }
+    
+    /* Checkbox et radio : zone tactile 44px */
+    input[type="checkbox"],
+    input[type="radio"] {
+        width: 24px;
+        height: 24px;
+        margin: 10px; /* Zone tactile totale = 44px */
+    }
+    
+    /* Labels cliquables : padding généreux */
+    label {
+        padding: 10px 5px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Links : zone tactile minimum */
+    a {
+        padding: 10px 5px;
+        margin: -10px -5px; /* Extend clickable area */
+    }
+}
+
+/* ============================================================================
+   2. RESPONSIVE LAYOUT AMÉLIORÉ
+   ============================================================================ */
+
+/* Container principal : full width mobile */
+@media (max-width: 768px) {
+    .container, .container-fluid {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+    
+    /* Cards : full width */
+    .card {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        border-radius: 0 !important;
+    }
+    
+    /* Modals : full screen mobile */
+    .modal-dialog {
+        margin: 0 !important;
+        max-width: 100% !important;
+        height: 100% !important;
+    }
+    
+    .modal-content {
+        height: 100% !important;
+        border-radius: 0 !important;
+    }
+    
+    /* Grid : 1 colonne sur mobile */
+    .row > [class*="col-"] {
+        width: 100% !important;
+        margin-bottom: 15px;
+    }
+    
+    /* Messages chat : max-width optimale */
+    .message {
+        max-width: 90% !important;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+    
+    /* Titres : tailles réduites */
+    h1 {
+        font-size: 24px !important;
+    }
+    
+    h2 {
+        font-size: 20px !important;
+    }
+    
+    h3 {
+        font-size: 18px !important;
+    }
+}
+
+/* Très petits écrans (<400px) */
+@media (max-width: 400px) {
+    button, .btn {
+        font-size: 14px !important;
+        padding: 10px 16px !important;
+    }
+    
+    h1 {
+        font-size: 20px !important;
+    }
+}
+
+/* ============================================================================
+   3. CLAVIER VIRTUEL - GESTION ESPACE
+   ============================================================================ */
+
+/* Éviter que le clavier ne cache les inputs */
+@media (max-width: 768px) {
+    /* Input focus : scroll automatique */
+    input:focus, textarea:focus {
+        scroll-margin-bottom: 150px; /* Espace pour clavier */
+    }
+    
+    /* Container messages : padding bottom pour clavier */
+    .messages-container {
+        padding-bottom: 100px !important;
+    }
+    
+    /* Zone saisie : fixed bottom avec padding */
+    .input-area {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 10px 15px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+    
+    /* Safe area iOS (notch) */
+    .input-area {
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+}
+
+/* iOS : empêcher zoom sur focus input */
+@media (max-width: 768px) {
+    input, textarea, select {
+        font-size: 16px !important; /* 16px minimum pour éviter zoom */
+    }
+}
+
+/* ============================================================================
+   4. ORIENTATION PORTRAIT / PAYSAGE
+   ============================================================================ */
+
+/* Portrait : optimisation verticale */
+@media (max-width: 768px) and (orientation: portrait) {
+    /* Header compact */
+    header, .header {
+        padding: 10px 15px !important;
+    }
+    
+    /* Avatar plus petit */
+    .avatar, .avatar-image {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    /* Progress bars : pleine largeur */
+    .progress {
+        width: 100% !important;
+    }
+}
+
+/* Paysage : optimisation horizontale */
+@media (max-width: 768px) and (orientation: landscape) {
+    /* Header très compact */
+    header, .header {
+        padding: 5px 15px !important;
+        font-size: 14px !important;
+    }
+    
+    /* Messages : disposition optimisée */
+    .messages-container {
+        max-height: calc(100vh - 120px) !important;
+    }
+    
+    /* Input area : compact */
+    .input-area {
+        padding: 5px 15px !important;
+    }
+    
+    /* Modals : scroll si nécessaire */
+    .modal-body {
+        max-height: calc(100vh - 100px) !important;
+        overflow-y: auto !important;
+    }
+}
+
+/* ============================================================================
+   5. PERFORMANCE MOBILE - OPTIMISATIONS
+   ============================================================================ */
+
+/* Désactiver hover states sur mobile */
+@media (max-width: 768px) {
+    /* Pas de hover sur mobile (touch only) */
+    button:hover, .btn:hover, a:hover {
+        transform: none !important;
+    }
+    
+    /* Active states uniquement */
+    button:active, .btn:active {
+        transform: scale(0.98) !important;
+        transition: transform 0.1s !important;
+    }
+}
+
+/* Animations plus légères sur mobile */
+@media (max-width: 768px) {
+    /* Réduire durée animations */
+    .message-clone, .message-user {
+        animation-duration: 0.2s !important;
+    }
+    
+    /* Transitions plus rapides */
+    * {
+        transition-duration: 0.2s !important;
+    }
+    
+    /* Désactiver animations complexes */
+    .card:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+}
+
+/* ============================================================================
+   6. SCROLL MOBILE OPTIMISÉ
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    /* Scroll momentum iOS/Android */
+    .messages-container,
+    .modal-body,
+    .scrollable {
+        -webkit-overflow-scrolling: touch;
+        overflow-y: auto;
+    }
+    
+    /* Cacher scrollbar mais garder fonctionnalité */
+    .messages-container::-webkit-scrollbar,
+    .modal-body::-webkit-scrollbar {
+        width: 2px;
+    }
+    
+    .messages-container::-webkit-scrollbar-thumb,
+    .modal-body::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 2px;
+    }
+}
+
+/* ============================================================================
+   7. IMAGES LAZY LOADING - PLACEHOLDER
+   ============================================================================ */
+
+/* Placeholder pendant chargement image */
+img[loading="lazy"] {
+    background: linear-gradient(
+        90deg,
+        #f0f0f0 25%,
+        #e0e0e0 50%,
+        #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+}
+
+/* Image loaded : fade in */
+img.loaded {
+    animation: fadeIn 0.3s ease-in;
+}
+
+/* Avatar placeholder */
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* ============================================================================
+   8. SAFE AREAS iOS (NOTCH)
+   ============================================================================ */
+
+@supports (padding: max(0px)) {
+    /* Header avec safe area top */
+    header, .header {
+        padding-top: max(10px, env(safe-area-inset-top));
+    }
+    
+    /* Input area avec safe area bottom */
+    .input-area, .footer {
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+    
+    /* Sides pour landscape */
+    .container {
+        padding-left: max(15px, env(safe-area-inset-left));
+        padding-right: max(15px, env(safe-area-inset-right));
+    }
+}
+
+/* ============================================================================
+   9. TACTILE FEEDBACK
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    /* Highlight touch */
+    * {
+        -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
+    }
+    
+    /* Désactiver sélection texte sur éléments interactifs */
+    button, .btn, a {
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    
+    /* Active state visuel */
+    button:active, .btn:active, a:active {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+}
+
+/* ============================================================================
+   10. TYPOGRAPHIE MOBILE
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    /* Line height optimisé mobile */
+    body {
+        line-height: 1.6 !important;
+    }
+    
+    /* Paragraphes : espacement */
+    p {
+        margin-bottom: 1em;
+    }
+    
+    /* Liens : underline pour clarté */
+    a {
+        text-decoration: underline;
+    }
+    
+    button a, .btn a {
+        text-decoration: none;
+    }
+}
+
+/* ============================================================================
+   11. FORMS MOBILE
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    /* Labels au-dessus des inputs */
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+    
+    /* Input full width */
+    input, textarea, select {
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+    
+    /* Textarea : hauteur min confortable */
+    textarea {
+        min-height: 100px !important;
+        resize: vertical;
+    }
+    
+    /* Select : apparence native mobile */
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        padding-right: 40px !important;
+    }
+}
+
+/* ============================================================================
+   12. MODALS MOBILE
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    /* Modal full screen */
+    .modal {
+        padding: 0 !important;
+    }
+    
+    .modal-dialog {
+        margin: 0;
+        max-width: 100%;
+        height: 100%;
+    }
+    
+    .modal-content {
+        height: 100%;
+        border: 0;
+        border-radius: 0;
+    }
+    
+    /* Modal header : sticky top */
+    .modal-header {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 1;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    /* Modal footer : sticky bottom */
+    .modal-footer {
+        position: sticky;
+        bottom: 0;
+        background: white;
+        z-index: 1;
+        border-top: 1px solid #ddd;
+    }
+    
+    /* Modal body : scroll */
+    .modal-body {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* ============================================================================
+   13. NAVIGATION MOBILE
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    /* Tabs : scroll horizontal */
+    .nav-tabs {
+        display: flex;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+    }
+    
+    .nav-tabs .nav-link {
+        white-space: nowrap;
+        min-width: 100px;
+    }
+    
+    /* Breadcrumb : scroll horizontal */
+    .breadcrumb {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+    }
+}
+
+/* ============================================================================
+   14. TABLES MOBILE
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    /* Tables : scroll horizontal */
+    table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Alternative : vertical stacking */
+    table.mobile-stack {
+        display: block;
+    }
+    
+    table.mobile-stack thead {
+        display: none;
+    }
+    
+    table.mobile-stack tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+    }
+    
+    table.mobile-stack td {
+        display: block;
+        text-align: right;
+        padding: 8px;
+        border: 0;
+    }
+    
+    table.mobile-stack td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+    }
+}
+
+/* ============================================================================
+   15. PULL TO REFRESH - DISABLE
+   ============================================================================ */
+
+/* Désactiver pull-to-refresh natif */
+body {
+    overscroll-behavior-y: contain;
+}
+
+/* ============================================================================
+   16. PERFORMANCE - GPU ACCELERATION
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    /* Force GPU acceleration pour éléments animés */
+    .message-clone, .message-user,
+    .modal, .toast, .skeleton {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        will-change: transform, opacity;
+    }
+}
+
+/* ============================================================================
+   17. PRINT STYLES
+   ============================================================================ */
+
+@media print {
+    /* Cacher éléments non-imprimables */
+    button, .btn, .input-area, .modal, .toast {
+        display: none !important;
+    }
+    
+    /* Full width */
+    .container, .card {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Avoid page breaks inside */
+    .message, .card {
+        page-break-inside: avoid;
+    }
+}
+
+        
     </style>
     <!-- TensorFlow.js & Universal Sentence Encoder (MODULE 14 Hybride) -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0"></script>
