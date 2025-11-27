@@ -8,6 +8,9 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- p5.js for Avatar Animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    
     <style>
         /* ============================================
            CSS VARIABLES - INSTITUT DU COUPLE
@@ -1125,6 +1128,185 @@
                 opacity: 1;
             }
         }
+
+        /* ============================================
+           AVATAR SIDEBAR
+        ============================================ */
+        .avatar-sidebar {
+            position: fixed;
+            left: 0;
+            top: 70px;
+            width: 320px;
+            height: calc(100vh - 70px);
+            background: var(--white);
+            border-right: 1px solid var(--border-light);
+            padding: 1.5rem;
+            overflow-y: auto;
+            z-index: 90;
+            transition: transform 0.3s ease, background var(--transition), border-color var(--transition);
+        }
+
+        body.dark .avatar-sidebar {
+            background: #1e293b;
+            border-color: var(--border-dark);
+        }
+
+        .avatar-sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .avatar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .avatar-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .avatar-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            color: var(--text-muted);
+            transition: color var(--transition);
+        }
+
+        .avatar-toggle-btn:hover {
+            color: var(--primary);
+        }
+
+        .avatar-container {
+            width: 100%;
+            background: var(--bg-accent);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #avatar {
+            width: 280px;
+            height: 280px;
+        }
+
+        .avatar-traits {
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        body.dark .avatar-traits {
+            background: #0f172a;
+            border-color: var(--border-dark);
+        }
+
+        .avatar-traits h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .trait-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .trait-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .trait-label {
+            color: var(--text-muted);
+        }
+
+        .trait-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .trait-bar-container {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-accent);
+            border-radius: 3px;
+            margin-top: 0.25rem;
+            overflow: hidden;
+        }
+
+        .trait-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* Avatar Toggle Button (when sidebar is hidden) */
+        .avatar-float-toggle {
+            position: fixed;
+            left: 1rem;
+            bottom: 1rem;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(143, 175, 177, 0.3);
+            z-index: 95;
+            display: none;
+            transition: all var(--transition);
+        }
+
+        .avatar-float-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(143, 175, 177, 0.4);
+        }
+
+        .avatar-float-toggle.visible {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Adjust main container when sidebar is visible */
+        .main-container.with-avatar-sidebar {
+            margin-left: 320px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .avatar-sidebar {
+                transform: translateX(-100%);
+            }
+
+            .avatar-sidebar.visible {
+                transform: translateX(0);
+            }
+
+            .main-container.with-avatar-sidebar {
+                margin-left: 0;
+            }
+
+            .avatar-float-toggle {
+                display: flex;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1143,8 +1325,66 @@
         </div>
     </div>
 
+    <!-- Avatar Sidebar -->
+    <div class="avatar-sidebar" id="avatarSidebar">
+        <div class="avatar-header">
+            <h3>🎨 Avatar Personnalité</h3>
+            <button class="avatar-toggle-btn" id="avatarToggleBtn" title="Masquer">⬅️</button>
+        </div>
+        
+        <div class="avatar-container">
+            <div id="avatar"></div>
+        </div>
+        
+        <div class="avatar-traits">
+            <h4>📊 Traits Big Five</h4>
+            <div class="trait-item">
+                <span class="trait-label">Ouverture</span>
+                <span class="trait-value" id="traitOpenness">5.0</span>
+            </div>
+            <div class="trait-bar-container">
+                <div class="trait-bar-fill" id="barOpenness" style="width: 50%"></div>
+            </div>
+            
+            <div class="trait-item" style="margin-top: 0.75rem;">
+                <span class="trait-label">Conscienciosité</span>
+                <span class="trait-value" id="traitConscientiousness">5.0</span>
+            </div>
+            <div class="trait-bar-container">
+                <div class="trait-bar-fill" id="barConscientiousness" style="width: 50%"></div>
+            </div>
+            
+            <div class="trait-item" style="margin-top: 0.75rem;">
+                <span class="trait-label">Extraversion</span>
+                <span class="trait-value" id="traitExtraversion">5.0</span>
+            </div>
+            <div class="trait-bar-container">
+                <div class="trait-bar-fill" id="barExtraversion" style="width: 50%"></div>
+            </div>
+            
+            <div class="trait-item" style="margin-top: 0.75rem;">
+                <span class="trait-label">Agréabilité</span>
+                <span class="trait-value" id="traitAgreeableness">5.0</span>
+            </div>
+            <div class="trait-bar-container">
+                <div class="trait-bar-fill" id="barAgreeableness" style="width: 50%"></div>
+            </div>
+            
+            <div class="trait-item" style="margin-top: 0.75rem;">
+                <span class="trait-label">Stabilité Émotionnelle</span>
+                <span class="trait-value" id="traitEmotionalStability">5.0</span>
+            </div>
+            <div class="trait-bar-container">
+                <div class="trait-bar-fill" id="barEmotionalStability" style="width: 50%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avatar Float Toggle (mobile) -->
+    <button class="avatar-float-toggle" id="avatarFloatToggle">🎨</button>
+
     <!-- Main Container -->
-    <div class="main-container">
+    <div class="main-container with-avatar-sidebar">
         <!-- Welcome Screen -->
         <div class="welcome-screen" id="welcomeScreen">
             <div class="welcome-content">
@@ -2136,6 +2376,306 @@
         };
 
         // ============================================
+        // MODULE 9: AVATAR P5.JS
+        // ============================================
+        const Avatar = {
+            // Configuration
+            config: {
+                canvasWidth: 280,
+                canvasHeight: 280,
+                baseSize: 90,
+                particleCount: 30,
+                animationSpeed: 0.02,
+            },
+
+            // State
+            state: {
+                p5Instance: null,
+                currentTraits: {
+                    openness: 5,
+                    conscientiousness: 5,
+                    extraversion: 5,
+                    agreeableness: 5,
+                    emotionalStability: 5
+                },
+                targetTraits: {},
+                morphProgress: 0,
+                particles: [],
+                time: 0
+            },
+
+            // Initialization
+            init(containerElement = null) {
+                const container = containerElement || document.getElementById('avatar');
+                if (!container) {
+                    console.error('Avatar: Container element not found');
+                    return;
+                }
+
+                // Create p5 instance
+                const sketch = (p) => {
+                    p.setup = () => {
+                        const canvas = p.createCanvas(this.config.canvasWidth, this.config.canvasHeight);
+                        canvas.parent(container);
+                        p.colorMode(p.HSB, 360, 100, 100, 100);
+                        
+                        // Initialize particles
+                        this.initParticles(p);
+                    };
+
+                    p.draw = () => {
+                        // Clear background
+                        p.background(0, 0, 100, 20);
+                        
+                        // Update time
+                        this.state.time += this.config.animationSpeed;
+                        
+                        // Morph traits if needed
+                        if (this.state.morphProgress < 1) {
+                            this.morphTraits();
+                        }
+                        
+                        // Draw avatar
+                        p.push();
+                        p.translate(p.width / 2, p.height / 2);
+                        
+                        // Draw main form
+                        this.drawMainForm(p);
+                        
+                        // Draw particles
+                        this.drawParticles(p);
+                        
+                        p.pop();
+                    };
+                };
+
+                this.state.p5Instance = new p5(sketch);
+            },
+
+            // Update traits
+            update(traits) {
+                // Normalize traits to 0-10 scale
+                const normalized = {};
+                Object.keys(traits).forEach(key => {
+                    normalized[key] = this.normalize(traits[key], 0, 10);
+                });
+
+                // Set target traits for morphing
+                this.state.targetTraits = normalized;
+                this.state.morphProgress = 0;
+
+                // Update UI
+                this.updateUI(normalized);
+            },
+
+            normalize(value, min, max) {
+                if (value < min) return min;
+                if (value > max) return max;
+                return value;
+            },
+
+            morphTraits() {
+                this.state.morphProgress += 0.02;
+                if (this.state.morphProgress > 1) {
+                    this.state.morphProgress = 1;
+                }
+
+                // Interpolate between current and target traits
+                Object.keys(this.state.targetTraits).forEach(key => {
+                    const current = this.state.currentTraits[key];
+                    const target = this.state.targetTraits[key];
+                    this.state.currentTraits[key] = current + (target - current) * this.state.morphProgress;
+                });
+            },
+
+            // Draw main form
+            drawMainForm(p) {
+                const traits = this.state.currentTraits;
+                const t = this.state.time;
+
+                // Get colors based on openness
+                const colors = this.getColors(traits.openness);
+                
+                // Get shape complexity based on conscientiousness
+                const complexity = this.getComplexity(traits.conscientiousness);
+                
+                // Get motion amplitude based on extraversion
+                const motionAmp = this.getMotionAmplitude(traits.extraversion);
+                
+                // Get softness based on agreeableness
+                const softness = this.getSoftness(traits.agreeableness);
+                
+                // Get stability based on emotional stability
+                const stability = this.getStability(traits.emotionalStability);
+
+                // Draw main shape
+                p.noStroke();
+                
+                // Multiple layers for depth
+                for (let layer = 0; layer < 3; layer++) {
+                    p.push();
+                    
+                    // Color with transparency
+                    const col = colors[layer % colors.length];
+                    p.fill(col.h, col.s, col.b, 30);
+                    
+                    // Rotate based on time and stability
+                    const rotation = t * (0.5 - stability * 0.04);
+                    p.rotate(rotation);
+                    
+                    // Scale based on layer
+                    const scale = 1 - layer * 0.15;
+                    p.scale(scale);
+                    
+                    // Draw organic shape
+                    p.beginShape();
+                    for (let i = 0; i < complexity; i++) {
+                        const angle = (i / complexity) * p.TWO_PI;
+                        
+                        // Base radius
+                        let radius = this.config.baseSize;
+                        
+                        // Add motion based on extraversion
+                        radius += p.sin(angle * 2 + t) * motionAmp;
+                        radius += p.cos(angle * 3 - t * 0.5) * (motionAmp * 0.5);
+                        
+                        // Add softness based on agreeableness
+                        radius += p.sin(angle * softness + t) * 10;
+                        
+                        // Add variation based on stability
+                        const variation = p.noise(
+                            p.cos(angle) + t * (1 - stability),
+                            p.sin(angle) + t * (1 - stability)
+                        ) * 20;
+                        radius += variation;
+                        
+                        const x = p.cos(angle) * radius;
+                        const y = p.sin(angle) * radius;
+                        p.vertex(x, y);
+                    }
+                    p.endShape(p.CLOSE);
+                    
+                    p.pop();
+                }
+            },
+
+            // Initialize particles
+            initParticles(p) {
+                this.state.particles = [];
+                for (let i = 0; i < this.config.particleCount; i++) {
+                    this.state.particles.push({
+                        angle: p.random(p.TWO_PI),
+                        radius: p.random(40, 130),
+                        speed: p.random(0.001, 0.005),
+                        size: p.random(2, 5),
+                        alpha: p.random(30, 60)
+                    });
+                }
+            },
+
+            // Draw particles
+            drawParticles(p) {
+                const traits = this.state.currentTraits;
+                const colors = this.getColors(traits.openness);
+
+                this.state.particles.forEach((particle, i) => {
+                    // Update particle position
+                    particle.angle += particle.speed;
+                    
+                    // Modulate radius based on time and extraversion
+                    const radiusMod = p.sin(this.state.time + i) * (traits.extraversion * 1.5);
+                    const currentRadius = particle.radius + radiusMod;
+                    
+                    const x = p.cos(particle.angle) * currentRadius;
+                    const y = p.sin(particle.angle) * currentRadius;
+                    
+                    // Get color
+                    const col = colors[i % colors.length];
+                    
+                    // Draw particle
+                    p.noStroke();
+                    p.fill(col.h, col.s, col.b, particle.alpha);
+                    p.circle(x, y, particle.size);
+                    
+                    // Draw glow if high extraversion
+                    if (traits.extraversion > 7) {
+                        p.fill(col.h, col.s, col.b, 15);
+                        p.circle(x, y, particle.size * 2);
+                    }
+                });
+            },
+
+            // Trait mappings
+            getColors(openness) {
+                // Openness determines color palette - Institut du Couple
+                if (openness > 7) {
+                    return [
+                        { h: 183, s: 19, b: 69 },   // Mer #8FAFB1
+                        { h: 100, s: 6, b: 82 },    // Vert Sauge #C8D0C3
+                        { h: 40, s: 15, b: 85 },    // Beige Sable #D8CDBB
+                        { h: 35, s: 16, b: 90 }     // Sable #E6D7C3
+                    ];
+                } else if (openness > 4) {
+                    return [
+                        { h: 183, s: 19, b: 69 },   // Mer #8FAFB1
+                        { h: 100, s: 6, b: 82 },    // Vert Sauge #C8D0C3
+                        { h: 35, s: 16, b: 90 }     // Sable #E6D7C3
+                    ];
+                } else {
+                    return [
+                        { h: 40, s: 15, b: 85 },    // Beige Sable #D8CDBB
+                        { h: 35, s: 16, b: 90 },    // Sable #E6D7C3
+                        { h: 30, s: 10, b: 75 }     // Beige foncé
+                    ];
+                }
+            },
+
+            getComplexity(conscientiousness) {
+                if (conscientiousness > 7) return 8;
+                else if (conscientiousness > 4) return 12;
+                else return 20;
+            },
+
+            getMotionAmplitude(extraversion) {
+                return 8 + (extraversion / 10) * 25;
+            },
+
+            getSoftness(agreeableness) {
+                return 2 + (agreeableness / 10) * 4;
+            },
+
+            getStability(emotionalStability) {
+                return emotionalStability / 10;
+            },
+
+            // Update UI
+            updateUI(traits) {
+                const traitNames = ['openness', 'conscientiousness', 'extraversion', 'agreeableness', 'emotionalStability'];
+                
+                traitNames.forEach(trait => {
+                    const value = traits[trait];
+                    const displayElement = document.getElementById(`trait${trait.charAt(0).toUpperCase() + trait.slice(1)}`);
+                    const barElement = document.getElementById(`bar${trait.charAt(0).toUpperCase() + trait.slice(1)}`);
+                    
+                    if (displayElement) {
+                        displayElement.textContent = value.toFixed(1);
+                    }
+                    if (barElement) {
+                        barElement.style.width = `${(value / 10) * 100}%`;
+                    }
+                });
+            },
+
+            // Utilities
+            destroy() {
+                if (this.state.p5Instance) {
+                    this.state.p5Instance.remove();
+                    this.state.p5Instance = null;
+                }
+            }
+        };
+
+        // ============================================
         // API COMMUNICATION
         // ============================================
         async function sendToAPI(userMessage) {
@@ -2223,6 +2763,11 @@
             elements.inputArea.value = '';
             elements.inputArea.style.height = 'auto';
 
+            // Update avatar every 3 responses
+            if (state.responseCount % 3 === 0) {
+                updateAvatarTraits();
+            }
+
             const response = await sendToAPI(message);
             if (response) {
                 addMessage('assistant', response);
@@ -2232,9 +2777,69 @@
         // ============================================
         // INITIALIZATION
         // ============================================
+        // ============================================
+        // AVATAR TRAITS CALCULATION
+        // ============================================
+        function updateAvatarTraits() {
+            // Simple trait calculation based on conversation metrics
+            // This can be enhanced with more sophisticated analysis
+            
+            const responseCount = state.responseCount;
+            const avgWordCount = state.totalWords / Math.max(responseCount, 1);
+            const conversationDepth = (state.currentPhase / state.totalPhases) * 10;
+            
+            // Calculate traits (simplified version)
+            const traits = {
+                // Openness: based on vocabulary richness and depth
+                openness: Math.min(10, 3 + conversationDepth * 0.5 + (avgWordCount > 50 ? 2 : 0)),
+                
+                // Conscientiousness: based on response length consistency
+                conscientiousness: Math.min(10, 4 + (avgWordCount > 30 ? 2 : 0) + (responseCount > 10 ? 1 : 0)),
+                
+                // Extraversion: based on response energy (word count)
+                extraversion: Math.min(10, 3 + (avgWordCount / 20)),
+                
+                // Agreeableness: baseline with slight variation
+                agreeableness: Math.min(10, 5 + Math.random() * 2),
+                
+                // Emotional Stability: increases with engagement
+                emotionalStability: Math.min(10, 4 + (responseCount / 10))
+            };
+            
+            // Update avatar
+            Avatar.update(traits);
+            
+            console.log('🎨 Avatar traits updated:', traits);
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
         async function init() {
             // Initialize voice recognition
             VoiceRecognition.init();
+
+            // Initialize avatar
+            Avatar.init();
+            console.log('✅ Avatar initialized');
+
+            // Avatar sidebar toggle
+            const avatarSidebar = document.getElementById('avatarSidebar');
+            const avatarToggleBtn = document.getElementById('avatarToggleBtn');
+            const avatarFloatToggle = document.getElementById('avatarFloatToggle');
+            const mainContainer = document.querySelector('.main-container');
+
+            avatarToggleBtn.addEventListener('click', () => {
+                avatarSidebar.classList.add('hidden');
+                mainContainer.classList.remove('with-avatar-sidebar');
+                avatarFloatToggle.classList.add('visible');
+            });
+
+            avatarFloatToggle.addEventListener('click', () => {
+                avatarSidebar.classList.remove('hidden');
+                mainContainer.classList.add('with-avatar-sidebar');
+                avatarFloatToggle.classList.remove('visible');
+            });
 
             // Event listeners
             elements.startBtn.addEventListener('click', () => {
