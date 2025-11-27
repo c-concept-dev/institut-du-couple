@@ -11,6 +11,9 @@
     <!-- p5.js for Avatar Animation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     
+    <!-- jsPDF for Psychological Report -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <style>
         /* ============================================
            CSS VARIABLES - INSTITUT DU COUPLE
@@ -1489,7 +1492,7 @@
     <!-- Header -->
     <div class="header">
         <div class="logo">
-            🧠 Clone de Personnalité
+            Clone de Personnalité
             <span class="badge-premium">Premium</span>
         </div>
         <div class="header-controls">
@@ -1497,7 +1500,8 @@
             <button class="control-btn" id="statsToggle" title="Statistiques">Stats</button>
             <button class="control-btn" id="themeToggle" title="Changer le thème">🌓</button>
             <button class="control-btn" id="pauseBtn" title="Pause">⏸️</button>
-            <button class="control-btn" id="exportBtn" title="Exporter">💾</button>
+            <button class="control-btn" id="exportBtn" title="Exporter JSON">JSON</button>
+            <button class="control-btn" id="pdfBtn" title="Rapport Psychologique PDF">PDF</button>
         </div>
     </div>
 
@@ -1602,7 +1606,7 @@
         <!-- Welcome Screen -->
         <div class="welcome-screen" id="welcomeScreen">
             <div class="welcome-content">
-                <h1>Bienvenue 👋</h1>
+                <h1>Bienvenue</h1>
                 <p>Créons ensemble votre clone de personnalité uploadable dans une IA. Cette interview dure environ 45-65 minutes et génère un profil unique de 25-30k mots.</p>
                 <button class="start-btn" id="startBtn">Commencer l'interview</button>
             </div>
@@ -1654,7 +1658,7 @@
         <!-- Revelations Panel -->
         <div class="revelations-panel" id="revelationsPanel">
             <div class="revelations-header">
-                <h3>✨ Révélations</h3>
+                <h3>Révélations</h3>
                 <button class="control-btn" id="closeRevelations">✕</button>
             </div>
             <div class="revelations-content">
@@ -1671,12 +1675,12 @@
 
                 <div class="badges-grid" id="badgesGrid">
                     <div class="badge-item locked" data-milestone="10">
-                        <div class="badge-icon">🔍</div>
+                        <div class="badge-icon"></div>
                         <div class="badge-title">Explorer</div>
                         <div class="badge-milestone">10 réponses</div>
                     </div>
                     <div class="badge-item locked" data-milestone="20">
-                        <div class="badge-icon">🧠</div>
+                        <div class="badge-icon"></div>
                         <div class="badge-title">Introspectif</div>
                         <div class="badge-milestone">20 réponses</div>
                     </div>
@@ -1686,7 +1690,7 @@
                         <div class="badge-milestone">30 réponses</div>
                     </div>
                     <div class="badge-item locked" data-milestone="40">
-                        <div class="badge-icon">🏆</div>
+                        <div class="badge-icon"></div>
                         <div class="badge-title">Maître</div>
                         <div class="badge-milestone">40 réponses</div>
                     </div>
@@ -1723,7 +1727,7 @@
 
         <!-- Revelations Toggle Button -->
         <button class="revelations-toggle" id="revelationsToggle">
-            ✨
+            Insights
             <span class="badge-count" id="badgeCount">0</span>
         </button>
 
@@ -1837,6 +1841,7 @@
             statsPanel: document.getElementById('statsPanel'),
             pauseBtn: document.getElementById('pauseBtn'),
             exportBtn: document.getElementById('exportBtn'),
+            pdfBtn: document.getElementById('pdfBtn'),
             loadingOverlay: document.getElementById('loadingOverlay'),
             startBtn: document.getElementById('startBtn'),
             revelationsPanel: document.getElementById('revelationsPanel'),
@@ -1969,7 +1974,7 @@
                     ]
                 },
                 {
-                    q: "✨ Quel superpouvoir choisirais-tu ?",
+                    q: "Quel superpouvoir choisirais-tu ?",
                     options: [
                         { text: "Lire les pensées", traits: { openness: 1, agreeableness: 1 } },
                         { text: "Voyager dans le temps", traits: { openness: 1, conscientiousness: 1 } },
@@ -2176,8 +2181,8 @@
 
                 // Get badge info
                 const badges = {
-                    10: { icon: "🔍", title: "Explorer", message: "Premier jalon franchi ! Tu commences à révéler ta personnalité." },
-                    20: { icon: "🧠", title: "Introspectif", message: "Tu creuses en profondeur ! Tes réponses deviennent plus riches." },
+                    10: { icon: "", title: "Explorer", message: "Premier jalon franchi ! Tu commences à révéler ta personnalité." },
+                    20: { icon: "", title: "Introspectif", message: "Tu creuses en profondeur ! Tes réponses deviennent plus riches." },
                     30: { icon: "", title: "Profond", message: "Impressionnant ! Tu explores des aspects profonds de toi-même." },
                     40: { icon: "🏆", title: "Maître", message: "Bravo ! Tu as complété un profil exceptionnel !" }
                 };
@@ -3234,7 +3239,7 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${role}`;
             messageDiv.innerHTML = `
-                <div class="message-avatar">${role === 'assistant' ? '🧠' : '👤'}</div>
+                <div class="message-avatar">${role === 'assistant' ? 'C' : 'V'}</div>
                 <div class="message-content">${content}</div>
             `;
 
@@ -3698,6 +3703,724 @@
         };
 
         // ============================================
+        // MODULE 11: RAPPORT PSYCHOLOGIQUE PDF
+        // ============================================
+        const PsychologicalReport = {
+            
+            // Générer le rapport complet
+            async generate() {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Get all data
+                const bigFive = {
+                    initial: state.initialTraits,
+                    final: state.finalTraits,
+                    evolution: this.calculateEvolution()
+                };
+                const paraverbal = Paraverbal.getReport();
+                const userName = localStorage.getItem('avatar_name') || 'Participant';
+                
+                // Configuration
+                const margin = 20;
+                const pageWidth = doc.internal.pageSize.width;
+                const pageHeight = doc.internal.pageSize.height;
+                const contentWidth = pageWidth - 2 * margin;
+                let y = margin;
+                
+                // Colors Institut du Couple
+                const primaryColor = [143, 175, 177];  // Mer
+                const textColor = [51, 51, 51];
+                
+                // Helper functions
+                const addPage = () => {
+                    doc.addPage();
+                    y = margin;
+                };
+                
+                const checkPageBreak = (neededSpace) => {
+                    if (y + neededSpace > pageHeight - margin) {
+                        addPage();
+                    }
+                };
+                
+                const addTitle = (text, size = 16, color = primaryColor) => {
+                    checkPageBreak(15);
+                    doc.setFontSize(size);
+                    doc.setTextColor(...color);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(text, margin, y);
+                    y += 10;
+                };
+                
+                const addSubtitle = (text) => {
+                    checkPageBreak(12);
+                    doc.setFontSize(12);
+                    doc.setTextColor(...primaryColor);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(text, margin, y);
+                    y += 8;
+                };
+                
+                const addText = (text, indent = 0) => {
+                    doc.setFontSize(10);
+                    doc.setTextColor(...textColor);
+                    doc.setFont('helvetica', 'normal');
+                    const lines = doc.splitTextToSize(text, contentWidth - indent);
+                    lines.forEach(line => {
+                        checkPageBreak(7);
+                        doc.text(line, margin + indent, y);
+                        y += 7;
+                    });
+                };
+                
+                const addSeparator = () => {
+                    checkPageBreak(5);
+                    doc.setDrawColor(...primaryColor);
+                    doc.line(margin, y, pageWidth - margin, y);
+                    y += 10;
+                };
+                
+                // ========================================
+                // PAGE 1: PAGE DE GARDE
+                // ========================================
+                doc.setFillColor(...primaryColor);
+                doc.rect(0, 0, pageWidth, 60, 'F');
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(24);
+                doc.setFont('helvetica', 'bold');
+                doc.text('RAPPORT PSYCHOLOGIQUE', pageWidth / 2, 30, { align: 'center' });
+                
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'normal');
+                doc.text('Analyse Multi-Dimensionnelle de Personnalité', pageWidth / 2, 45, { align: 'center' });
+                
+                y = 80;
+                doc.setTextColor(...textColor);
+                doc.setFontSize(12);
+                doc.text(`Participant : ${userName}`, margin, y);
+                y += 10;
+                doc.text(`Date : ${new Date().toLocaleDateString('fr-FR')}`, margin, y);
+                y += 10;
+                doc.text(`Durée interview : ${Math.floor(state.elapsedSeconds / 60)} minutes`, margin, y);
+                y += 10;
+                doc.text(`Nombre de réponses : ${state.responseCount}`, margin, y);
+                
+                y = 140;
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'italic');
+                doc.text('Institut du Couple', pageWidth / 2, y, { align: 'center' });
+                y += 7;
+                doc.text('Analyse confidentielle - Usage thérapeutique uniquement', pageWidth / 2, y, { align: 'center' });
+                
+                // Footer
+                doc.setFontSize(8);
+                doc.text('Clone de Personnalité v8.0 ULTIMATE', pageWidth / 2, pageHeight - 10, { align: 'center' });
+                
+                // ========================================
+                // PAGE 2: SYNTHÈSE EXÉCUTIVE
+                // ========================================
+                addPage();
+                addTitle('1. SYNTHÈSE EXÉCUTIVE');
+                addSeparator();
+                
+                const profile = this.generateExecutiveSummary(bigFive, paraverbal);
+                addText(profile.overview);
+                y += 5;
+                
+                addSubtitle('Profil dominant');
+                addText(profile.dominantProfile, 5);
+                y += 5;
+                
+                addSubtitle('Traits caractéristiques');
+                profile.keyTraits.forEach(trait => {
+                    addText(`• ${trait}`, 5);
+                });
+                
+                // ========================================
+                // PAGE 3-4: ANALYSE BIG FIVE
+                // ========================================
+                addPage();
+                addTitle('2. ANALYSE BIG FIVE APPROFONDIE');
+                addSeparator();
+                
+                const traits = [
+                    { name: 'Ouverture', key: 'openness', score: bigFive.final.openness },
+                    { name: 'Conscience', key: 'conscientiousness', score: bigFive.final.conscientiousness },
+                    { name: 'Extraversion', key: 'extraversion', score: bigFive.final.extraversion },
+                    { name: 'Agréabilité', key: 'agreeableness', score: bigFive.final.agreeableness },
+                    { name: 'Stabilité Émotionnelle', key: 'emotionalStability', score: bigFive.final.emotionalStability }
+                ];
+                
+                traits.forEach(trait => {
+                    const analysis = this.analyzeTrait(trait.name, trait.score, trait.key);
+                    
+                    addSubtitle(`${trait.name} : ${trait.score.toFixed(1)}/10`);
+                    
+                    // Barre visuelle
+                    const barWidth = (contentWidth - 20) * (trait.score / 10);
+                    doc.setFillColor(...primaryColor);
+                    doc.rect(margin + 5, y, barWidth, 5, 'F');
+                    doc.setDrawColor(200, 200, 200);
+                    doc.rect(margin + 5, y, contentWidth - 20, 5);
+                    y += 10;
+                    
+                    addText(analysis.interpretation, 5);
+                    y += 3;
+                    addText(`Manifestations : ${analysis.manifestations}`, 5);
+                    y += 3;
+                    addText(`Impact relationnel : ${analysis.relationalImpact}`, 5);
+                    y += 8;
+                });
+                
+                // ========================================
+                // PAGE 5: PROFIL PARAVERBAL
+                // ========================================
+                addPage();
+                addTitle('3. ANALYSE PARAVERBALE');
+                addSeparator();
+                
+                const paraAnalysis = this.analyzeParaverbal(paraverbal);
+                
+                addSubtitle('Style communicationnel');
+                addText(paraAnalysis.style, 5);
+                y += 5;
+                
+                addSubtitle('Rythme et expressivité');
+                addText(paraAnalysis.rhythm, 5);
+                y += 5;
+                
+                addSubtitle('Patterns linguistiques');
+                addText(paraAnalysis.patterns, 5);
+                y += 5;
+                
+                addSubtitle('Implications relationnelles');
+                addText(paraAnalysis.relational, 5);
+                
+                // ========================================
+                // PAGE 6: DYNAMIQUE ÉMOTIONNELLE
+                // ========================================
+                addPage();
+                addTitle('4. DYNAMIQUE ÉMOTIONNELLE');
+                addSeparator();
+                
+                const emotionalAnalysis = this.analyzeEmotional(paraverbal);
+                
+                addSubtitle('Vocabulaire émotionnel');
+                addText(emotionalAnalysis.vocabulary, 5);
+                y += 5;
+                
+                addSubtitle('Intensité et régulation');
+                addText(emotionalAnalysis.intensity, 5);
+                y += 5;
+                
+                addSubtitle('Cohérence affective');
+                addText(emotionalAnalysis.coherence, 5);
+                
+                // ========================================
+                // PAGE 7: STRUCTURE COGNITIVE
+                // ========================================
+                addPage();
+                addTitle('5. STRUCTURE COGNITIVE');
+                addSeparator();
+                
+                const cognitiveAnalysis = this.analyzeCognitive(paraverbal);
+                
+                addSubtitle('Profondeur réflexive');
+                addText(cognitiveAnalysis.depth, 5);
+                y += 5;
+                
+                addSubtitle('Complexité de pensée');
+                addText(cognitiveAnalysis.complexity, 5);
+                y += 5;
+                
+                addSubtitle('Capacité d\'introspection');
+                addText(cognitiveAnalysis.introspection, 5);
+                
+                // ========================================
+                // PAGE 8-9: PROFIL RELATIONNEL
+                // ========================================
+                addPage();
+                addTitle('6. PROFIL RELATIONNEL');
+                addSeparator();
+                
+                const relationalAnalysis = this.analyzeRelational(bigFive, paraverbal);
+                
+                addSubtitle('Style de communication en couple');
+                addText(relationalAnalysis.communicationStyle, 5);
+                y += 5;
+                
+                addSubtitle('Besoins relationnels');
+                relationalAnalysis.needs.forEach(need => {
+                    addText(`• ${need}`, 5);
+                });
+                y += 5;
+                
+                addSubtitle('Zones de vulnérabilité');
+                relationalAnalysis.vulnerabilities.forEach(vuln => {
+                    addText(`• ${vuln}`, 5);
+                });
+                y += 5;
+                
+                addSubtitle('Ressources et points forts');
+                relationalAnalysis.strengths.forEach(strength => {
+                    addText(`• ${strength}`, 5);
+                });
+                
+                // ========================================
+                // PAGE 10: RECOMMANDATIONS
+                // ========================================
+                addPage();
+                addTitle('7. RECOMMANDATIONS THÉRAPEUTIQUES');
+                addSeparator();
+                
+                const recommendations = this.generateRecommendations(bigFive, paraverbal);
+                
+                addSubtitle('Axes de travail personnel');
+                recommendations.personal.forEach(rec => {
+                    addText(`• ${rec}`, 5);
+                });
+                y += 5;
+                
+                addSubtitle('Pistes thérapie de couple');
+                recommendations.couple.forEach(rec => {
+                    addText(`• ${rec}`, 5);
+                });
+                y += 5;
+                
+                addSubtitle('Exercices suggérés');
+                recommendations.exercises.forEach(ex => {
+                    addText(`• ${ex}`, 5);
+                });
+                
+                // ========================================
+                // PAGE 11: ÉVOLUTION
+                // ========================================
+                addPage();
+                addTitle('8. ÉVOLUTION PENDANT L\'INTERVIEW');
+                addSeparator();
+                
+                if (bigFive.evolution) {
+                    addText('L\'analyse de l\'évolution des traits pendant l\'interview révèle les changements suivants :');
+                    y += 5;
+                    
+                    Object.entries(bigFive.evolution).forEach(([trait, change]) => {
+                        const changeName = {
+                            openness: 'Ouverture',
+                            conscientiousness: 'Conscience',
+                            extraversion: 'Extraversion',
+                            agreeableness: 'Agréabilité',
+                            emotionalStability: 'Stabilité Émotionnelle'
+                        }[trait];
+                        
+                        const interpretation = parseFloat(change) > 0 ? 'augmentation' : 'diminution';
+                        addText(`• ${changeName} : ${change} point(s) - ${interpretation}`, 5);
+                    });
+                    
+                    y += 10;
+                    const totalEvolution = Object.values(bigFive.evolution)
+                        .reduce((sum, val) => sum + Math.abs(parseFloat(val)), 0);
+                    
+                    let evolutionText = '';
+                    if (totalEvolution < 1) {
+                        evolutionText = 'Le profil s\'est révélé très cohérent, avec peu de variations. Cela suggère une bonne connaissance de soi préalable.';
+                    } else if (totalEvolution < 3) {
+                        evolutionText = 'L\'interview a permis un raffinement progressif du profil, typique d\'un processus de découverte de soi.';
+                    } else {
+                        evolutionText = 'L\'interview a révélé des changements significatifs, suggérant de nouvelles prises de conscience importantes.';
+                    }
+                    
+                    addText(evolutionText, 5);
+                }
+                
+                // Footer dernière page
+                y = pageHeight - 30;
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'italic');
+                doc.text('Ce rapport est confidentiel et destiné uniquement à un usage thérapeutique.', pageWidth / 2, y, { align: 'center' });
+                y += 7;
+                doc.text('Institut du Couple - Analyse psychologique professionnelle', pageWidth / 2, y, { align: 'center' });
+                
+                // Save PDF
+                doc.save(`Rapport-Psychologique-${userName.replace(/\s+/g, '-')}.pdf`);
+                Utils.showToast('Rapport psychologique généré !', 'success');
+            },
+            
+            // Calculate trait evolution
+            calculateEvolution() {
+                if (!state.initialTraits || !state.finalTraits) return null;
+                
+                return {
+                    openness: (state.finalTraits.openness - state.initialTraits.openness).toFixed(1),
+                    conscientiousness: (state.finalTraits.conscientiousness - state.initialTraits.conscientiousness).toFixed(1),
+                    extraversion: (state.finalTraits.extraversion - state.initialTraits.extraversion).toFixed(1),
+                    agreeableness: (state.finalTraits.agreeableness - state.initialTraits.agreeableness).toFixed(1),
+                    emotionalStability: (state.finalTraits.emotionalStability - state.initialTraits.emotionalStability).toFixed(1),
+                };
+            },
+            
+            // Generate executive summary
+            generateExecutiveSummary(bigFive, paraverbal) {
+                const traits = bigFive.final;
+                const avgScore = (traits.openness + traits.conscientiousness + traits.extraversion + 
+                                 traits.agreeableness + traits.emotionalStability) / 5;
+                
+                // Determine dominant traits
+                const traitNames = {
+                    openness: 'Ouverture',
+                    conscientiousness: 'Conscience',
+                    extraversion: 'Extraversion',
+                    agreeableness: 'Agréabilité',
+                    emotionalStability: 'Stabilité Émotionnelle'
+                };
+                
+                const sortedTraits = Object.entries(traits)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3);
+                
+                // Generate overview
+                let overview = `L'analyse révèle un profil de personnalité équilibré avec un score moyen de ${avgScore.toFixed(1)}/10. `;
+                
+                if (paraverbal.rhythm.pattern === 'thoughtful') {
+                    overview += 'Le rythme de composition réfléchi suggère une personnalité introspective qui prend le temps d\'analyser avant de s\'exprimer. ';
+                } else if (paraverbal.rhythm.pattern === 'spontaneous') {
+                    overview += 'Le rythme de composition spontané suggère une personnalité réactive et directe dans son expression. ';
+                }
+                
+                if (paraverbal.depth.averageWordsPerMessage > 80) {
+                    overview += 'La richesse des réponses indique une capacité développée d\'élaboration et de nuance.';
+                }
+                
+                // Dominant profile
+                let dominantProfile = 'Profil ';
+                if (traits.openness > 7 && paraverbal.patterns.linguisticStyle.includes('reflective')) {
+                    dominantProfile += 'introspectif créatif - ';
+                } else if (traits.conscientiousness > 7) {
+                    dominantProfile += 'structuré et consciencieux - ';
+                } else if (traits.extraversion > 7) {
+                    dominantProfile += 'extraverti et sociable - ';
+                }
+                dominantProfile += `caractérisé par des niveaux élevés de ${traitNames[sortedTraits[0][0]]} et ${traitNames[sortedTraits[1][0]]}.`;
+                
+                // Key traits
+                const keyTraits = [
+                    `${traitNames[sortedTraits[0][0]]} élevée (${sortedTraits[0][1].toFixed(1)}/10)`,
+                    `${traitNames[sortedTraits[1][0]]} marquée (${sortedTraits[1][1].toFixed(1)}/10)`,
+                    `Style communicationnel ${paraverbal.rhythm.pattern === 'thoughtful' ? 'réfléchi' : 'spontané'}`,
+                    `Expressivité ${paraverbal.expressiveness.emphasisLevel}`
+                ];
+                
+                return { overview, dominantProfile, keyTraits };
+            },
+            
+            // Analyze individual trait
+            analyzeTrait(name, score, key) {
+                const interpretations = {
+                    openness: {
+                        high: 'Score élevé indiquant une forte curiosité intellectuelle, une appréciation de l\'art et de la beauté, et une ouverture aux expériences nouvelles.',
+                        medium: 'Score modéré suggérant un équilibre entre ouverture aux nouveautés et attachement aux traditions.',
+                        low: 'Score indiquant une préférence pour le familier et le conventionnel, avec une approche pragmatique.'
+                    },
+                    conscientiousness: {
+                        high: 'Score élevé révélant une personnalité organisée, disciplinée, avec un sens aigu du devoir et de la responsabilité.',
+                        medium: 'Score modéré indiquant une capacité d\'organisation variable selon les contextes et les priorités.',
+                        low: 'Score suggérant une approche plus flexible et spontanée, parfois au détriment de la planification.'
+                    },
+                    extraversion: {
+                        high: 'Score élevé caractéristique d\'une personnalité sociable, énergique, qui puise son énergie dans les interactions sociales.',
+                        medium: 'Score modéré suggérant une ambiversion - capacité à être sociable tout en appréciant les moments de solitude.',
+                        low: 'Score indiquant une préférence pour les interactions en petit comité et les activités introspectives.'
+                    },
+                    agreeableness: {
+                        high: 'Score élevé révélant une personnalité chaleureuse, empathique, avec une forte orientation vers l\'harmonie relationnelle.',
+                        medium: 'Score modéré indiquant un équilibre entre bienveillance et affirmation de soi.',
+                        low: 'Score suggérant une approche plus directe et critique, privilégiant l\'authenticité sur l\'harmonie.'
+                    },
+                    emotionalStability: {
+                        high: 'Score élevé indiquant une bonne régulation émotionnelle et une résilience face au stress.',
+                        medium: 'Score modéré suggérant une sensibilité émotionnelle normale avec des capacités variables de régulation.',
+                        low: 'Score révélant une sensibilité émotionnelle accrue et une réactivité plus importante aux stress.'
+                    }
+                };
+                
+                const manifestations = {
+                    openness: score > 7 ? 'Recherche active de nouvelles expériences, créativité, pensée abstraite' : 
+                              score > 4 ? 'Ouverture sélective, créativité contextuelle' : 
+                              'Préférence pour la routine, pensée concrète',
+                    conscientiousness: score > 7 ? 'Organisation méticuleuse, respect strict des engagements, planification détaillée' :
+                                      score > 4 ? 'Organisation adaptative, engagement variable' :
+                                      'Approche flexible, spontanéité',
+                    extraversion: score > 7 ? 'Recherche active d\'interactions, énergie sociale élevée' :
+                                 score > 4 ? 'Sociabilité sélective, énergie modérée' :
+                                 'Préférence pour la solitude, interactions limitées',
+                    agreeableness: score > 7 ? 'Forte empathie, comportement altruiste, évitement des conflits' :
+                                  score > 4 ? 'Empathie sélective, assertivité modérée' :
+                                  'Approche directe, critique constructive',
+                    emotionalStability: score > 7 ? 'Calme sous pression, optimisme, faible réactivité émotionnelle' :
+                                       score > 4 ? 'Réactivité émotionnelle variable, régulation contextuelle' :
+                                       'Sensibilité accrue, réactivité émotionnelle importante'
+                };
+                
+                const relationalImpacts = {
+                    openness: score > 7 ? 'Apporte nouveauté et stimulation dans le couple, encourage l\'exploration commune' :
+                              score > 4 ? 'Équilibre entre stabilité et nouveauté dans la relation' :
+                              'Apporte stabilité et prévisibilité, peut résister aux changements',
+                    conscientiousness: score > 7 ? 'Fiabilité et organisation du couple, peut être perçu comme rigide' :
+                                      score > 4 ? 'Organisation flexible du quotidien conjugal' :
+                                      'Spontanéité, peut créer des tensions sur l\'organisation',
+                    extraversion: score > 7 ? 'Dynamisme social du couple, besoin d\'interactions fréquentes' :
+                                 score > 4 ? 'Équilibre entre vie sociale et intimité à deux' :
+                                 'Préférence pour l\'intimité à deux, vie sociale limitée',
+                    agreeableness: score > 7 ? 'Harmonie relationnelle, résolution coopérative des conflits, risque d\'évitement' :
+                                  score > 4 ? 'Communication équilibrée, gestion constructive des désaccords' :
+                                  'Communication directe, peut générer des tensions mais favorise l\'authenticité',
+                    emotionalStability: score > 7 ? 'Stabilité émotionnelle du couple, soutien dans les crises' :
+                                       score > 4 ? 'Réactivité émotionnelle normale, besoin de soutien variable' :
+                                       'Sensibilité émotionnelle élevée, besoin important de soutien et réassurance'
+                };
+                
+                const level = score > 7 ? 'high' : score > 4 ? 'medium' : 'low';
+                
+                return {
+                    interpretation: interpretations[key][level],
+                    manifestations: manifestations[key],
+                    relationalImpact: relationalImpacts[key]
+                };
+            },
+            
+            // Analyze paraverbal
+            analyzeParaverbal(paraverbal) {
+                let style = '';
+                if (paraverbal.rhythm.pattern === 'thoughtful') {
+                    style = 'Le style communicationnel se caractérise par une approche réfléchie et posée. Les réponses sont construites avec soin, suggérant un besoin de clarté et de précision dans l\'expression. ';
+                } else if (paraverbal.rhythm.pattern === 'spontaneous') {
+                    style = 'Le style communicationnel se caractérise par une spontanéité et une réactivité. Les réponses sont rapides et directes, révélant une pensée fluide et une aisance d\'expression. ';
+                }
+                
+                if (paraverbal.patterns.linguisticStyle.includes('reflective')) {
+                    style += 'La présence fréquente de marqueurs de réflexion ("je pense", "il me semble") indique une personnalité introspective qui relativise ses propres perspectives.';
+                }
+                
+                let rhythm = `Le temps de composition moyen de ${paraverbal.rhythm.averageCompositionTime.toFixed(0)} secondes par message révèle un rythme ${paraverbal.rhythm.pattern === 'thoughtful' ? 'réfléchi' : 'spontané'}. `;
+                
+                if (paraverbal.expressiveness.emphasisLevel === 'high') {
+                    rhythm += 'L\'expressivité est marquée avec une utilisation fréquente de ponctuation expressive (!, ?, ...), suggérant une communication énergique et émotionnellement investie.';
+                } else {
+                    rhythm += 'L\'expressivité est mesurée, avec une ponctuation sobre qui reflète un style de communication plus réservé.';
+                }
+                
+                let patterns = `L'analyse linguistique révèle un vocabulaire de ${paraverbal.depth.uniqueVocabularySize} mots uniques, indiquant une richesse lexicale ${paraverbal.depth.uniqueVocabularySize > 300 ? 'importante' : 'modérée'}. `;
+                
+                if (paraverbal.depth.nuanceMarkers > 10) {
+                    patterns += 'La présence fréquente de nuances ("peut-être", "parfois", "souvent") révèle une pensée complexe qui évite les absolus.';
+                }
+                
+                let relational = 'Dans le contexte relationnel, ';
+                if (paraverbal.rhythm.pattern === 'thoughtful' && paraverbal.depth.averageWordsPerMessage > 80) {
+                    relational += 'ce style favorise des échanges profonds et élaborés, propices à l\'exploration émotionnelle. Le partenaire peut apprécier cette profondeur tout en nécessitant parfois des échanges plus concis.';
+                } else if (paraverbal.rhythm.pattern === 'spontaneous') {
+                    relational += 'ce style favorise des échanges fluides et dynamiques. La spontanéité peut être appréciée mais nécessite de s\'assurer que tous les sujets sont pleinement explorés.';
+                }
+                
+                return { style, rhythm, patterns, relational };
+            },
+            
+            // Analyze emotional
+            analyzeEmotional(paraverbal) {
+                const vocabSize = Object.keys(paraverbal.emotional.vocabulary).length;
+                
+                let vocabulary = `Le vocabulaire émotionnel comprend ${vocabSize} termes différents, `;
+                if (vocabSize > 10) {
+                    vocabulary += 'révélant une capacité développée d\'identification et de différenciation émotionnelle. Cette granularité émotionnelle est un atout précieux pour la régulation émotionnelle et la communication relationnelle.';
+                } else if (vocabSize > 5) {
+                    vocabulary += 'suggérant une conscience émotionnelle adaptée. Le développement de ce vocabulaire pourrait enrichir l\'expression des nuances affectives.';
+                } else {
+                    vocabulary += 'indiquant un vocabulaire émotionnel limité. L\'enrichissement de ce répertoire faciliterait l\'expression et la régulation des émotions.';
+                }
+                
+                const avgIntensity = paraverbal.emotional.averageIntensity;
+                let intensity = `L'intensité émotionnelle moyenne de ${avgIntensity.toFixed(1)}/10 `;
+                if (avgIntensity > 7) {
+                    intensity += 'révèle une vie émotionnelle riche et intense. Cette sensibilité constitue une ressource pour l\'empathie et la connexion, tout en nécessitant des stratégies de régulation pour éviter la submersion émotionnelle.';
+                } else if (avgIntensity > 4) {
+                    intensity += 'indique un équilibre émotionnel sain, avec une capacité à ressentir sans être submergé. Cette régulation naturelle favorise des relations stables.';
+                } else {
+                    intensity += 'suggère une tendance à la modération émotionnelle. Selon le contexte, cela peut refléter une bonne régulation ou une forme de restriction émotionnelle à explorer.';
+                }
+                
+                let coherence = 'L\'analyse de cohérence affective ';
+                if (paraverbal.emotional.coherence === 'analyzable') {
+                    coherence += 'révèle une expression émotionnelle cohérente et authentique. Les variations d\'intensité semblent correspondre aux contenus abordés, suggérant une bonne connexion entre ressenti et expression.';
+                } else {
+                    coherence += 'nécessite davantage de données pour une évaluation fiable. Les premières observations suggèrent une expression émotionnelle en cours de déploiement.';
+                }
+                
+                return { vocabulary, intensity, coherence };
+            },
+            
+            // Analyze cognitive
+            analyzeCognitive(paraverbal) {
+                let depth = '';
+                if (paraverbal.depth.averageWordsPerMessage > 80) {
+                    depth = 'La profondeur réflexive est remarquable, avec des réponses développées et élaborées. Cette capacité d\'exploration approfondie révèle un besoin de comprendre en profondeur et une aisance avec la complexité.';
+                } else if (paraverbal.depth.averageWordsPerMessage > 40) {
+                    depth = 'La profondeur réflexive est équilibrée, avec des réponses suffisamment développées sans être exhaustives. Cette approche pragmatique privilégie l\'efficacité communicationnelle.';
+                } else {
+                    depth = 'Le style de réflexion privilégie la concision et la synthèse. Les réponses vont à l\'essentiel, révélant une préférence pour l\'efficacité et la clarté.';
+                }
+                
+                let complexity = '';
+                if (paraverbal.depth.nuanceMarkers > 15) {
+                    complexity = 'La complexité de pensée est élevée, caractérisée par de nombreuses nuances et qualifications. Cette pensée non-dichotomique permet d\'appréhender les situations dans leur richesse et leurs paradoxes. ';
+                    if (paraverbal.depth.reflectionMarkers > 15) {
+                        complexity += 'La présence fréquente de marqueurs de réflexion renforce cette approche contemplative.';
+                    }
+                } else {
+                    complexity = 'La pensée se caractérise par une clarté et une définition des positions. Cette approche directe facilite la prise de décision et l\'action.';
+                }
+                
+                let introspection = '';
+                if (paraverbal.depth.reflectionMarkers > 20) {
+                    introspection = 'La capacité d\'introspection est très développée. Cette aptitude à s\'observer et à questionner ses propres processus est précieuse pour la croissance personnelle et la thérapie.';
+                } else if (paraverbal.depth.reflectionMarkers > 10) {
+                    introspection = 'La capacité d\'introspection est présente et fonctionnelle. Cette conscience de soi offre une base solide pour le travail thérapeutique.';
+                } else {
+                    introspection = 'Le style cognitif privilégie l\'action et l\'expérience directe sur la réflexion introspective. Le développement de cette dimension pourrait enrichir la conscience de soi.';
+                }
+                
+                return { depth, complexity, introspection };
+            },
+            
+            // Analyze relational
+            analyzeRelational(bigFive, paraverbal) {
+                const traits = bigFive.final;
+                
+                let communicationStyle = '';
+                if (traits.agreeableness > 7 && paraverbal.rhythm.pattern === 'thoughtful') {
+                    communicationStyle = 'Le style de communication en couple se caractérise par une attention bienveillante et réfléchie. La priorité donnée à l\'harmonie et la prise de temps pour élaborer favorisent une écoute profonde et une expression soignée.';
+                } else if (traits.agreeableness > 7 && paraverbal.rhythm.pattern === 'spontaneous') {
+                    communicationStyle = 'Le style de communication allie chaleur relationnelle et spontanéité. Cette combinaison crée des échanges fluides et authentiques, même si une attention particulière doit être portée à laisser l\'espace d\'expression au partenaire.';
+                } else if (traits.extraversion > 7) {
+                    communicationStyle = 'Le style de communication est dynamique et expressif. L\'énergie relationnelle est élevée, favorisant des échanges vivants qui peuvent nécessiter des moments de pause pour approfondir.';
+                } else {
+                    communicationStyle = 'Le style de communication privilégie l\'authenticité et la profondeur sur la quantité d\'échanges. Les moments de communication sont sélectionnés et investis avec intention.';
+                }
+                
+                const needs = [];
+                if (traits.emotionalStability < 6) {
+                    needs.push('Besoin de réassurance et de soutien émotionnel régulier');
+                }
+                if (traits.openness > 7) {
+                    needs.push('Besoin de nouveauté et d\'exploration commune');
+                }
+                if (traits.conscientiousness > 7) {
+                    needs.push('Besoin de prévisibilité et d\'organisation partagée');
+                }
+                if (traits.extraversion > 7) {
+                    needs.push('Besoin d\'interactions sociales et de vie sociale active');
+                } else if (traits.extraversion < 4) {
+                    needs.push('Besoin de temps d\'intimité à deux et de respect des moments de solitude');
+                }
+                if (traits.agreeableness > 7) {
+                    needs.push('Besoin d\'harmonie et d\'évitement des conflits prolongés');
+                }
+                
+                const vulnerabilities = [];
+                if (traits.agreeableness > 8) {
+                    vulnerabilities.push('Risque d\'évitement des conflits nécessaires et d\'accumulation des non-dits');
+                }
+                if (traits.conscientiousness > 8) {
+                    vulnerabilities.push('Risque de rigidité et de difficulté face aux imprévus');
+                }
+                if (traits.emotionalStability < 5) {
+                    vulnerabilities.push('Sensibilité aux critiques et aux tensions relationnelles');
+                }
+                if (traits.openness < 4) {
+                    vulnerabilities.push('Résistance au changement et difficulté avec les transitions');
+                }
+                if (paraverbal.depth.averageWordsPerMessage > 100) {
+                    vulnerabilities.push('Risque de sur-explication et de difficulté à synthétiser dans l\'urgence');
+                }
+                
+                const strengths = [];
+                if (traits.agreeableness > 6) {
+                    strengths.push('Empathie et capacité à se mettre à la place du partenaire');
+                }
+                if (traits.conscientiousness > 6) {
+                    strengths.push('Fiabilité et respect des engagements');
+                }
+                if (traits.openness > 6) {
+                    strengths.push('Ouverture au changement et capacité d\'adaptation');
+                }
+                if (traits.emotionalStability > 6) {
+                    strengths.push('Stabilité émotionnelle et capacité à apaiser');
+                }
+                if (paraverbal.depth.reflectionMarkers > 15) {
+                    strengths.push('Capacité d\'introspection et de remise en question');
+                }
+                if (paraverbal.depth.nuanceMarkers > 15) {
+                    strengths.push('Pensée nuancée facilitant la résolution de conflits complexes');
+                }
+                
+                return { communicationStyle, needs, vulnerabilities, strengths };
+            },
+            
+            // Generate recommendations
+            generateRecommendations(bigFive, paraverbal) {
+                const traits = bigFive.final;
+                const personal = [];
+                const couple = [];
+                const exercises = [];
+                
+                // Personal recommendations
+                if (traits.emotionalStability < 6) {
+                    personal.push('Développer des stratégies de régulation émotionnelle (respiration, pleine conscience)');
+                    exercises.push('Pratique quotidienne de 10 minutes de méditation de pleine conscience');
+                }
+                
+                if (traits.openness > 8) {
+                    personal.push('Équilibrer le besoin de nouveauté avec la stabilité nécessaire à une relation durable');
+                }
+                
+                if (paraverbal.depth.reflectionMarkers > 20 && paraverbal.rhythm.averageCompositionTime > 60) {
+                    personal.push('Développer la capacité de décision rapide dans les situations nécessitant de l\'action');
+                    exercises.push('Exercice de décision en temps limité (1 minute) sur des choix quotidiens');
+                }
+                
+                if (traits.agreeableness > 8) {
+                    personal.push('Travailler sur l\'affirmation de soi et l\'expression des besoins personnels');
+                    exercises.push('Journal des besoins : noter quotidiennement un besoin non exprimé et explorer comment le communiquer');
+                }
+                
+                // Couple recommendations
+                if (traits.conscientiousness > 7) {
+                    couple.push('Explorer l\'impact du besoin de contrôle sur la dynamique relationnelle');
+                    couple.push('Pratiquer la flexibilité en acceptant les imprévus comme opportunités');
+                }
+                
+                if (traits.extraversion > 7 || traits.extraversion < 4) {
+                    couple.push('Négocier un équilibre entre vie sociale et intimité à deux respectant les besoins de chacun');
+                    exercises.push('Planifier alternativement des activités sociales et des moments d\'intimité');
+                }
+                
+                if (paraverbal.emotional.averageIntensity > 7) {
+                    couple.push('Établir des rituels de connexion émotionnelle réguliers');
+                    exercises.push('Partage émotionnel quotidien de 10 minutes : chacun exprime son état émotionnel sans jugement');
+                }
+                
+                couple.push('Pratiquer l\'écoute active avec reformulation pour assurer la compréhension mutuelle');
+                exercises.push('Exercice de l\'écoute : un partenaire s\'exprime 5 minutes, l\'autre reformule avant de répondre');
+                
+                if (paraverbal.depth.nuanceMarkers > 15) {
+                    couple.push('Valoriser la capacité de nuance dans la résolution de conflits complexes');
+                }
+                
+                return { personal, couple, exercises };
+            }
+        };
+
+        // ============================================
         // INITIALIZATION
         // ============================================
         async function init() {
@@ -3858,6 +4581,13 @@
 
             // Export button
             elements.exportBtn.addEventListener('click', exportProfile);
+
+            // PDF Report button
+            if (elements.pdfBtn) {
+                elements.pdfBtn.addEventListener('click', () => {
+                    PsychologicalReport.generate();
+                });
+            }
 
             // Start timer
             startTimer();
