@@ -1340,42 +1340,42 @@
             <h4>📊 Traits Big Five</h4>
             <div class="trait-item">
                 <span class="trait-label">Ouverture</span>
-                <span class="trait-value" id="traitOpenness">5.0</span>
+                <span class="trait-value" id="traitOpenness">7.0</span>
             </div>
             <div class="trait-bar-container">
-                <div class="trait-bar-fill" id="barOpenness" style="width: 50%"></div>
+                <div class="trait-bar-fill" id="barOpenness" style="width: 70%"></div>
             </div>
             
             <div class="trait-item" style="margin-top: 0.75rem;">
                 <span class="trait-label">Conscienciosité</span>
-                <span class="trait-value" id="traitConscientiousness">5.0</span>
+                <span class="trait-value" id="traitConscientiousness">6.0</span>
             </div>
             <div class="trait-bar-container">
-                <div class="trait-bar-fill" id="barConscientiousness" style="width: 50%"></div>
+                <div class="trait-bar-fill" id="barConscientiousness" style="width: 60%"></div>
             </div>
             
             <div class="trait-item" style="margin-top: 0.75rem;">
                 <span class="trait-label">Extraversion</span>
-                <span class="trait-value" id="traitExtraversion">5.0</span>
+                <span class="trait-value" id="traitExtraversion">6.0</span>
             </div>
             <div class="trait-bar-container">
-                <div class="trait-bar-fill" id="barExtraversion" style="width: 50%"></div>
+                <div class="trait-bar-fill" id="barExtraversion" style="width: 60%"></div>
             </div>
             
             <div class="trait-item" style="margin-top: 0.75rem;">
                 <span class="trait-label">Agréabilité</span>
-                <span class="trait-value" id="traitAgreeableness">5.0</span>
+                <span class="trait-value" id="traitAgreeableness">7.0</span>
             </div>
             <div class="trait-bar-container">
-                <div class="trait-bar-fill" id="barAgreeableness" style="width: 50%"></div>
+                <div class="trait-bar-fill" id="barAgreeableness" style="width: 70%"></div>
             </div>
             
             <div class="trait-item" style="margin-top: 0.75rem;">
                 <span class="trait-label">Stabilité Émotionnelle</span>
-                <span class="trait-value" id="traitEmotionalStability">5.0</span>
+                <span class="trait-value" id="traitEmotionalStability">6.0</span>
             </div>
             <div class="trait-bar-container">
-                <div class="trait-bar-fill" id="barEmotionalStability" style="width: 50%"></div>
+                <div class="trait-bar-fill" id="barEmotionalStability" style="width: 60%"></div>
             </div>
         </div>
     </div>
@@ -2383,20 +2383,20 @@
             config: {
                 canvasWidth: 280,
                 canvasHeight: 280,
-                baseSize: 90,
-                particleCount: 30,
-                animationSpeed: 0.02,
+                baseSize: 65,           // Réduit de 90 → 65 (plus d'espace autour)
+                particleCount: 35,      // Un peu plus de particules
+                animationSpeed: 0.015,  // Légèrement plus lent pour mieux voir
             },
 
             // State
             state: {
                 p5Instance: null,
                 currentTraits: {
-                    openness: 5,
-                    conscientiousness: 5,
-                    extraversion: 5,
-                    agreeableness: 5,
-                    emotionalStability: 5
+                    openness: 7,              // Plus d'ouverture = plus de couleurs
+                    conscientiousness: 6,     // Un peu plus structuré
+                    extraversion: 6,          // Mouvement modéré
+                    agreeableness: 7,         // Forme douce
+                    emotionalStability: 6     // Stable mais pas rigide
                 },
                 targetTraits: {},
                 morphProgress: 0,
@@ -2509,15 +2509,23 @@
                 const stability = this.getStability(traits.emotionalStability);
 
                 // Draw main shape
-                p.noStroke();
-                
                 // Multiple layers for depth
                 for (let layer = 0; layer < 3; layer++) {
                     p.push();
                     
-                    // Color with transparency
+                    // Color with transparency (augmenté de 30 → 40 pour plus de visibilité)
                     const col = colors[layer % colors.length];
-                    p.fill(col.h, col.s, col.b, 30);
+                    const alpha = layer === 0 ? 50 : (layer === 1 ? 40 : 30); // Layer principal plus visible
+                    
+                    // Contour sur le premier layer seulement pour mieux définir la forme
+                    if (layer === 0) {
+                        p.strokeWeight(1.5);
+                        p.stroke(col.h, col.s, Math.max(col.b - 15, 0), 60);
+                    } else {
+                        p.noStroke();
+                    }
+                    
+                    p.fill(col.h, col.s, col.b, alpha);
                     
                     // Rotate based on time and stability
                     const rotation = t * (0.5 - stability * 0.04);
@@ -2631,13 +2639,14 @@
             },
 
             getComplexity(conscientiousness) {
-                if (conscientiousness > 7) return 8;
-                else if (conscientiousness > 4) return 12;
-                else return 20;
+                if (conscientiousness > 7) return 8;      // Très géométrique
+                else if (conscientiousness > 5) return 10; // Semi-géométrique (changé de 12)
+                else return 16;                            // Organique mais pas trop (changé de 20)
             },
 
             getMotionAmplitude(extraversion) {
-                return 8 + (extraversion / 10) * 25;
+                // Réduit de 8-33px à 5-22px pour mouvements plus contrôlés
+                return 5 + (extraversion / 10) * 17;
             },
 
             getSoftness(agreeableness) {
