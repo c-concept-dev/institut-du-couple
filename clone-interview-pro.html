@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clone de Personnalité v8.0 ULTIMATE</title>
-    
-    <!-- CDN Dependencies -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <title>Clone de Personnalité v8.0 ULTIMATE - Institut du Couple</title>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1318,7 +1315,6 @@
             totalWords: 0,
             isPaused: false,
             recognition: null,
-            encryptionPassword: null,
             warmupCompleted: false,
             warmupResults: {},
             revelationsUnlocked: 0,
@@ -1427,68 +1423,27 @@
         };
 
         // ============================================
-        // MODULE 1: SECURE STORAGE (AES-256)
+        // MODULE 1: SIMPLE STORAGE (localStorage)
         // ============================================
         const SecureStorage = {
-            async setPassword() {
-                const password = prompt('Créez un mot de passe pour protéger votre profil (mémorisez-le bien !) :');
-                if (!password || password.length < 6) {
-                    alert('Le mot de passe doit contenir au moins 6 caractères.');
-                    return this.setPassword();
-                }
-                const confirmPassword = prompt('Confirmez votre mot de passe :');
-                if (password !== confirmPassword) {
-                    alert('Les mots de passe ne correspondent pas.');
-                    return this.setPassword();
-                }
-                state.encryptionPassword = password;
-                this.showToast('Mot de passe défini avec succès !', 'success');
-                return password;
-            },
-
-            encrypt(data) {
-                if (!state.encryptionPassword) return null;
-                try {
-                    const encrypted = CryptoJS.AES.encrypt(
-                        JSON.stringify(data),
-                        state.encryptionPassword
-                    ).toString();
-                    return encrypted;
-                } catch (error) {
-                    console.error('Encryption error:', error);
-                    return null;
-                }
-            },
-
-            decrypt(encryptedData) {
-                if (!state.encryptionPassword) {
-                    state.encryptionPassword = prompt('Entrez votre mot de passe pour déchiffrer :');
-                }
-                try {
-                    const bytes = CryptoJS.AES.decrypt(encryptedData, state.encryptionPassword);
-                    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-                    return JSON.parse(decrypted);
-                } catch (error) {
-                    alert('Mot de passe incorrect ou données corrompues.');
-                    return null;
-                }
-            },
-
             save(key, data) {
-                const encrypted = this.encrypt(data);
-                if (encrypted) {
-                    localStorage.setItem(key, encrypted);
+                try {
+                    localStorage.setItem(key, JSON.stringify(data));
                     return true;
+                } catch (error) {
+                    console.error('Storage error:', error);
+                    return false;
                 }
-                return false;
             },
 
             load(key) {
-                const encrypted = localStorage.getItem(key);
-                if (encrypted) {
-                    return this.decrypt(encrypted);
+                try {
+                    const data = localStorage.getItem(key);
+                    return data ? JSON.parse(data) : null;
+                } catch (error) {
+                    console.error('Load error:', error);
+                    return null;
                 }
-                return null;
             },
 
             showToast(message, type) {
@@ -2118,9 +2073,6 @@
         // INITIALIZATION
         // ============================================
         async function init() {
-            // Set encryption password
-            await SecureStorage.setPassword();
-
             // Event listeners
             elements.startBtn.addEventListener('click', () => {
                 elements.welcomeScreen.classList.add('hidden');
@@ -2221,7 +2173,7 @@
                 // Generate comprehensive profile
                 const profile = {
                     metadata: {
-                        version: '8.0 ULTIMATE',
+                        version: '8.0 ULTIMATE - Institut du Couple',
                         created: new Date().toISOString(),
                         duration: state.elapsedSeconds,
                         questionCount: state.questionCount,
@@ -2244,16 +2196,7 @@
                     reflectionNotes: state.reflectionNotes
                 };
 
-                // Encrypt and download
-                const encrypted = SecureStorage.encrypt(profile);
-                const blob = new Blob([encrypted], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `clone-personality-v8-${Date.now()}.encrypted`;
-                a.click();
-
-                // Also export unencrypted JSON for backup
+                // Export JSON
                 const jsonBlob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
                 const jsonUrl = URL.createObjectURL(jsonBlob);
                 const jsonA = document.createElement('a');
@@ -2261,7 +2204,7 @@
                 jsonA.download = `clone-personality-v8-${Date.now()}.json`;
                 jsonA.click();
 
-                Utils.showToast('Profil exporté avec succès !', 'success', '2 fichiers téléchargés : chiffré + JSON');
+                Utils.showToast('Profil exporté avec succès !', 'success', 'Fichier JSON téléchargé');
             } catch (error) {
                 console.error('Export error:', error);
                 Utils.showToast('Erreur lors de l\'export', 'danger');
