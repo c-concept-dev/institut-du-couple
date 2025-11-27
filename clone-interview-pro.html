@@ -2060,28 +2060,37 @@
                 };
 
                 this.recognition.onresult = (event) => {
-                    this.interimTranscript = '';
-                    this.finalTranscript = elements.inputArea.value;
+                    let interimTranscript = '';
+                    let finalTranscript = '';
 
-                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                    // Parcourir tous les résultats depuis le début
+                    for (let i = 0; i < event.results.length; i++) {
                         const transcript = event.results[i][0].transcript;
                         
                         if (event.results[i].isFinal) {
-                            this.finalTranscript += transcript + ' ';
+                            finalTranscript += transcript + ' ';
                         } else {
-                            this.interimTranscript += transcript;
+                            interimTranscript += transcript;
                         }
                     }
 
+                    // Combiner le texte initial (avant le start) avec les nouveaux résultats
+                    const fullText = this.finalTranscript + finalTranscript + interimTranscript;
+                    
                     // Update textarea
-                    elements.inputArea.value = (this.finalTranscript + this.interimTranscript).trim();
+                    elements.inputArea.value = fullText.trim();
+                    
+                    // Sauvegarder le texte finalisé (sans interim)
+                    if (finalTranscript) {
+                        this.finalTranscript += finalTranscript;
+                    }
                     
                     // Auto-resize
                     elements.inputArea.style.height = 'auto';
                     elements.inputArea.style.height = (elements.inputArea.scrollHeight) + 'px';
                     
-                    // Visual feedback
-                    if (this.interimTranscript) {
+                    // Visual feedback - bordure colorée si texte temporaire
+                    if (interimTranscript) {
                         elements.inputArea.style.borderColor = 'var(--primary)';
                     } else {
                         elements.inputArea.style.borderColor = '';
@@ -2106,7 +2115,8 @@
 
             start() {
                 try {
-                    this.finalTranscript = elements.inputArea.value;
+                    // Sauvegarder le texte qui existe déjà dans textarea
+                    this.finalTranscript = elements.inputArea.value ? elements.inputArea.value + ' ' : '';
                     this.interimTranscript = '';
                     this.recognition.start();
                 } catch (error) {
