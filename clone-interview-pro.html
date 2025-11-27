@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clone de Personnalité v8.0 ULTIMATE - Institut du Couple</title>
+    <title>Clone Interview Pro v10.1 ULTIMATE - Hybride USE+TF-IDF</title>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1822,6 +1822,9 @@
             }
         }
     </style>
+    <!-- TensorFlow.js & Universal Sentence Encoder (MODULE 14 Hybride) -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
 </head>
 <body>
     <!-- Header -->
@@ -3833,6 +3836,12 @@
             Avatar.update(traits);
             
             console.log('🎨 Avatar traits updated:', traits);
+
+            
+            // MODULE 17: Capture snapshot personnalité tous les 10 messages
+            if (state.responseCount % 10 === 0 && state.responseCount > 0) {
+                PersonalityEvolution.captureSnapshot();
+            }
         }
 
         // ============================================
@@ -5616,6 +5625,14 @@
                 }
                 
                 console.log('🧠 Memory stored:', enrichedMessage.id);
+
+                
+                // MODULE 15: Auto-compression si >100 messages
+                if (this.storage.messages.length > 100 && this.storage.messages.length % 20 === 0) {
+                    console.log('🗜️ Auto-compression triggered');
+                    MemoryCompressor.compress(this.storage.messages);
+                    MemoryCompressor.smartRetention(this.storage.messages);
+                }
             },
             
             // Analyser message
@@ -5623,7 +5640,8 @@
                 const analysis = {
                     topics: this.extractTopics(message),
                     preferences: this.extractPreferences(message),
-                    mood: this.detectMood(message),
+                    mood: this.detectMood(message), // Gardé pour compatibilité
+                    emotions: AdvancedEmotions.detect(message), // MODULE 16: 27 émotions
                     temporalMarkers: this.extractTemporalMarkers(message),
                     entities: this.extractEntities(message),
                     sentiment: this.analyzeSentiment(message),
@@ -5935,15 +5953,49 @@
                 // Analyse du message actuel
                 const currentAnalysis = await this.analyzeMessage(currentMessage, 'user');
                 
-                // 1. Recherche par topics
+                // 0. MODULE 14 HYBRIDE: Recherche sémantique USE+TF-IDF (PRIORITÉ 1)
+                if (typeof SemanticEmbeddings !== 'undefined' && this.storage.messages.length > 0) {
+                    try {
+                        // Préparer documents pour recherche
+                        const documents = this.storage.messages.map((m, idx) => ({
+                            content: m.content,
+                            index: idx,
+                            timestamp: m.timestamp,
+                            analysis: m.analysis
+                        }));
+                        
+                        // Recherche hybride (USE ou TF-IDF fallback)
+                        const semanticResults = await SemanticEmbeddings.search(currentMessage, documents);
+                        
+                        // Ajouter résultats avec confidence élevée
+                        semanticResults.forEach(result => {
+                            const memory = this.storage.messages[result.index];
+                            if (memory) {
+                                relevantMemories.push({
+                                    message: memory.content,
+                                    score: result.similarity * 0.95, // Confidence 95%
+                                    reason: 'semantic_hybrid',
+                                    source: result.source, // 'use' ou 'tfidf'
+                                    timestamp: memory.timestamp
+                                });
+                            }
+                        });
+                        
+                        console.log(`🔍 Semantic Hybride: ${semanticResults.length} results via ${semanticResults[0]?.source?.toUpperCase() || 'none'}`);
+                    } catch (err) {
+                        console.warn('⚠️ Semantic search failed:', err);
+                    }
+                }
+                
+                // 1. Recherche par topics (confidence 80%)
                 const topicMatches = await this.searchByTopics(currentAnalysis.topics);
                 relevantMemories.push(...topicMatches);
                 
-                // 2. Recherche par sentiment similaire
+                // 2. Recherche par sentiment similaire (confidence 50%)
                 const sentimentMatches = await this.searchBySentiment(currentAnalysis.sentiment);
                 relevantMemories.push(...sentimentMatches);
                 
-                // 3. Recherche par marqueurs temporels
+                // 3. Recherche par marqueurs temporels (confidence 60%)
                 if (currentAnalysis.temporalMarkers.length > 0) {
                     const temporalMatches = await this.searchByTemporal(currentAnalysis.temporalMarkers);
                     relevantMemories.push(...temporalMatches);
@@ -6167,6 +6219,578 @@
         };
 
         // ════════════════════════════════════════════
+
+        // ============================================================================
+        // MODULE 14: SEMANTIC EMBEDDINGS HYBRIDE ULTIMATE
+        // ============================================================================
+
+        // ============================================================================
+        // MODULE 14 : SEMANTIC EMBEDDINGS HYBRIDE ULTIMATE
+        // v10.1 - USE Universal Sentence Encoder + TF-IDF Fallback
+        // Institut du Couple - Clone de Personnalité
+        // ============================================================================
+
+        const SemanticEmbeddings = {
+            // ========================================
+            // CONFIGURATION
+            // ========================================
+
+            config: {
+                useEnabled: true,              // Essayer USE en priorité
+                tfIdfEnabled: true,            // Fallback TF-IDF toujours actif
+                useSimilarityThreshold: 0.70,  // Seuil USE (70%)
+                tfIdfSimilarityThreshold: 0.65, // Seuil TF-IDF (65%)
+                maxResults: 5,                 // Top 5 résultats
+                cacheEnabled: true,            // Cache activé
+                cacheMaxSize: 1000,            // 1000 entrées max
+                persistCache: true,            // Persistance IndexedDB
+                lazyLoad: true,                // Chargement lazy
+                showNotifications: true,       // Toasts UX
+                logPerformance: true           // Métriques détaillées
+            },
+
+            // ========================================
+            // ÉTAT INTERNE
+            // ========================================
+
+            state: {
+                useLoaded: false,
+                useModel: null,
+                useLoading: false,
+                useLoadError: null,
+                tfIdfReady: true,
+                fallbackCount: 0,
+                totalSearches: 0,
+                averageSearchTime: 0
+            },
+
+            // ========================================
+            // CACHE MULTICOUCHE
+            // ========================================
+
+            cache: {
+                // Cache RAM (rapide)
+                ram: new Map(),
+
+                // Stats cache
+                hits: 0,
+                misses: 0,
+
+                // Méthodes cache
+                get(key) {
+                    const cached = this.ram.get(key);
+                    if (cached) {
+                        this.hits++;
+                        return cached;
+                    }
+                    this.misses++;
+                    return null;
+                },
+
+                set(key, value) {
+                    // LRU : si cache plein, supprimer plus ancien
+                    if (this.ram.size >= SemanticEmbeddings.config.cacheMaxSize) {
+                        const firstKey = this.ram.keys().next().value;
+                        this.ram.delete(firstKey);
+                    }
+                    this.ram.set(key, value);
+
+                    // Persister dans IndexedDB si activé
+                    if (SemanticEmbeddings.config.persistCache) {
+                        this.persistToIndexedDB(key, value);
+                    }
+                },
+
+                clear() {
+                    this.ram.clear();
+                    this.hits = 0;
+                    this.misses = 0;
+                },
+
+                getStats() {
+                    const total = this.hits + this.misses;
+                    return {
+                        hits: this.hits,
+                        misses: this.misses,
+                        hitRate: total > 0 ? (this.hits / total * 100).toFixed(1) : 0,
+                        size: this.ram.size,
+                        maxSize: SemanticEmbeddings.config.cacheMaxSize
+                    };
+                },
+
+                // Persistance IndexedDB (async)
+                async persistToIndexedDB(key, value) {
+                    try {
+                        if (!window.indexedDB) return;
+
+                        const dbName = 'SemanticEmbeddingsCache';
+                        const storeName = 'embeddings';
+
+                        const request = indexedDB.open(dbName, 1);
+
+                        request.onupgradeneeded = (e) => {
+                            const db = e.target.result;
+                            if (!db.objectStoreNames.contains(storeName)) {
+                                db.createObjectStore(storeName);
+                            }
+                        };
+
+                        request.onsuccess = (e) => {
+                            const db = e.target.result;
+                            const tx = db.transaction(storeName, 'readwrite');
+                            const store = tx.objectStore(storeName);
+                            store.put(value, key);
+                            db.close();
+                        };
+                    } catch (err) {
+                        // Silent fail pour IndexedDB
+                        console.warn('IndexedDB persist failed:', err);
+                    }
+                }
+            },
+
+            // ========================================
+            // TF-IDF FALLBACK (OPTIMISÉ)
+            // ========================================
+
+            tfIdf: {
+                // Stop words français (75 mots)
+                stopWords: new Set([
+                    'le', 'la', 'les', 'un', 'une', 'des', 'de', 'du', 'au', 'aux',
+                    'ce', 'cet', 'cette', 'ces', 'mon', 'ton', 'son', 'ma', 'ta', 'sa',
+                    'mes', 'tes', 'ses', 'notre', 'votre', 'leur', 'nos', 'vos', 'leurs',
+                    'je', 'tu', 'il', 'elle', 'on', 'nous', 'vous', 'ils', 'elles',
+                    'me', 'te', 'se', 'moi', 'toi', 'lui', 'eux',
+                    'et', 'ou', 'mais', 'donc', 'or', 'ni', 'car',
+                    'que', 'qui', 'quoi', 'dont', 'où',
+                    'à', 'dans', 'par', 'pour', 'en', 'vers', 'avec', 'sans', 'sous', 'sur',
+                    'être', 'avoir', 'faire', 'dire', 'aller', 'voir', 'savoir', 'pouvoir', 'vouloir', 'devoir'
+                ]),
+
+                // Tokenisation
+                tokenize(text) {
+                    return text
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '') // Supprimer accents
+                        .replace(/[^\w\s]/g, ' ')
+                        .split(/\s+/)
+                        .filter(token => token.length > 2 && !this.stopWords.has(token));
+                },
+
+                // Calcul TF (Term Frequency)
+                computeTF(tokens) {
+                    const tf = {};
+                    const total = tokens.length;
+
+                    tokens.forEach(token => {
+                        tf[token] = (tf[token] || 0) + 1;
+                    });
+
+                    // Normalisation
+                    Object.keys(tf).forEach(token => {
+                        tf[token] = tf[token] / total;
+                    });
+
+                    return tf;
+                },
+
+                // Calcul IDF (Inverse Document Frequency)
+                computeIDF(documents) {
+                    const df = {}; // Document Frequency
+                    const N = documents.length;
+
+                    documents.forEach(doc => {
+                        const uniqueTokens = new Set(doc.tokens);
+                        uniqueTokens.forEach(token => {
+                            df[token] = (df[token] || 0) + 1;
+                        });
+                    });
+
+                    const idf = {};
+                    Object.keys(df).forEach(token => {
+                        idf[token] = Math.log(N / df[token]);
+                    });
+
+                    return idf;
+                },
+
+                // Vectorisation TF-IDF
+                vectorize(tf, idf) {
+                    const vector = {};
+                    Object.keys(tf).forEach(token => {
+                        vector[token] = tf[token] * (idf[token] || 0);
+                    });
+                    return vector;
+                },
+
+                // Similarité cosine
+                cosineSimilarity(vecA, vecB) {
+                    let dotProduct = 0;
+                    let magnitudeA = 0;
+                    let magnitudeB = 0;
+
+                    const allTokens = new Set([...Object.keys(vecA), ...Object.keys(vecB)]);
+
+                    allTokens.forEach(token => {
+                        const a = vecA[token] || 0;
+                        const b = vecB[token] || 0;
+
+                        dotProduct += a * b;
+                        magnitudeA += a * a;
+                        magnitudeB += b * b;
+                    });
+
+                    magnitudeA = Math.sqrt(magnitudeA);
+                    magnitudeB = Math.sqrt(magnitudeB);
+
+                    if (magnitudeA === 0 || magnitudeB === 0) return 0;
+
+                    return dotProduct / (magnitudeA * magnitudeB);
+                },
+
+                // Recherche TF-IDF
+                search(query, documents) {
+                    const startTime = performance.now();
+
+                    // Tokenisation
+                    const queryTokens = this.tokenize(query);
+                    if (queryTokens.length === 0) return [];
+
+                    // Préparer documents
+                    const docsWithTokens = documents.map(doc => ({
+                        ...doc,
+                        tokens: this.tokenize(doc.content)
+                    }));
+
+                    // Calcul IDF sur corpus
+                    const idf = this.computeIDF(docsWithTokens);
+
+                    // Vectorisation query
+                    const queryTF = this.computeTF(queryTokens);
+                    const queryVector = this.vectorize(queryTF, idf);
+
+                    // Calcul similarité pour chaque document
+                    const results = docsWithTokens.map(doc => {
+                        const docTF = this.computeTF(doc.tokens);
+                        const docVector = this.vectorize(docTF, idf);
+                        const similarity = this.cosineSimilarity(queryVector, docVector);
+
+                        return {
+                            ...doc,
+                            similarity,
+                            source: 'tfidf'
+                        };
+                    });
+
+                    // Filtrer et trier
+                    const filtered = results
+                        .filter(r => r.similarity >= SemanticEmbeddings.config.tfIdfSimilarityThreshold)
+                        .sort((a, b) => b.similarity - a.similarity)
+                        .slice(0, SemanticEmbeddings.config.maxResults);
+
+                    const endTime = performance.now();
+                    const searchTime = endTime - startTime;
+
+                    if (SemanticEmbeddings.config.logPerformance) {
+                        console.log(`[TF-IDF] Search: ${filtered.length} results in ${searchTime.toFixed(1)}ms`);
+                    }
+
+                    return filtered;
+                }
+            },
+
+            // ========================================
+            // USE UNIVERSAL SENTENCE ENCODER
+            // ========================================
+
+            use: {
+                model: null,
+
+                // Chargement modèle
+                async load() {
+                    try {
+                        console.log('[USE] Loading model from CDN...');
+
+                        // Vérifier que TensorFlow.js est disponible
+                        if (typeof tf === 'undefined') {
+                            throw new Error('TensorFlow.js not loaded');
+                        }
+
+                        // Vérifier que USE est disponible
+                        if (typeof use === 'undefined') {
+                            throw new Error('Universal Sentence Encoder not loaded');
+                        }
+
+                        // Charger modèle
+                        this.model = await use.load();
+
+                        console.log('[USE] Model loaded successfully');
+                        return true;
+
+                    } catch (err) {
+                        console.error('[USE] Load error:', err);
+                        throw err;
+                    }
+                },
+
+                // Embedding d'un texte
+                async embed(text) {
+                    if (!this.model) {
+                        throw new Error('USE model not loaded');
+                    }
+
+                    // Vérifier cache
+                    const cacheKey = `use:${text}`;
+                    const cached = SemanticEmbeddings.cache.get(cacheKey);
+                    if (cached) return cached;
+
+                    // Calcul embedding
+                    const embedding = await this.model.embed([text]);
+                    const vector = await embedding.array();
+                    const result = vector[0]; // Premier élément (notre texte)
+
+                    // Cache
+                    SemanticEmbeddings.cache.set(cacheKey, result);
+
+                    return result;
+                },
+
+                // Similarité cosine entre deux vecteurs
+                cosineSimilarity(vecA, vecB) {
+                    let dotProduct = 0;
+                    let magnitudeA = 0;
+                    let magnitudeB = 0;
+
+                    for (let i = 0; i < vecA.length; i++) {
+                        dotProduct += vecA[i] * vecB[i];
+                        magnitudeA += vecA[i] * vecA[i];
+                        magnitudeB += vecB[i] * vecB[i];
+                    }
+
+                    magnitudeA = Math.sqrt(magnitudeA);
+                    magnitudeB = Math.sqrt(magnitudeB);
+
+                    if (magnitudeA === 0 || magnitudeB === 0) return 0;
+
+                    return dotProduct / (magnitudeA * magnitudeB);
+                },
+
+                // Recherche USE
+                async search(query, documents) {
+                    const startTime = performance.now();
+
+                    try {
+                        // Embedding query
+                        const queryEmbedding = await this.embed(query);
+
+                        // Calcul similarité pour chaque document
+                        const results = await Promise.all(
+                            documents.map(async (doc) => {
+                                const docEmbedding = await this.embed(doc.content);
+                                const similarity = this.cosineSimilarity(queryEmbedding, docEmbedding);
+
+                                return {
+                                    ...doc,
+                                    similarity,
+                                    source: 'use'
+                                };
+                            })
+                        );
+
+                        // Filtrer et trier
+                        const filtered = results
+                            .filter(r => r.similarity >= SemanticEmbeddings.config.useSimilarityThreshold)
+                            .sort((a, b) => b.similarity - a.similarity)
+                            .slice(0, SemanticEmbeddings.config.maxResults);
+
+                        const endTime = performance.now();
+                        const searchTime = endTime - startTime;
+
+                        if (SemanticEmbeddings.config.logPerformance) {
+                            console.log(`[USE] Search: ${filtered.length} results in ${searchTime.toFixed(1)}ms`);
+                        }
+
+                        return filtered;
+
+                    } catch (err) {
+                        console.error('[USE] Search error:', err);
+                        throw err;
+                    }
+                }
+            },
+
+            // ========================================
+            // INITIALISATION
+            // ========================================
+
+            async init() {
+                console.log('[SemanticEmbeddings] Initialisation...');
+
+                // TF-IDF toujours prêt
+                this.state.tfIdfReady = true;
+
+                // Lazy load USE en background si activé
+                if (this.config.lazyLoad && this.config.useEnabled) {
+                    this.preloadUSE();
+                }
+
+                console.log('[SemanticEmbeddings] Initialized (TF-IDF ready)');
+            },
+
+            // Préchargement USE en background
+            async preloadUSE() {
+                if (this.state.useLoading || this.state.useLoaded) return;
+
+                this.state.useLoading = true;
+
+                try {
+                    console.log('[USE] Preloading in background...');
+
+                    // Attendre que TensorFlow.js et USE soient chargés
+                    await this.waitForLibraries();
+
+                    // Charger modèle
+                    await this.use.load();
+
+                    this.state.useLoaded = true;
+                    this.state.useLoading = false;
+                    this.state.useModel = this.use.model;
+
+                    console.log('[USE] ✅ Preload complete');
+
+                    // Notification UX
+                    if (this.config.showNotifications && typeof Utils !== 'undefined' && Utils.showToast) {
+                        Utils.showToast('🧠 Mémoire sémantique avancée activée', 'success');
+                    }
+
+                } catch (err) {
+                    console.error('[USE] Preload failed:', err);
+                    this.state.useLoading = false;
+                    this.state.useLoadError = err.message;
+
+                    // Fallback sur TF-IDF (déjà actif)
+                    console.log('[USE] ⚠️ Fallback to TF-IDF');
+                }
+            },
+
+            // Attendre que les librairies soient chargées
+            async waitForLibraries(maxWait = 10000) {
+                const startTime = Date.now();
+
+                while (Date.now() - startTime < maxWait) {
+                    if (typeof tf !== 'undefined' && typeof use !== 'undefined') {
+                        // Attendre que tf soit ready
+                        await tf.ready();
+                        return true;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+
+                throw new Error('Libraries timeout');
+            },
+
+            // ========================================
+            // RECHERCHE HYBRIDE
+            // ========================================
+
+            async search(query, documents) {
+                if (!query || !documents || documents.length === 0) {
+                    return [];
+                }
+
+                this.state.totalSearches++;
+                const startTime = performance.now();
+
+                let results = [];
+                let source = 'none';
+
+                try {
+                    // Priorité 1 : USE si disponible
+                    if (this.state.useLoaded && this.config.useEnabled) {
+                        try {
+                            results = await this.use.search(query, documents);
+                            source = 'use';
+                        } catch (err) {
+                            console.warn('[USE] Search failed, falling back to TF-IDF:', err);
+                            this.state.fallbackCount++;
+                            throw err; // Passer au catch pour fallback
+                        }
+                    } else {
+                        // USE pas encore chargé ou désactivé
+                        throw new Error('USE not available');
+                    }
+
+                } catch (err) {
+                    // Fallback : TF-IDF
+                    if (this.config.tfIdfEnabled) {
+                        results = this.tfIdf.search(query, documents);
+                        source = 'tfidf';
+                        this.state.fallbackCount++;
+                    }
+                }
+
+                const endTime = performance.now();
+                const searchTime = endTime - startTime;
+
+                // Mise à jour moyenne
+                this.state.averageSearchTime = 
+                    (this.state.averageSearchTime * (this.state.totalSearches - 1) + searchTime) / 
+                    this.state.totalSearches;
+
+                if (this.config.logPerformance) {
+                    console.log(`[Hybrid] Search via ${source.toUpperCase()}: ${results.length} results in ${searchTime.toFixed(1)}ms`);
+                }
+
+                return results;
+            },
+
+            // ========================================
+            // MÉTRIQUES & STATS
+            // ========================================
+
+            getStats() {
+                const cacheStats = this.cache.getStats();
+
+                return {
+                    use: {
+                        loaded: this.state.useLoaded,
+                        loading: this.state.useLoading,
+                        error: this.state.useLoadError
+                    },
+                    tfidf: {
+                        ready: this.state.tfIdfReady
+                    },
+                    searches: {
+                        total: this.state.totalSearches,
+                        fallbackCount: this.state.fallbackCount,
+                        fallbackRate: this.state.totalSearches > 0 
+                            ? (this.state.fallbackCount / this.state.totalSearches * 100).toFixed(1) 
+                            : 0,
+                        averageTime: this.state.averageSearchTime.toFixed(1)
+                    },
+                    cache: cacheStats
+                };
+            },
+
+            // Export pour profil
+            exportStats() {
+                const stats = this.getStats();
+
+                return {
+                    version: '10.1-ULTIMATE',
+                    mode: this.state.useLoaded ? 'USE Hybrid' : 'TF-IDF Fallback',
+                    stats: stats,
+                    config: {
+                        useSimilarityThreshold: this.config.useSimilarityThreshold,
+                        tfIdfSimilarityThreshold: this.config.tfIdfSimilarityThreshold,
+                        maxResults: this.config.maxResults,
+                        cacheEnabled: this.config.cacheEnabled
+                    }
+                };
+            }
+        };
+
         // MICRO-EXPRESSIONS TEXTUELLES
         // ════════════════════════════════════════════
         const TextualMicroExpressions = {
@@ -6389,6 +7013,603 @@
         };
 
         // ============================================
+
+        // ============================================
+        // PHASE 3: MODULES 14-17 (Optimisation Avancée)
+        // ============================================
+
+        // ============================================
+        
+        
+        // ============================================
+        // MODULE 15: COMPRESSION MÉMOIRE INTELLIGENTE
+        // ============================================
+        
+        const MemoryCompressor = {
+            
+            config: {
+                fullRetention: 50,       // Derniers 50 messages complets
+                summaryRetention: 100,   // Messages 50-100 en résumés
+                topicsOnly: Infinity     // 100+ en topics seulement
+            },
+            
+            stats: {
+                totalCompressed: 0,
+                bytesFreed: 0,
+                lastCompression: null
+            },
+            
+            // ════════════════════════════════════════
+            // COMPRESSION STRATÉGIQUE
+            // ════════════════════════════════════════
+            
+            compress(messages) {
+                if (!messages || messages.length === 0) return;
+                
+                const total = messages.length;
+                let bytesFreed = 0;
+                let compressed = 0;
+                
+                messages.forEach((msg, index) => {
+                    const age = total - index; // Age = position depuis la fin
+                    
+                    if (age <= this.config.fullRetention) {
+                        // Garder complet
+                        if (!msg.compressionLevel) {
+                            msg.compressionLevel = 'full';
+                        }
+                        
+                    } else if (age <= this.config.summaryRetention) {
+                        // Compresser en résumé
+                        if (msg.compressionLevel !== 'summary') {
+                            const originalSize = JSON.stringify(msg.content).length;
+                            msg.summary = this.summarize(msg.content);
+                            msg.compressionLevel = 'summary';
+                            
+                            // Libérer RAM (garder content dans summary)
+                            delete msg.content;
+                            
+                            const newSize = JSON.stringify(msg.summary).length;
+                            bytesFreed += (originalSize - newSize);
+                            compressed++;
+                        }
+                        
+                    } else {
+                        // Garder topics seulement
+                        if (msg.compressionLevel !== 'topics') {
+                            const originalSize = JSON.stringify(msg).length;
+                            msg.topicsOnly = msg.analysis?.topics?.map(t => t.name) || [];
+                            msg.compressionLevel = 'topics';
+                            
+                            // Supprimer données lourdes
+                            delete msg.content;
+                            delete msg.summary;
+                            delete msg.analysis;
+                            
+                            const newSize = JSON.stringify(msg.topicsOnly).length;
+                            bytesFreed += (originalSize - newSize);
+                            compressed++;
+                        }
+                    }
+                });
+                
+                this.stats.totalCompressed += compressed;
+                this.stats.bytesFreed += bytesFreed;
+                this.stats.lastCompression = Date.now();
+                
+                console.log(`🗜️ Compressed ${compressed} messages, freed ${(bytesFreed / 1024).toFixed(1)} KB`);
+                
+                return {
+                    compressed: compressed,
+                    bytesFreed: bytesFreed
+                };
+            },
+            
+            // ════════════════════════════════════════
+            // RÉSUMÉ EXTRACTIF
+            // ════════════════════════════════════════
+            
+            summarize(text) {
+                if (!text) return '';
+                
+                // Split en phrases
+                const sentences = text
+                    .split(/[.!?]+/)
+                    .map(s => s.trim())
+                    .filter(s => s.length > 0);
+                
+                // Si <= 3 phrases, garder tout
+                if (sentences.length <= 3) return text;
+                
+                // Scorer chaque phrase par importance
+                const scored = sentences.map(s => ({
+                    text: s,
+                    score: this.scoreSentence(s)
+                }));
+                
+                // Garder top 3 phrases
+                const top3 = scored
+                    .sort((a, b) => b.score - a.score)
+                    .slice(0, 3)
+                    .map(s => s.text);
+                
+                return top3.join('. ') + '.';
+            },
+            
+            // Scorer importance phrase
+            scoreSentence(sentence) {
+                let score = 0;
+                const lower = sentence.toLowerCase();
+                
+                // Mots-clés importants
+                const importantKeywords = [
+                    'important', 'essentiel', 'crucial', 'fondamental', 'primordial',
+                    'toujours', 'jamais', 'souvent', 'rarement',
+                    'très', 'vraiment', 'extrêmement', 'particulièrement',
+                    'amour', 'famille', 'travail', 'santé', 'argent',
+                    'problème', 'solution', 'objectif', 'défi',
+                    'sentiment', 'émotion', 'ressenti'
+                ];
+                
+                // +1 point par mot-clé trouvé
+                importantKeywords.forEach(kw => {
+                    if (lower.includes(kw)) score += 1;
+                });
+                
+                // Bonus longueur (phrases moyennes préférées)
+                const wordCount = sentence.split(/\s+/).length;
+                if (wordCount >= 5 && wordCount <= 20) {
+                    score += 2;
+                }
+                
+                // Bonus entités nommées (majuscules en milieu de phrase)
+                const capitalWords = sentence.match(/\b[A-Z][a-z]+\b/g) || [];
+                score += capitalWords.length * 0.5;
+                
+                return score;
+            },
+            
+            // ════════════════════════════════════════
+            // RÉTENTION INTELLIGENTE
+            // ════════════════════════════════════════
+            
+            smartRetention(messages) {
+                if (!messages || messages.length === 0) return;
+                
+                const priorities = {
+                    emotional: 1.0,    // Messages émotionnellement forts
+                    preferences: 0.9,  // Préférences exprimées
+                    unique: 0.8,       // Info unique (noms, dates)
+                    neutral: 0.5       // Messages neutres
+                };
+                
+                messages.forEach(msg => {
+                    if (!msg.analysis) {
+                        msg.retentionPriority = priorities.neutral;
+                        return;
+                    }
+                    
+                    let priority = priorities.neutral;
+                    
+                    // Boost si émotionnel fort
+                    if (msg.analysis.emotionalIntensity > 7) {
+                        priority = Math.max(priority, priorities.emotional);
+                    }
+                    
+                    // Boost si préférences
+                    if (msg.analysis.preferences && Object.keys(msg.analysis.preferences).length > 0) {
+                        priority = Math.max(priority, priorities.preferences);
+                    }
+                    
+                    // Boost si entités uniques (personnes, lieux)
+                    if (msg.analysis.entities && 
+                        (msg.analysis.entities.people?.length > 0 || msg.analysis.entities.places?.length > 0)) {
+                        priority = Math.max(priority, priorities.unique);
+                    }
+                    
+                    msg.retentionPriority = priority;
+                });
+                
+                console.log('🎯 Smart retention priorities assigned');
+            },
+            
+            // ════════════════════════════════════════
+            // RAPPORT
+            // ════════════════════════════════════════
+            
+            getReport() {
+                return {
+                    config: this.config,
+                    stats: this.stats,
+                    compressionRate: this.stats.totalCompressed > 0 
+                        ? (this.stats.bytesFreed / this.stats.totalCompressed).toFixed(2) + ' bytes/msg'
+                        : 'N/A'
+                };
+            }
+        };
+        
+        
+        // ============================================
+        // MODULE 16: ANALYSE ÉMOTIONNELLE AVANCÉE
+        // ============================================
+        
+        const AdvancedEmotions = {
+            
+            // Modèle émotionnel étendu (Plutchik's Wheel + extensions)
+            // 27 émotions vs 6 dans MODULE 13
+            emotions: {
+                // Primaires (8)
+                joy: ['heureux', 'content', 'ravi', 'joyeux', 'gai', 'réjoui'],
+                sadness: ['triste', 'malheureux', 'déprimé', 'morose', 'mélancolique'],
+                anger: ['colère', 'furieux', 'énervé', 'irrité', 'fâché', 'rage'],
+                fear: ['peur', 'anxieux', 'inquiet', 'effrayé', 'apeuré', 'craintif'],
+                trust: ['confiance', 'sûr', 'serein', 'paisible', 'tranquille'],
+                disgust: ['dégoût', 'répugnant', 'écœuré', 'révulsé'],
+                surprise: ['surpris', 'étonné', 'stupéfait', 'ébahi'],
+                anticipation: ['impatient', 'excité', 'enthousiaste', 'avide'],
+                
+                // Secondaires (8) - Combinaisons
+                love: ['amour', 'adore', 'chéri', 'affection', 'tendresse'], // joy + trust
+                guilt: ['coupable', 'honte', 'remords'], // fear + sadness
+                delight: ['délice', 'enchanté', 'ravi'], // joy + surprise
+                submission: ['soumis', 'accepte', 'résigné'], // trust + fear
+                disappointment: ['déçu', 'désabusé', 'désenchanté'], // surprise + sadness
+                remorse: ['remords', 'regret', 'repentir'], // disgust + sadness
+                contempt: ['mépris', 'dédain', 'condescendance'], // anger + disgust
+                envy: ['envie', 'jaloux', 'jalousie'], // sadness + anger
+                
+                // Tertiaires (11) - Nuances fines
+                optimism: ['optimiste', 'positif', 'confiant', 'espérance'], // anticipation + joy
+                pessimism: ['pessimiste', 'négatif', 'sombre'], // anticipation + sadness
+                aggressiveness: ['agressif', 'violent', 'hostile'], // anger + anticipation
+                pride: ['fier', 'orgueilleux', 'satisfait'], // anger + joy
+                hope: ['espoir', 'espère', 'souhaite'], // anticipation + trust
+                anxiety: ['anxiété', 'angoisse', 'stress'], // fear + anticipation
+                despair: ['désespoir', 'désolé', 'accablé'], // fear + sadness
+                shame: ['honte', 'embarrassé', 'humilié'], // fear + disgust
+                morbidness: ['morbide', 'macabre', 'lugubre'], // disgust + anticipation
+                serenity: ['sérénité', 'calme', 'apaisé'], // joy + trust (nuance positive)
+                boredom: ['ennui', 'blasé', 'lassitude'] // disgust + sadness
+            },
+            
+            // ════════════════════════════════════════
+            // DÉTECTION ÉMOTIONS
+            // ════════════════════════════════════════
+            
+            detect(text) {
+                if (!text) return this.getDefaultEmotion();
+                
+                const lowerText = text.toLowerCase();
+                const detected = [];
+                
+                // Chercher chaque émotion
+                for (const [emotion, keywords] of Object.entries(this.emotions)) {
+                    const matches = keywords.filter(kw => lowerText.includes(kw));
+                    
+                    if (matches.length > 0) {
+                        detected.push({
+                            emotion: emotion,
+                            confidence: matches.length / keywords.length,
+                            keywords: matches,
+                            matchCount: matches.length
+                        });
+                    }
+                }
+                
+                // Trier par confidence décroissante
+                detected.sort((a, b) => b.confidence - a.confidence);
+                
+                // Calculer dimensions
+                const intensity = this.calculateIntensity(text);
+                const valence = this.calculateValence(detected);
+                const arousal = this.calculateArousal(detected);
+                
+                return {
+                    primary: detected[0]?.emotion || 'neutral',
+                    secondary: detected[1]?.emotion || null,
+                    tertiary: detected[2]?.emotion || null,
+                    all: detected.slice(0, 5), // Top 5
+                    intensity: intensity,      // 0-10
+                    valence: valence,          // -1 to 1 (négatif à positif)
+                    arousal: arousal           // 0-1 (calme à excité)
+                };
+            },
+            
+            // ════════════════════════════════════════
+            // CALCUL INTENSITÉ
+            // ════════════════════════════════════════
+            
+            calculateIntensity(text) {
+                const indicators = {
+                    exclamation: (text.match(/!/g) || []).length,
+                    capitals: (text.match(/[A-Z]{2,}/g) || []).length,
+                    intensifiers: (text.match(/très|vraiment|trop|extrêmement|énormément|absolument/gi) || []).length,
+                    repetition: (text.match(/(\w+)\1+/g) || []).length,
+                    emphasis: (text.match(/\*\*.*?\*\*|__.*?__/g) || []).length
+                };
+                
+                // Score pondéré
+                const score = (
+                    indicators.exclamation * 2.0 +
+                    indicators.capitals * 2.5 +
+                    indicators.intensifiers * 1.5 +
+                    indicators.repetition * 2.0 +
+                    indicators.emphasis * 1.0
+                ) / 10;
+                
+                // Normaliser 0-10
+                return Math.min(10, Math.max(0, score));
+            },
+            
+            // ════════════════════════════════════════
+            // CALCUL VALENCE (Positif/Négatif)
+            // ════════════════════════════════════════
+            
+            calculateValence(detected) {
+                const positiveEmotions = [
+                    'joy', 'trust', 'love', 'delight', 'optimism', 
+                    'hope', 'pride', 'serenity', 'anticipation'
+                ];
+                
+                const negativeEmotions = [
+                    'sadness', 'anger', 'fear', 'disgust', 'guilt', 
+                    'shame', 'despair', 'envy', 'contempt', 'disappointment',
+                    'remorse', 'pessimism', 'anxiety', 'boredom', 'morbidness'
+                ];
+                
+                let score = 0;
+                
+                detected.forEach(d => {
+                    if (positiveEmotions.includes(d.emotion)) {
+                        score += d.confidence;
+                    } else if (negativeEmotions.includes(d.emotion)) {
+                        score -= d.confidence;
+                    }
+                });
+                
+                // Normaliser -1 to 1
+                return Math.max(-1, Math.min(1, score));
+            },
+            
+            // ════════════════════════════════════════
+            // CALCUL AROUSAL (Activation/Énergie)
+            // ════════════════════════════════════════
+            
+            calculateArousal(detected) {
+                const highArousal = [
+                    'anger', 'fear', 'surprise', 'anticipation', 'anxiety', 
+                    'aggressiveness', 'excitement', 'rage', 'panic'
+                ];
+                
+                const lowArousal = [
+                    'sadness', 'trust', 'serenity', 'boredom', 
+                    'calm', 'depression', 'contentment'
+                ];
+                
+                let score = 0.5; // Neutral baseline
+                
+                detected.forEach(d => {
+                    if (highArousal.includes(d.emotion)) {
+                        score += d.confidence * 0.3;
+                    } else if (lowArousal.includes(d.emotion)) {
+                        score -= d.confidence * 0.3;
+                    }
+                });
+                
+                // Normaliser 0-1
+                return Math.max(0, Math.min(1, score));
+            },
+            
+            // ════════════════════════════════════════
+            // DÉFAUT
+            // ════════════════════════════════════════
+            
+            getDefaultEmotion() {
+                return {
+                    primary: 'neutral',
+                    secondary: null,
+                    tertiary: null,
+                    all: [],
+                    intensity: 0,
+                    valence: 0,
+                    arousal: 0.5
+                };
+            },
+            
+            // ════════════════════════════════════════
+            // RAPPORT
+            // ════════════════════════════════════════
+            
+            getReport() {
+                return {
+                    totalEmotions: Object.keys(this.emotions).length,
+                    categories: {
+                        primary: 8,
+                        secondary: 8,
+                        tertiary: 11
+                    },
+                    emotionList: Object.keys(this.emotions)
+                };
+            }
+        };
+        
+        
+        // ============================================
+        // MODULE 17: PERSONNALITÉ ÉVOLUTIVE
+        // ============================================
+        
+        const PersonalityEvolution = {
+            
+            snapshots: [], // Historique des snapshots
+            
+            // ════════════════════════════════════════
+            // CAPTURE SNAPSHOT
+            // ════════════════════════════════════════
+            
+            captureSnapshot() {
+                // Capturer état actuel traits Big Five
+                const currentTraits = {
+                    openness: state.bigFiveTraits.openness || 0,
+                    conscientiousness: state.bigFiveTraits.conscientiousness || 0,
+                    extraversion: state.bigFiveTraits.extraversion || 0,
+                    agreeableness: state.bigFiveTraits.agreeableness || 0,
+                    emotionalStability: state.bigFiveTraits.emotionalStability || 0
+                };
+                
+                const snapshot = {
+                    timestamp: Date.now(),
+                    messageCount: state.responseCount,
+                    traits: currentTraits,
+                    context: {
+                        topTopics: LongTermMemory.context.topics.slice(0, 3).map(t => t.topic),
+                        currentMood: LongTermMemory.context.mood,
+                        conversationDepth: LongTermMemory.storage.messages.length
+                    }
+                };
+                
+                this.snapshots.push(snapshot);
+                
+                console.log(`📸 Personality snapshot captured (#${this.snapshots.length})`);
+                
+                return snapshot;
+            },
+            
+            // ════════════════════════════════════════
+            // ÉVOLUTION TRAIT
+            // ════════════════════════════════════════
+            
+            getEvolution(trait) {
+                if (!['openness', 'conscientiousness', 'extraversion', 'agreeableness', 'emotionalStability'].includes(trait)) {
+                    return [];
+                }
+                
+                return this.snapshots.map(s => ({
+                    timestamp: s.timestamp,
+                    value: s.traits[trait],
+                    messageCount: s.messageCount
+                }));
+            },
+            
+            // ════════════════════════════════════════
+            // TENDANCE (RÉGRESSION LINÉAIRE)
+            // ════════════════════════════════════════
+            
+            getTrend(trait) {
+                const evolution = this.getEvolution(trait);
+                
+                if (evolution.length < 2) {
+                    return null; // Pas assez de données
+                }
+                
+                // Régression linéaire simple
+                const n = evolution.length;
+                const sumX = evolution.reduce((sum, p, i) => sum + i, 0);
+                const sumY = evolution.reduce((sum, p) => sum + p.value, 0);
+                const sumXY = evolution.reduce((sum, p, i) => sum + i * p.value, 0);
+                const sumX2 = evolution.reduce((sum, p, i) => sum + i * i, 0);
+                
+                // Slope = (n*ΣXY - ΣX*ΣY) / (n*ΣX² - (ΣX)²)
+                const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+                
+                // Direction
+                let direction = 'stable';
+                if (slope > 0.1) direction = 'increasing';
+                else if (slope < -0.1) direction = 'decreasing';
+                
+                return {
+                    slope: slope,
+                    direction: direction,
+                    magnitude: Math.abs(slope),
+                    confidence: Math.min(1, evolution.length / 5) // Confidence augmente avec données
+                };
+            },
+            
+            // ════════════════════════════════════════
+            // INSIGHTS PERSONNALITÉ
+            // ════════════════════════════════════════
+            
+            getInsights() {
+                const insights = [];
+                
+                const traits = ['openness', 'conscientiousness', 'extraversion', 'agreeableness', 'emotionalStability'];
+                
+                traits.forEach(trait => {
+                    const trend = this.getTrend(trait);
+                    
+                    if (trend && trend.magnitude > 0.1 && trend.confidence > 0.5) {
+                        insights.push({
+                            trait: trait,
+                            trend: trend.direction,
+                            magnitude: trend.magnitude,
+                            confidence: trend.confidence,
+                            message: this.generateInsightMessage(trait, trend)
+                        });
+                    }
+                });
+                
+                return insights;
+            },
+            
+            // ════════════════════════════════════════
+            // GÉNÉRATION MESSAGE INSIGHT
+            // ════════════════════════════════════════
+            
+            generateInsightMessage(trait, trend) {
+                const messages = {
+                    openness: {
+                        increasing: "Ton ouverture d'esprit s'accroît - tu explores de nouvelles perspectives",
+                        decreasing: "Tu te stabilises dans tes préférences et convictions",
+                        stable: "Ton ouverture reste constante et équilibrée"
+                    },
+                    conscientiousness: {
+                        increasing: "Tu deviens plus structuré et organisé dans ton approche",
+                        decreasing: "Tu gagnes en spontanéité et flexibilité",
+                        stable: "Ton niveau d'organisation reste stable"
+                    },
+                    extraversion: {
+                        increasing: "Ton énergie sociale semble croître",
+                        decreasing: "Tu sembles te recentrer davantage sur toi-même",
+                        stable: "Ton niveau d'extraversion reste équilibré"
+                    },
+                    agreeableness: {
+                        increasing: "Tu développes une approche plus coopérative",
+                        decreasing: "Tu affirmes davantage tes positions personnelles",
+                        stable: "Ton degré de coopération reste constant"
+                    },
+                    emotionalStability: {
+                        increasing: "Ta stabilité émotionnelle progresse",
+                        decreasing: "Tu traverses peut-être une période plus sensible",
+                        stable: "Ton équilibre émotionnel reste stable"
+                    }
+                };
+                
+                return messages[trait]?.[trend.direction] || "Évolution détectée";
+            },
+            
+            // ════════════════════════════════════════
+            // RAPPORT
+            // ════════════════════════════════════════
+            
+            getReport() {
+                return {
+                    totalSnapshots: this.snapshots.length,
+                    trends: {
+                        openness: this.getTrend('openness'),
+                        conscientiousness: this.getTrend('conscientiousness'),
+                        extraversion: this.getTrend('extraversion'),
+                        agreeableness: this.getTrend('agreeableness'),
+                        emotionalStability: this.getTrend('emotionalStability')
+                    },
+                    insights: this.getInsights(),
+                    coverage: {
+                        messagesTracked: this.snapshots[this.snapshots.length - 1]?.messageCount || 0,
+                        timeSpan: this.snapshots.length > 0 
+                            ? this.snapshots[this.snapshots.length - 1].timestamp - this.snapshots[0].timestamp
+                            : 0
+                    }
+                };
+            }
+        };
         // MODULE 13: UPDATE DISPLAY
         // ============================================
         
@@ -6467,7 +7688,25 @@
             // Initialize avatar
             Avatar.init();
             Avatar.loadSavedPhoto(); // Load saved photo if exists
+
+            // Initialize Semantic Embeddings (MODULE 14 Hybride)
+            if (typeof SemanticEmbeddings !== 'undefined') {
+                try {
+                    await SemanticEmbeddings.init();
+                    console.log('✅ Semantic Embeddings initialized');
+                } catch (err) {
+                    console.error('❌ Semantic Embeddings init failed:', err);
+                }
+            }
+            
             console.log('✅ Avatar initialized');
+
+            
+            // MODULE 14: Initialize Semantic Embeddings (si messages existants)
+            if (state.messages && state.messages.length > 0) {
+                SemanticEmbeddings.init(state.messages);
+            }
+            console.log('✅ Phase 3 modules initialized');
 
             // Avatar upload
             const avatarUploadInput = document.getElementById('avatarUploadInput');
@@ -6835,7 +8074,25 @@
                             topLearned: TextualMicroExpressions.personalTics.learned.slice(0, 5)
                         },
                         report: TextualMicroExpressions.getReport()
-                    }
+                    },
+                
+                // MODULE 14: Semantic Embeddings
+                semanticEmbeddings: SemanticEmbeddings.getReport(),
+                
+                // MODULE 15: Memory Compression
+                memoryCompression: MemoryCompressor.getReport(),
+                
+                // MODULE 16: Advanced Emotions  
+                advancedEmotions: AdvancedEmotions.getReport(),
+                
+                // MODULE 17: Personality Evolution
+                personalityEvolution: PersonalityEvolution.getReport(),
+                
+                // MODULE 14 HYBRIDE: Semantic Embeddings Stats
+                semanticEmbeddings: typeof SemanticEmbeddings !== 'undefined' 
+                    ? SemanticEmbeddings.exportStats() 
+                    : null
+
                 };
 
                 // Export JSON
