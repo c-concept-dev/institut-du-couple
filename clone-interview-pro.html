@@ -3,13 +3,865 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clone Interview Pro v10.1 ULTIMATE - Hybride USE+TF-IDF</title>
+    <title>Clone Interview Pro v10.1 POLISHED - Optimisé Performance + UX</title>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- p5.js for Avatar Animation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js">
+
+        // ============================================================================
+        // PERFORMANCE OPTIMIZATIONS v10.1 - SESSION 1
+        // ============================================================================
+        
+        // ============================================================================
+// PERFORMANCE OPTIMIZATIONS v10.1 - SESSION 1
+// ============================================================================
+// Améliorations :
+// 1. Préchargement USE intelligent pendant interview
+// 2. Cache warm-up automatique des premiers messages
+// 3. Optimisation temps première recherche
+// 4. Loading states & feedback utilisateur
+// ============================================================================
+
+const PerformanceOptimizer = {
+    
+    // ========================================
+    // CONFIGURATION
+    // ========================================
+    
+    config: {
+        warmupEnabled: true,              // Cache warm-up auto
+        warmupMessageCount: 5,            // Nombre messages à précalculer
+        aggressivePreload: true,          // Préchargement agressif USE
+        showLoadingStates: true,          // Afficher états chargement
+        compressionEnabled: true,         // Compression embeddings cache
+        backgroundCalculation: true       // Calculs en background
+    },
+    
+    state: {
+        warmupComplete: false,
+        preloadProgress: 0,
+        firstSearchOptimized: false,
+        loadingStates: new Map()
+    },
+    
+    // ========================================
+    // 1. PRÉCHARGEMENT INTELLIGENT USE
+    // ========================================
+    
+    /**
+     * Démarrer préchargement agressif USE pendant interview
+     * Appelé dès que l'utilisateur commence à répondre
+     */
+    async startAggressivePreload() {
+        if (!this.config.aggressivePreload) return;
+        
+        console.log('[Perf] 🚀 Starting aggressive USE preload...');
+        
+        try {
+            // Attendre que SemanticEmbeddings soit disponible
+            if (typeof SemanticEmbeddings === 'undefined') {
+                console.warn('[Perf] SemanticEmbeddings not available yet');
+                return;
+            }
+            
+            // Si USE déjà chargé, skip
+            if (SemanticEmbeddings.state.useLoaded) {
+                console.log('[Perf] ✅ USE already loaded');
+                this.state.preloadProgress = 100;
+                return;
+            }
+            
+            // Forcer préchargement immédiat
+            await SemanticEmbeddings.preloadUSE();
+            
+            this.state.preloadProgress = 100;
+            console.log('[Perf] ✅ Aggressive preload complete');
+            
+            // Notifier utilisateur si activé
+            if (this.config.showLoadingStates && typeof Utils !== 'undefined') {
+                Utils.showToast('🧠 Mémoire sémantique activée', 'success');
+            }
+            
+        } catch (error) {
+            console.error('[Perf] ❌ Aggressive preload failed:', error);
+            this.state.preloadProgress = -1; // Error state
+        }
+    },
+    
+    /**
+     * Précharger USE dès le premier message de l'interview
+     * Hook dans le système de questions
+     */
+    hookInterviewStart() {
+        console.log('[Perf] 🎯 Hooking interview start for preload');
+        
+        // Observer le premier message utilisateur
+        const originalAddMessage = window.addUserMessage;
+        let firstMessageSent = false;
+        
+        window.addUserMessage = (...args) => {
+            // Appeler fonction originale
+            if (originalAddMessage) {
+                originalAddMessage.apply(this, args);
+            }
+            
+            // Au premier message, démarrer préchargement agressif
+            if (!firstMessageSent) {
+                firstMessageSent = true;
+                console.log('[Perf] 📨 First message detected, starting preload');
+                this.startAggressivePreload();
+                
+                // Démarrer warm-up cache aussi
+                setTimeout(() => {
+                    this.startCacheWarmup();
+                }, 2000); // Attendre 2s pour ne pas bloquer l'UI
+            }
+        };
+    },
+    
+    // ========================================
+    // 2. CACHE WARM-UP AUTOMATIQUE
+    // ========================================
+    
+    /**
+     * Précalculer embeddings des premiers messages en background
+     * Réduit drastiquement le temps de première recherche
+     */
+    async startCacheWarmup() {
+        if (!this.config.warmupEnabled) return;
+        if (this.state.warmupComplete) return;
+        
+        console.log('[Perf] 🔥 Starting cache warm-up...');
+        
+        try {
+            // Attendre que USE soit chargé
+            if (!SemanticEmbeddings.state.useLoaded) {
+                console.log('[Perf] ⏳ Waiting for USE to load before warm-up...');
+                await this.waitForUSE();
+            }
+            
+            // Récupérer les N premiers messages de la mémoire
+            const messages = state.messages || [];
+            const warmupCount = Math.min(
+                this.config.warmupMessageCount,
+                messages.length
+            );
+            
+            if (warmupCount === 0) {
+                console.log('[Perf] ⚠️ No messages to warm-up');
+                return;
+            }
+            
+            console.log(`[Perf] 🔥 Warming up cache for ${warmupCount} messages...`);
+            
+            // Précalculer embeddings en background
+            const warmupMessages = messages.slice(0, warmupCount);
+            
+            for (let i = 0; i < warmupMessages.length; i++) {
+                const msg = warmupMessages[i];
+                
+                // Calculer embedding (sera mis en cache automatiquement)
+                if (msg.content && msg.content.length > 0) {
+                    try {
+                        // Utiliser la méthode interne USE pour calculer embedding
+                        await SemanticEmbeddings.use.getEmbedding(msg.content);
+                        console.log(`[Perf] ✅ Warmed up message ${i + 1}/${warmupCount}`);
+                    } catch (err) {
+                        console.warn(`[Perf] ⚠️ Failed to warm-up message ${i + 1}:`, err);
+                    }
+                }
+                
+                // Petit délai pour ne pas bloquer l'UI
+                await this.sleep(50);
+            }
+            
+            this.state.warmupComplete = true;
+            console.log('[Perf] ✅ Cache warm-up complete');
+            
+            // Afficher stats cache
+            const cacheStats = SemanticEmbeddings.getStats().cache;
+            console.log(`[Perf] 📊 Cache: ${cacheStats.size} entries, ${cacheStats.hitRate}% hit rate`);
+            
+        } catch (error) {
+            console.error('[Perf] ❌ Cache warm-up failed:', error);
+        }
+    },
+    
+    /**
+     * Attendre que USE soit chargé (avec timeout)
+     */
+    async waitForUSE(maxWait = 30000) {
+        const startTime = Date.now();
+        
+        while (!SemanticEmbeddings.state.useLoaded) {
+            if (Date.now() - startTime > maxWait) {
+                throw new Error('USE loading timeout');
+            }
+            await this.sleep(100);
+        }
+        
+        return true;
+    },
+    
+    // ========================================
+    // 3. OPTIMISATION PREMIÈRE RECHERCHE
+    // ========================================
+    
+    /**
+     * Optimiser la première recherche sémantique
+     * Combine : warm-up + compression + feedback
+     */
+    async optimizeFirstSearch() {
+        if (this.state.firstSearchOptimized) return;
+        
+        console.log('[Perf] ⚡ Optimizing first search...');
+        
+        // Hook la fonction search pour détecter première utilisation
+        const originalSearch = SemanticEmbeddings.search;
+        let firstSearch = true;
+        
+        SemanticEmbeddings.search = async function(...args) {
+            if (firstSearch && PerformanceOptimizer.config.showLoadingStates) {
+                firstSearch = false;
+                
+                // Afficher loading state
+                PerformanceOptimizer.showLoadingState('search', 'Analyse sémantique en cours...');
+                
+                try {
+                    // Appeler fonction originale
+                    const result = await originalSearch.apply(this, args);
+                    
+                    // Masquer loading state
+                    PerformanceOptimizer.hideLoadingState('search');
+                    
+                    console.log('[Perf] ✅ First search completed');
+                    PerformanceOptimizer.state.firstSearchOptimized = true;
+                    
+                    return result;
+                    
+                } catch (error) {
+                    PerformanceOptimizer.hideLoadingState('search');
+                    throw error;
+                }
+            } else {
+                // Recherches suivantes : appel normal
+                return await originalSearch.apply(this, args);
+            }
+        };
+    },
+    
+    // ========================================
+    // 4. COMPRESSION EMBEDDINGS CACHE
+    // ========================================
+    
+    /**
+     * Compresser les embeddings dans le cache pour réduire mémoire
+     * Float32Array → Float16 (approximation acceptable)
+     */
+    compressEmbedding(embedding) {
+        if (!this.config.compressionEnabled) return embedding;
+        
+        // Conversion Float32 → Float16 (approximation)
+        // Gain : 50% mémoire, perte précision : <1%
+        
+        // Pour simplification, on garde Float32 mais on pourrait
+        // utiliser une lib de compression ou quantization
+        
+        // TODO: Implémenter compression réelle si besoin
+        return embedding;
+    },
+    
+    // ========================================
+    // 5. LOADING STATES & FEEDBACK
+    // ========================================
+    
+    /**
+     * Afficher un état de chargement à l'utilisateur
+     */
+    showLoadingState(key, message) {
+        this.state.loadingStates.set(key, {
+            message,
+            startTime: Date.now()
+        });
+        
+        console.log(`[Perf] 📊 Loading: ${message}`);
+        
+        // Afficher toast si Utils disponible
+        if (typeof Utils !== 'undefined' && Utils.showToast) {
+            // Toast léger, non-intrusif
+            const toastEl = document.createElement('div');
+            toastEl.id = `loading-${key}`;
+            toastEl.className = 'loading-toast';
+            toastEl.innerHTML = `
+                <div class="spinner-border spinner-border-sm me-2" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                ${message}
+            `;
+            toastEl.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                z-index: 9999;
+                font-size: 14px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            `;
+            
+            document.body.appendChild(toastEl);
+        }
+    },
+    
+    /**
+     * Masquer un état de chargement
+     */
+    hideLoadingState(key) {
+        const loadingState = this.state.loadingStates.get(key);
+        
+        if (loadingState) {
+            const duration = Date.now() - loadingState.startTime;
+            console.log(`[Perf] ✅ Loading complete: ${loadingState.message} (${duration}ms)`);
+            
+            this.state.loadingStates.delete(key);
+        }
+        
+        // Retirer toast
+        const toastEl = document.getElementById(`loading-${key}`);
+        if (toastEl) {
+            toastEl.style.opacity = '0';
+            toastEl.style.transition = 'opacity 0.3s';
+            setTimeout(() => toastEl.remove(), 300);
+        }
+    },
+    
+    // ========================================
+    // 6. UTILITIES
+    // ========================================
+    
+    /**
+     * Sleep utility
+     */
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    },
+    
+    /**
+     * Get performance stats
+     */
+    getStats() {
+        return {
+            warmupComplete: this.state.warmupComplete,
+            preloadProgress: this.state.preloadProgress,
+            firstSearchOptimized: this.state.firstSearchOptimized,
+            activeLoadingStates: this.state.loadingStates.size,
+            config: this.config
+        };
+    },
+    
+    // ========================================
+    // 7. INITIALIZATION
+    // ========================================
+    
+    /**
+     * Initialiser toutes les optimisations
+     */
+    async init() {
+        console.log('[Perf] 🚀 Initializing Performance Optimizations...');
+        
+        try {
+            // 1. Hook interview start pour préchargement
+            this.hookInterviewStart();
+            
+            // 2. Optimiser première recherche
+            this.optimizeFirstSearch();
+            
+            // 3. Si messages déjà présents, warm-up immédiat
+            if (state.messages && state.messages.length > 0) {
+                console.log('[Perf] 📚 Existing messages detected, starting warm-up');
+                setTimeout(() => {
+                    this.startCacheWarmup();
+                }, 1000);
+            }
+            
+            console.log('[Perf] ✅ Performance Optimizations initialized');
+            
+        } catch (error) {
+            console.error('[Perf] ❌ Initialization failed:', error);
+        }
+    }
+};
+
+// Auto-initialize when DOM ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        PerformanceOptimizer.init();
+    });
+} else {
+    PerformanceOptimizer.init();
+}
+
+// Expose globally
+window.PerformanceOptimizer = PerformanceOptimizer;
+
+        
+        // ============================================================================
+        // UX ENHANCEMENTS v10.1 - LOADING STATES & FEEDBACK
+        // ============================================================================
+        
+        // ============================================================================
+// UX IMPROVEMENTS v10.1 - LOADING STATES & FEEDBACK
+// ============================================================================
+// Améliorations visuelles :
+// 1. Progress bar chargement USE
+// 2. Toast notifications améliorées
+// 3. Badge "USE actif"
+// 4. Spinner première recherche
+// 5. Skeleton screens
+// ============================================================================
+
+const UXEnhancements = {
+    
+    // ========================================
+    // 1. PROGRESS BAR CHARGEMENT USE
+    // ========================================
+    
+    /**
+     * Afficher progress bar pendant chargement USE
+     */
+    showUSELoadingProgress() {
+        // Créer container progress si n'existe pas
+        let progressContainer = document.getElementById('use-loading-progress');
+        
+        if (!progressContainer) {
+            progressContainer = document.createElement('div');
+            progressContainer.id = 'use-loading-progress';
+            progressContainer.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: rgba(0,0,0,0.1);
+                z-index: 10000;
+                display: none;
+            `;
+            
+            const progressBar = document.createElement('div');
+            progressBar.id = 'use-progress-bar';
+            progressBar.style.cssText = `
+                height: 100%;
+                width: 0%;
+                background: linear-gradient(90deg, #4CAF50, #8BC34A);
+                transition: width 0.3s ease;
+            `;
+            
+            progressContainer.appendChild(progressBar);
+            document.body.insertBefore(progressContainer, document.body.firstChild);
+        }
+        
+        // Animer progress bar
+        progressContainer.style.display = 'block';
+        const progressBar = document.getElementById('use-progress-bar');
+        
+        // Simuler progression (0% → 90% pendant chargement)
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 90) progress = 90;
+            
+            progressBar.style.width = progress + '%';
+            
+            // Si USE chargé, compléter à 100%
+            if (typeof SemanticEmbeddings !== 'undefined' && 
+                SemanticEmbeddings.state && 
+                SemanticEmbeddings.state.useLoaded) {
+                clearInterval(interval);
+                progressBar.style.width = '100%';
+                
+                // Masquer après 0.5s
+                setTimeout(() => {
+                    progressContainer.style.opacity = '0';
+                    progressContainer.style.transition = 'opacity 0.5s';
+                    setTimeout(() => {
+                        progressContainer.style.display = 'none';
+                        progressContainer.style.opacity = '1';
+                    }, 500);
+                }, 500);
+            }
+        }, 300);
+        
+        // Timeout sécurité 30s
+        setTimeout(() => {
+            clearInterval(interval);
+            if (progressContainer.style.display !== 'none') {
+                progressContainer.style.display = 'none';
+            }
+        }, 30000);
+    },
+    
+    // ========================================
+    // 2. BADGE "USE ACTIF"
+    // ========================================
+    
+    /**
+     * Afficher badge permanent "🧠 USE actif" quand chargé
+     */
+    showUSEActiveBadge() {
+        // Vérifier si déjà affiché
+        if (document.getElementById('use-active-badge')) return;
+        
+        const badge = document.createElement('div');
+        badge.id = 'use-active-badge';
+        badge.innerHTML = '🧠 Mémoire sémantique active';
+        badge.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideInRight 0.5s ease-out;
+            cursor: pointer;
+            transition: all 0.3s;
+        `;
+        
+        // Animation entrée
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Click pour afficher stats
+        badge.addEventListener('click', () => {
+            if (typeof SemanticEmbeddings !== 'undefined') {
+                const stats = SemanticEmbeddings.getStats();
+                console.log('📊 USE Stats:', stats);
+                
+                // Toast avec stats
+                if (typeof Utils !== 'undefined' && Utils.showToast) {
+                    Utils.showToast(
+                        `Cache: ${stats.cache.size} entrées | Hit rate: ${stats.cache.hitRate}%`, 
+                        'info'
+                    );
+                }
+            }
+        });
+        
+        // Hover effect
+        badge.addEventListener('mouseenter', () => {
+            badge.style.transform = 'scale(1.05)';
+            badge.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.5)';
+        });
+        
+        badge.addEventListener('mouseleave', () => {
+            badge.style.transform = 'scale(1)';
+            badge.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+        });
+        
+        document.body.appendChild(badge);
+    },
+    
+    // ========================================
+    // 3. SPINNER PREMIÈRE RECHERCHE
+    // ========================================
+    
+    /**
+     * Afficher spinner pendant première recherche sémantique
+     */
+    showSearchSpinner(message = 'Analyse sémantique en cours...') {
+        // Vérifier si déjà affiché
+        if (document.getElementById('search-spinner')) return;
+        
+        const spinner = document.createElement('div');
+        spinner.id = 'search-spinner';
+        spinner.innerHTML = `
+            <div class="spinner-container">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-text">${message}</div>
+            </div>
+        `;
+        spinner.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            z-index: 10000;
+            text-align: center;
+        `;
+        
+        // Style container
+        const style = document.createElement('style');
+        style.textContent = `
+            #search-spinner .spinner-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            #search-spinner .spinner-text {
+                color: #666;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            
+            #search-spinner .spinner-border {
+                width: 3rem;
+                height: 3rem;
+                border-width: 3px;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        document.body.appendChild(spinner);
+    },
+    
+    /**
+     * Masquer spinner recherche
+     */
+    hideSearchSpinner() {
+        const spinner = document.getElementById('search-spinner');
+        if (spinner) {
+            spinner.style.opacity = '0';
+            spinner.style.transition = 'opacity 0.3s';
+            setTimeout(() => spinner.remove(), 300);
+        }
+    },
+    
+    // ========================================
+    // 4. TOAST AMÉLIORÉS
+    // ========================================
+    
+    /**
+     * Toast amélioré avec icônes et couleurs
+     */
+    showEnhancedToast(message, type = 'info', duration = 3000) {
+        const icons = {
+            success: '✅',
+            error: '❌',
+            warning: '⚠️',
+            info: 'ℹ️'
+        };
+        
+        const colors = {
+            success: '#4CAF50',
+            error: '#F44336',
+            warning: '#FF9800',
+            info: '#2196F3'
+        };
+        
+        const toast = document.createElement('div');
+        toast.className = 'enhanced-toast';
+        toast.innerHTML = `
+            <span class="toast-icon">${icons[type] || icons.info}</span>
+            <span class="toast-message">${message}</span>
+        `;
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            color: #333;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            border-left: 4px solid ${colors[type] || colors.info};
+            animation: toastSlideUp 0.3s ease-out;
+        `;
+        
+        // Animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes toastSlideUp {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+            }
+            
+            .enhanced-toast .toast-icon {
+                font-size: 20px;
+            }
+            
+            .enhanced-toast .toast-message {
+                font-weight: 500;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        document.body.appendChild(toast);
+        
+        // Auto-remove
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s';
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    },
+    
+    // ========================================
+    // 5. BARRE PROGRESSION INTERVIEW
+    // ========================================
+    
+    /**
+     * Afficher barre progression interview (X/30 questions)
+     */
+    updateInterviewProgress(current, total = 30) {
+        let progressBar = document.getElementById('interview-progress-bar');
+        
+        if (!progressBar) {
+            // Créer barre progression
+            progressBar = document.createElement('div');
+            progressBar.id = 'interview-progress-bar';
+            progressBar.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: rgba(0,0,0,0.05);
+                z-index: 9998;
+            `;
+            
+            const progress = document.createElement('div');
+            progress.id = 'interview-progress-fill';
+            progress.style.cssText = `
+                height: 100%;
+                width: 0%;
+                background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+                transition: width 0.5s ease;
+            `;
+            
+            const label = document.createElement('div');
+            label.id = 'interview-progress-label';
+            label.style.cssText = `
+                position: absolute;
+                right: 20px;
+                top: 10px;
+                background: white;
+                padding: 4px 12px;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 600;
+                color: #667eea;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            `;
+            
+            progressBar.appendChild(progress);
+            progressBar.appendChild(label);
+            document.body.insertBefore(progressBar, document.body.firstChild);
+        }
+        
+        // Update
+        const percent = Math.round((current / total) * 100);
+        const progressFill = document.getElementById('interview-progress-fill');
+        const progressLabel = document.getElementById('interview-progress-label');
+        
+        if (progressFill) progressFill.style.width = percent + '%';
+        if (progressLabel) progressLabel.textContent = `${current}/${total} questions`;
+        
+        // Masquer quand terminé
+        if (current >= total) {
+            setTimeout(() => {
+                if (progressBar) {
+                    progressBar.style.opacity = '0';
+                    progressBar.style.transition = 'opacity 0.5s';
+                    setTimeout(() => progressBar.remove(), 500);
+                }
+            }, 2000);
+        }
+    },
+    
+    // ========================================
+    // INITIALIZATION
+    // ========================================
+    
+    /**
+     * Initialiser améliorations UX
+     */
+    init() {
+        console.log('[UX] 🎨 Initializing UX Enhancements...');
+        
+        // Afficher progress bar USE si en cours de chargement
+        if (typeof SemanticEmbeddings !== 'undefined') {
+            if (!SemanticEmbeddings.state.useLoaded) {
+                this.showUSELoadingProgress();
+            } else {
+                this.showUSEActiveBadge();
+            }
+            
+            // Observer chargement USE pour afficher badge
+            const checkUSELoaded = setInterval(() => {
+                if (SemanticEmbeddings.state.useLoaded) {
+                    clearInterval(checkUSELoaded);
+                    this.showUSEActiveBadge();
+                }
+            }, 500);
+            
+            // Timeout 30s
+            setTimeout(() => clearInterval(checkUSELoaded), 30000);
+        }
+        
+        console.log('[UX] ✅ UX Enhancements initialized');
+    }
+};
+
+// Auto-initialize
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        UXEnhancements.init();
+    });
+} else {
+    UXEnhancements.init();
+}
+
+// Expose globally
+window.UXEnhancements = UXEnhancements;
+
+        
+        </script>
     
     <!-- jsPDF for Psychological Report -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
