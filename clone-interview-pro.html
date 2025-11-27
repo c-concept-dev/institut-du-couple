@@ -968,6 +968,106 @@
             color: white;
         }
 
+        /* ============================================ */
+        /* MODULE 13: Intelligence & Mémoire Styles */
+        /* ============================================ */
+        
+        .intelligence-section {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        body.dark .intelligence-section {
+            background: #0f172a;
+        }
+
+        .intelligence-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
+        .memory-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .memory-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        body.dark .memory-stat {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .memory-label {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .memory-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .memory-unit {
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+
+        .tics-summary h5 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .tics-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            min-height: 2rem;
+        }
+
+        .tic-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.35rem 0.75rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .tic-badge .tic-freq {
+            font-size: 0.65rem;
+            opacity: 0.8;
+        }
+
+        .tics-status {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
         .revelations-toggle {
             position: fixed;
             right: 1rem;
@@ -1982,6 +2082,37 @@
                         <button class="concordance-btn secondary" id="diagnoseConcordanceBtn">
                             Diagnostic détaillé
                         </button>
+                    </div>
+                </div>
+
+                <!-- MODULE 13: Intelligence & Mémoire -->
+                <div class="intelligence-section" id="intelligenceSection" style="display: none;">
+                    <h4>Intelligence & Mémoire</h4>
+                    
+                    <div class="memory-summary">
+                        <div class="memory-stat">
+                            <span class="memory-label">Conversation</span>
+                            <span class="memory-value" id="memoryMessagesCount">0</span>
+                            <span class="memory-unit">messages</span>
+                        </div>
+                        <div class="memory-stat">
+                            <span class="memory-label">Topics explorés</span>
+                            <span class="memory-value" id="memoryTopicsCount">0</span>
+                        </div>
+                        <div class="memory-stat">
+                            <span class="memory-label">Humeur actuelle</span>
+                            <span class="memory-value" id="memoryMood">neutral</span>
+                        </div>
+                    </div>
+                    
+                    <div class="tics-summary" style="margin-top: 1rem;">
+                        <h5 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text);">Tics de langage appris</h5>
+                        <div class="tics-list" id="ticsList">
+                            <!-- Rempli dynamiquement -->
+                        </div>
+                        <div class="tics-status" id="ticsStatus" style="font-size: 0.8rem; color: var(--text-light); margin-top: 0.5rem;">
+                            Apprentissage en cours...
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3549,6 +3680,9 @@
             Paraverbal.analyzeMessage(message);
             Paraverbal.updateDisplay();
 
+            // MODULE 13: Store user message in Long-Term Memory
+            await LongTermMemory.store(message, 'user');
+
             addMessage('user', message);
             elements.inputArea.value = '';
             elements.inputArea.style.height = 'auto';
@@ -3571,13 +3705,33 @@
                 }
             }
 
-            const response = await sendToAPI(message);
+            // MODULE 13: Enrich prompt with memory context
+            let enrichedMessage = message;
+            if (state.responseCount > 5) {
+                const memoryEnrichment = await LongTermMemory.enrichPrompt(message, message);
+                if (memoryEnrichment.memoryUsed) {
+                    enrichedMessage = memoryEnrichment.prompt;
+                    console.log('🧠 Using memory context');
+                }
+            }
+
+            const response = await sendToAPI(enrichedMessage);
             if (response) {
+                // MODULE 13: Inject micro-expressions in response
+                let finalResponse = response;
+                if (state.responseCount > 10) {
+                    finalResponse = TextualMicroExpressions.inject(response);
+                    finalResponse = TextualMicroExpressions.addNaturalVariation(finalResponse);
+                }
+                
                 const messageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-                addMessage('assistant', response, messageId);
+                addMessage('assistant', finalResponse, messageId);
+                
+                // MODULE 13: Store assistant response in Long-Term Memory
+                await LongTermMemory.store(finalResponse, 'assistant', { messageId });
                 
                 // Feedback System: Check if should ask feedback
-                const feedbackDecision = await FeedbackSystem.shouldAskFeedback({ id: messageId, content: response });
+                const feedbackDecision = await FeedbackSystem.shouldAskFeedback({ id: messageId, content: finalResponse });
                 if (feedbackDecision.should) {
                     setTimeout(() => {
                         FeedbackSystem.askConversationalFeedback(messageId);
@@ -3621,6 +3775,24 @@
                             );
                         }
                     }, 1000);
+                }
+                
+                // MODULE 13: Learn tics every 15 messages
+                if (state.responseCount > 15 && state.responseCount % 15 === 0) {
+                    const userMessages = state.messages.filter(m => m.role === 'user');
+                    const learned = TextualMicroExpressions.learn(userMessages);
+                    if (learned.length > 0) {
+                        console.log(`🎯 Learned ${learned.length} personal tics`);
+                        // Update intelligence display
+                        updateIntelligenceDisplay();
+                    }
+                }
+                
+                // MODULE 13: Update intelligence display every 10 messages
+                if (state.responseCount >= 10 && state.responseCount % 10 === 0) {
+                    setTimeout(() => {
+                        updateIntelligenceDisplay();
+                    }, 1500);
                 }
             }
         }
@@ -5390,6 +5562,902 @@
         };
 
         // ============================================
+        // MODULE 13: INTELLIGENCE & MÉMOIRE
+        // ============================================
+        
+        // ════════════════════════════════════════════
+        // MÉMOIRE CONVERSATIONNELLE LONG TERME
+        // ════════════════════════════════════════════
+        const LongTermMemory = {
+            
+            context: {
+                topics: [],              // { topic, mentions, lastMentioned, sentiment }
+                preferences: {},         // { category: value }
+                mood: 'neutral',         // current, average, history
+                temporalMarkers: [],     // { event, timestamp, context }
+                relationships: {},       // { entity: relationship }
+                sharedExperiences: [],   // { experience, emotional_valence, timestamp }
+                conversationStyle: {},   // patterns détectés
+                personalHistory: []      // événements marquants mentionnés
+            },
+            
+            storage: {
+                messages: [],            // Tous les messages avec metadata enrichie
+                semanticIndex: {},       // Index pour recherche rapide
+                topicClusters: []        // Clustering automatique des sujets
+            },
+            
+            // ════════════════════════════════════════
+            // EXTRACTION & STOCKAGE
+            // ════════════════════════════════════════
+            
+            // Stocker message avec analyse enrichie
+            async store(message, role, metadata = {}) {
+                const enrichedMessage = {
+                    id: metadata.messageId || `msg-${Date.now()}`,
+                    role: role,
+                    content: message,
+                    timestamp: Date.now(),
+                    analysis: await this.analyzeMessage(message, role),
+                    context: { ...this.getCurrentContext() }
+                };
+                
+                this.storage.messages.push(enrichedMessage);
+                
+                // Mettre à jour contexte
+                await this.updateContext(enrichedMessage);
+                
+                // Indexer sémantiquement
+                await this.indexMessage(enrichedMessage);
+                
+                // Clustering si nécessaire
+                if (this.storage.messages.length % 10 === 0) {
+                    await this.performClustering();
+                }
+                
+                console.log('🧠 Memory stored:', enrichedMessage.id);
+            },
+            
+            // Analyser message
+            async analyzeMessage(message, role) {
+                const analysis = {
+                    topics: this.extractTopics(message),
+                    preferences: this.extractPreferences(message),
+                    mood: this.detectMood(message),
+                    temporalMarkers: this.extractTemporalMarkers(message),
+                    entities: this.extractEntities(message),
+                    sentiment: this.analyzeSentiment(message),
+                    questionType: role === 'assistant' ? this.classifyQuestion(message) : null,
+                    depth: message.split(' ').length,
+                    emotionalIntensity: this.measureEmotionalIntensity(message)
+                };
+                
+                return analysis;
+            },
+            
+            // Extraire topics
+            extractTopics(text) {
+                const topics = [];
+                const lowerText = text.toLowerCase();
+                
+                // Dictionnaire de topics clés
+                const topicKeywords = {
+                    work: ['travail', 'job', 'carrière', 'bureau', 'collègue', 'projet', 'entreprise', 'profession'],
+                    family: ['famille', 'parent', 'enfant', 'frère', 'sœur', 'mari', 'femme', 'conjoint'],
+                    emotions: ['sentiment', 'émotion', 'ressenti', 'tristesse', 'joie', 'colère', 'anxiété'],
+                    health: ['santé', 'maladie', 'médecin', 'bien-être', 'stress', 'fatigue', 'énergie'],
+                    relationships: ['relation', 'couple', 'ami', 'amour', 'conflit', 'communication'],
+                    hobbies: ['loisir', 'passion', 'sport', 'musique', 'lecture', 'voyage', 'art'],
+                    values: ['valeur', 'principe', 'croyance', 'éthique', 'moral', 'important'],
+                    future: ['futur', 'projet', 'objectif', 'rêve', 'ambition', 'plan', 'espoir'],
+                    past: ['passé', 'enfance', 'histoire', 'souvenir', 'avant', 'autrefois']
+                };
+                
+                // Détecter topics
+                for (const [topic, keywords] of Object.entries(topicKeywords)) {
+                    const matches = keywords.filter(kw => lowerText.includes(kw));
+                    if (matches.length > 0) {
+                        topics.push({
+                            name: topic,
+                            keywords: matches,
+                            confidence: matches.length / keywords.length
+                        });
+                    }
+                }
+                
+                return topics;
+            },
+            
+            // Extraire préférences
+            extractPreferences(text) {
+                const preferences = {};
+                const lowerText = text.toLowerCase();
+                
+                // Patterns de préférences
+                const patterns = [
+                    { regex: /j'aime (.*?)[\.,\!]/gi, category: 'likes' },
+                    { regex: /je préfère (.*?)[\.,\!]/gi, category: 'preferences' },
+                    { regex: /je déteste (.*?)[\.,\!]/gi, category: 'dislikes' },
+                    { regex: /important pour moi (.*?)[\.,\!]/gi, category: 'values' }
+                ];
+                
+                patterns.forEach(pattern => {
+                    const matches = [...text.matchAll(pattern.regex)];
+                    if (matches.length > 0) {
+                        preferences[pattern.category] = matches.map(m => m[1].trim());
+                    }
+                });
+                
+                return preferences;
+            },
+            
+            // Détecter humeur
+            detectMood(text) {
+                const lowerText = text.toLowerCase();
+                
+                const moodIndicators = {
+                    happy: ['content', 'heureux', 'joyeux', 'super', 'génial', 'satisfait', 'ravi'],
+                    sad: ['triste', 'malheureux', 'déçu', 'déprimé', 'morose'],
+                    anxious: ['anxieux', 'inquiet', 'stressé', 'nerveux', 'tendu'],
+                    calm: ['calme', 'serein', 'apaisé', 'tranquille', 'détendu'],
+                    angry: ['en colère', 'furieux', 'énervé', 'agacé', 'irrité'],
+                    excited: ['excité', 'enthousiaste', 'motivé', 'impatient']
+                };
+                
+                let maxScore = 0;
+                let detectedMood = 'neutral';
+                
+                for (const [mood, indicators] of Object.entries(moodIndicators)) {
+                    const score = indicators.filter(ind => lowerText.includes(ind)).length;
+                    if (score > maxScore) {
+                        maxScore = score;
+                        detectedMood = mood;
+                    }
+                }
+                
+                return {
+                    primary: detectedMood,
+                    confidence: maxScore > 0 ? maxScore / 3 : 0.5,
+                    timestamp: Date.now()
+                };
+            },
+            
+            // Extraire marqueurs temporels
+            extractTemporalMarkers(text) {
+                const markers = [];
+                const lowerText = text.toLowerCase();
+                
+                const temporalPatterns = [
+                    { pattern: /hier/gi, type: 'past', offset: -1 },
+                    { pattern: /aujourd'hui/gi, type: 'present', offset: 0 },
+                    { pattern: /demain/gi, type: 'future', offset: 1 },
+                    { pattern: /la semaine dernière/gi, type: 'past', offset: -7 },
+                    { pattern: /le mois dernier/gi, type: 'past', offset: -30 },
+                    { pattern: /récemment/gi, type: 'recent_past', offset: -7 },
+                    { pattern: /bientôt/gi, type: 'near_future', offset: 7 },
+                    { pattern: /dans le passé/gi, type: 'distant_past', offset: null }
+                ];
+                
+                temporalPatterns.forEach(tp => {
+                    if (tp.pattern.test(text)) {
+                        markers.push({
+                            type: tp.type,
+                            offset: tp.offset,
+                            context: text
+                        });
+                    }
+                });
+                
+                return markers;
+            },
+            
+            // Extraire entités (personnes, lieux)
+            extractEntities(text) {
+                const entities = {
+                    people: [],
+                    places: [],
+                    organizations: []
+                };
+                
+                // Simple regex pour noms propres (majuscule)
+                const properNouns = text.match(/\b[A-Z][a-zàâäéèêëïîôùûüç]+\b/g) || [];
+                
+                // Classification basique
+                properNouns.forEach(noun => {
+                    // Heuristique simple
+                    if (text.toLowerCase().includes(`${noun.toLowerCase()} et moi`) ||
+                        text.toLowerCase().includes(`avec ${noun.toLowerCase()}`)) {
+                        entities.people.push(noun);
+                    }
+                });
+                
+                return entities;
+            },
+            
+            // Analyser sentiment
+            analyzeSentiment(text) {
+                const lowerText = text.toLowerCase();
+                
+                const positiveWords = ['bon', 'bien', 'super', 'génial', 'excellent', 'magnifique', 'parfait', 'heureux'];
+                const negativeWords = ['mauvais', 'mal', 'terrible', 'horrible', 'nul', 'triste', 'difficile', 'dur'];
+                
+                const positiveCount = positiveWords.filter(w => lowerText.includes(w)).length;
+                const negativeCount = negativeWords.filter(w => lowerText.includes(w)).length;
+                
+                const score = (positiveCount - negativeCount) / Math.max(positiveCount + negativeCount, 1);
+                
+                return {
+                    score: score,  // -1 to 1
+                    valence: score > 0.3 ? 'positive' : score < -0.3 ? 'negative' : 'neutral'
+                };
+            },
+            
+            // Classifier type de question (si assistant)
+            classifyQuestion(text) {
+                const lowerText = text.toLowerCase();
+                
+                if (lowerText.includes('pourquoi')) return 'why';
+                if (lowerText.includes('comment')) return 'how';
+                if (lowerText.includes('quand')) return 'when';
+                if (lowerText.includes('où')) return 'where';
+                if (lowerText.includes('qui')) return 'who';
+                if (lowerText.includes('qu\'est-ce que') || lowerText.includes('que penses-tu')) return 'what';
+                if (lowerText.includes('peux-tu') || lowerText.includes('pourrais-tu')) return 'request';
+                
+                return 'open';
+            },
+            
+            // Mesurer intensité émotionnelle
+            measureEmotionalIntensity(text) {
+                const indicators = {
+                    exclamation: (text.match(/!/g) || []).length,
+                    capitals: (text.match(/[A-Z]{2,}/g) || []).length,
+                    intensifiers: (text.match(/très|vraiment|trop|extrêmement|absolument/gi) || []).length,
+                    repetition: (text.match(/(\w+)\1+/g) || []).length
+                };
+                
+                const score = (
+                    indicators.exclamation * 2 +
+                    indicators.capitals * 3 +
+                    indicators.intensifiers * 1.5 +
+                    indicators.repetition * 2
+                ) / 10;
+                
+                return Math.min(10, Math.max(0, score));
+            },
+            
+            // Mettre à jour contexte global
+            async updateContext(enrichedMessage) {
+                const analysis = enrichedMessage.analysis;
+                
+                // Update topics
+                analysis.topics.forEach(topic => {
+                    const existing = this.context.topics.find(t => t.topic === topic.name);
+                    if (existing) {
+                        existing.mentions++;
+                        existing.lastMentioned = Date.now();
+                    } else {
+                        this.context.topics.push({
+                            topic: topic.name,
+                            mentions: 1,
+                            lastMentioned: Date.now(),
+                            sentiment: analysis.sentiment.valence
+                        });
+                    }
+                });
+                
+                // Update preferences
+                Object.entries(analysis.preferences).forEach(([category, values]) => {
+                    if (!this.context.preferences[category]) {
+                        this.context.preferences[category] = [];
+                    }
+                    this.context.preferences[category].push(...values);
+                });
+                
+                // Update mood (moving average)
+                const currentMood = analysis.mood;
+                if (this.context.mood === 'neutral') {
+                    this.context.mood = currentMood.primary;
+                } else {
+                    // Moyenne pondérée (70% ancien, 30% nouveau)
+                    // Simplifié : garde le plus récent si confiance > 0.6
+                    if (currentMood.confidence > 0.6) {
+                        this.context.mood = currentMood.primary;
+                    }
+                }
+                
+                // Add temporal markers
+                if (analysis.temporalMarkers.length > 0) {
+                    this.context.temporalMarkers.push(...analysis.temporalMarkers.map(tm => ({
+                        ...tm,
+                        messageId: enrichedMessage.id,
+                        timestamp: Date.now()
+                    })));
+                }
+            },
+            
+            // Indexer message pour recherche
+            async indexMessage(enrichedMessage) {
+                const analysis = enrichedMessage.analysis;
+                
+                // Indexer par topics
+                analysis.topics.forEach(topic => {
+                    if (!this.storage.semanticIndex[topic.name]) {
+                        this.storage.semanticIndex[topic.name] = [];
+                    }
+                    this.storage.semanticIndex[topic.name].push(enrichedMessage.id);
+                });
+                
+                // Indexer par sentiment
+                const sentimentKey = `sentiment_${analysis.sentiment.valence}`;
+                if (!this.storage.semanticIndex[sentimentKey]) {
+                    this.storage.semanticIndex[sentimentKey] = [];
+                }
+                this.storage.semanticIndex[sentimentKey].push(enrichedMessage.id);
+            },
+            
+            // Clustering des sujets
+            async performClustering() {
+                // Simple clustering par co-occurrence de topics
+                const clusters = {};
+                
+                this.storage.messages.forEach(msg => {
+                    const topics = msg.analysis.topics.map(t => t.name);
+                    if (topics.length > 1) {
+                        const key = topics.sort().join('_');
+                        if (!clusters[key]) {
+                            clusters[key] = {
+                                topics: topics,
+                                messages: [],
+                                frequency: 0
+                            };
+                        }
+                        clusters[key].messages.push(msg.id);
+                        clusters[key].frequency++;
+                    }
+                });
+                
+                this.storage.topicClusters = Object.values(clusters)
+                    .filter(c => c.frequency > 1)
+                    .sort((a, b) => b.frequency - a.frequency);
+                
+                console.log('🔗 Topic clusters:', this.storage.topicClusters.length);
+            },
+            
+            // ════════════════════════════════════════
+            // RAPPEL & RECHERCHE
+            // ════════════════════════════════════════
+            
+            // Rappeler contexte pertinent pour message actuel
+            async recall(currentMessage) {
+                const relevantMemories = [];
+                
+                // Analyse du message actuel
+                const currentAnalysis = await this.analyzeMessage(currentMessage, 'user');
+                
+                // 1. Recherche par topics
+                const topicMatches = await this.searchByTopics(currentAnalysis.topics);
+                relevantMemories.push(...topicMatches);
+                
+                // 2. Recherche par sentiment similaire
+                const sentimentMatches = await this.searchBySentiment(currentAnalysis.sentiment);
+                relevantMemories.push(...sentimentMatches);
+                
+                // 3. Recherche par marqueurs temporels
+                if (currentAnalysis.temporalMarkers.length > 0) {
+                    const temporalMatches = await this.searchByTemporal(currentAnalysis.temporalMarkers);
+                    relevantMemories.push(...temporalMatches);
+                }
+                
+                // Déduplication et scoring
+                const uniqueMemories = this.deduplicateAndScore(relevantMemories);
+                
+                // Top 3 plus pertinents
+                const top3 = uniqueMemories.slice(0, 3);
+                
+                return {
+                    memories: top3,
+                    shouldMention: top3.length > 0 && top3[0].score > 0.7,
+                    context: this.formatContext(top3)
+                };
+            },
+            
+            // Recherche par topics
+            async searchByTopics(topics) {
+                const matches = [];
+                
+                topics.forEach(topic => {
+                    const messageIds = this.storage.semanticIndex[topic.name] || [];
+                    messageIds.forEach(id => {
+                        const message = this.storage.messages.find(m => m.id === id);
+                        if (message) {
+                            matches.push({
+                                message: message,
+                                score: topic.confidence * 0.8,
+                                reason: 'topic_match',
+                                detail: topic.name
+                            });
+                        }
+                    });
+                });
+                
+                return matches;
+            },
+            
+            // Recherche par sentiment
+            async searchBySentiment(sentiment) {
+                const matches = [];
+                const sentimentKey = `sentiment_${sentiment.valence}`;
+                const messageIds = this.storage.semanticIndex[sentimentKey] || [];
+                
+                messageIds.forEach(id => {
+                    const message = this.storage.messages.find(m => m.id === id);
+                    if (message) {
+                        matches.push({
+                            message: message,
+                            score: 0.5,
+                            reason: 'sentiment_match',
+                            detail: sentiment.valence
+                        });
+                    }
+                });
+                
+                return matches.slice(-5); // Derniers 5 avec sentiment similaire
+            },
+            
+            // Recherche par marqueurs temporels
+            async searchByTemporal(markers) {
+                const matches = [];
+                
+                markers.forEach(marker => {
+                    const relevantMessages = this.context.temporalMarkers
+                        .filter(tm => tm.type === marker.type)
+                        .map(tm => tm.messageId);
+                    
+                    relevantMessages.forEach(id => {
+                        const message = this.storage.messages.find(m => m.id === id);
+                        if (message) {
+                            matches.push({
+                                message: message,
+                                score: 0.6,
+                                reason: 'temporal_match',
+                                detail: marker.type
+                            });
+                        }
+                    });
+                });
+                
+                return matches;
+            },
+            
+            // Déduplication et scoring
+            deduplicateAndScore(memories) {
+                const messageScores = {};
+                
+                memories.forEach(mem => {
+                    const id = mem.message.id;
+                    if (!messageScores[id]) {
+                        messageScores[id] = {
+                            message: mem.message,
+                            score: 0,
+                            reasons: []
+                        };
+                    }
+                    messageScores[id].score += mem.score;
+                    messageScores[id].reasons.push({ reason: mem.reason, detail: mem.detail });
+                });
+                
+                // Bonus pour messages récents
+                Object.values(messageScores).forEach(ms => {
+                    const age = Date.now() - ms.message.timestamp;
+                    const recencyBonus = Math.max(0, 1 - (age / (24 * 60 * 60 * 1000))); // Decay sur 24h
+                    ms.score += recencyBonus * 0.2;
+                });
+                
+                // Trier par score
+                return Object.values(messageScores)
+                    .sort((a, b) => b.score - a.score);
+            },
+            
+            // Formatter contexte pour enrichissement
+            formatContext(memories) {
+                if (memories.length === 0) return '';
+                
+                let context = '\n\n[Contexte de conversation pertinent]:\n';
+                
+                memories.forEach((mem, i) => {
+                    const msg = mem.message;
+                    const timeAgo = this.formatTimeAgo(Date.now() - msg.timestamp);
+                    const content = msg.content.substring(0, 100) + (msg.content.length > 100 ? '...' : '');
+                    
+                    context += `${i + 1}. Il y a ${timeAgo}, ${msg.role === 'user' ? 'tu as dit' : 'j\'ai dit'}: "${content}"\n`;
+                    if (msg.analysis.sentiment.valence !== 'neutral') {
+                        context += `   (Ton ${msg.analysis.sentiment.valence})\n`;
+                    }
+                });
+                
+                return context;
+            },
+            
+            // Formatter temps écoulé
+            formatTimeAgo(ms) {
+                const minutes = Math.floor(ms / 60000);
+                const hours = Math.floor(minutes / 60);
+                const days = Math.floor(hours / 24);
+                
+                if (days > 0) return `${days} jour${days > 1 ? 's' : ''}`;
+                if (hours > 0) return `${hours} heure${hours > 1 ? 's' : ''}`;
+                if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+                return 'quelques secondes';
+            },
+            
+            // ════════════════════════════════════════
+            // ENRICHISSEMENT PROMPTS
+            // ════════════════════════════════════════
+            
+            // Enrichir prompt avec mémoire
+            async enrichPrompt(userMessage, basePrompt) {
+                const recall = await this.recall(userMessage);
+                
+                if (recall.shouldMention && recall.context) {
+                    // Ajouter contexte pertinent au prompt
+                    const enrichedPrompt = basePrompt + recall.context;
+                    
+                    console.log('🧠 Prompt enriched with memory');
+                    return {
+                        prompt: enrichedPrompt,
+                        memoryUsed: true,
+                        memoriesCount: recall.memories.length
+                    };
+                }
+                
+                return {
+                    prompt: basePrompt,
+                    memoryUsed: false,
+                    memoriesCount: 0
+                };
+            },
+            
+            // Obtenir contexte actuel complet
+            getCurrentContext() {
+                return {
+                    topics: [...this.context.topics],
+                    preferences: { ...this.context.preferences },
+                    mood: this.context.mood,
+                    recentActivity: this.storage.messages.slice(-5).map(m => ({
+                        id: m.id,
+                        role: m.role,
+                        topics: m.analysis.topics.map(t => t.name)
+                    }))
+                };
+            },
+            
+            // Export pour JSON
+            getReport() {
+                return {
+                    context: this.context,
+                    statistics: {
+                        totalMessages: this.storage.messages.length,
+                        topTopics: this.context.topics
+                            .sort((a, b) => b.mentions - a.mentions)
+                            .slice(0, 5)
+                            .map(t => ({ topic: t.topic, mentions: t.mentions })),
+                        averageMood: this.context.mood,
+                        topicClusters: this.storage.topicClusters.slice(0, 3),
+                        conversationDepth: this.calculateConversationDepth()
+                    }
+                };
+            },
+            
+            // Calculer profondeur conversation
+            calculateConversationDepth() {
+                if (this.storage.messages.length === 0) return 0;
+                
+                const avgLength = this.storage.messages.reduce((sum, m) => sum + m.analysis.depth, 0) / this.storage.messages.length;
+                const topicDiversity = this.context.topics.length;
+                const emotionalRange = new Set(this.storage.messages.map(m => m.analysis.sentiment.valence)).size;
+                
+                return {
+                    averageMessageLength: avgLength.toFixed(1),
+                    topicDiversity: topicDiversity,
+                    emotionalRange: emotionalRange,
+                    score: Math.min(10, (avgLength / 20 + topicDiversity / 5 + emotionalRange / 2))
+                };
+            }
+        };
+
+        // ════════════════════════════════════════════
+        // MICRO-EXPRESSIONS TEXTUELLES
+        // ════════════════════════════════════════════
+        const TextualMicroExpressions = {
+            
+            personalTics: {
+                // Tics de langage appris automatiquement
+                learned: [],
+                
+                // Tics par défaut (peuvent être overridés)
+                default: [
+                    { text: "tu vois", position: "middle", frequency: 0.15 },
+                    { text: "en fait", position: "start", frequency: 0.20 },
+                    { text: "du coup", position: "middle", frequency: 0.15 },
+                    { text: "écoute", position: "start", frequency: 0.10 },
+                    { text: "alors là", position: "start", frequency: 0.08 }
+                ]
+            },
+            
+            patterns: {
+                // Patterns d'hésitation
+                hesitation: ["euh", "hum", "enfin", "je veux dire", "comment dire"],
+                
+                // Patterns d'emphase
+                emphasis: ["vraiment", "carrément", "absolument", "totalement"],
+                
+                // Patterns de transition
+                transition: ["donc", "alors", "bon", "maintenant", "ensuite"],
+                
+                // Patterns conversationnels
+                conversational: ["tu sais quoi", "attends", "tiens", "regarde"]
+            },
+            
+            // ════════════════════════════════════════
+            // APPRENTISSAGE AUTOMATIQUE
+            // ════════════════════════════════════════
+            
+            // Apprendre des messages utilisateur
+            learn(userMessages) {
+                const frequencyMap = {};
+                const totalMessages = userMessages.length;
+                
+                // Patterns à chercher (2-3 mots)
+                const targetPatterns = [
+                    /\b(tu (vois|sais)|en fait|du coup|donc là|écoute|bon alors|attends|tiens)\b/gi,
+                    /\b(franchement|honnêtement|sincèrement|clairement)\b/gi,
+                    /\b(genre|style|comme|façon)\b/gi
+                ];
+                
+                userMessages.forEach(msg => {
+                    const text = msg.content.toLowerCase();
+                    
+                    targetPatterns.forEach(pattern => {
+                        const matches = [...text.matchAll(pattern)];
+                        matches.forEach(match => {
+                            const tic = match[0].trim();
+                            frequencyMap[tic] = (frequencyMap[tic] || 0) + 1;
+                        });
+                    });
+                });
+                
+                // Ne garder que les tics fréquents (> 10% des messages)
+                const threshold = Math.max(3, totalMessages * 0.1);
+                const learnedTics = [];
+                
+                Object.entries(frequencyMap).forEach(([tic, count]) => {
+                    if (count >= threshold) {
+                        learnedTics.push({
+                            text: tic,
+                            position: this.determinePosition(tic),
+                            frequency: count / totalMessages,
+                            confidence: Math.min(1, count / (threshold * 2))
+                        });
+                    }
+                });
+                
+                // Mettre à jour les tics appris
+                this.personalTics.learned = learnedTics
+                    .sort((a, b) => b.frequency - a.frequency)
+                    .slice(0, 8); // Top 8
+                
+                console.log('🎯 Learned tics:', this.personalTics.learned.length);
+                
+                return this.personalTics.learned;
+            },
+            
+            // Déterminer position préférée du tic
+            determinePosition(tic) {
+                // Heuristique basique
+                const startWords = ['écoute', 'bon', 'alors', 'franchement', 'honnêtement', 'clairement'];
+                const middleWords = ['tu vois', 'tu sais', 'en fait', 'du coup', 'genre'];
+                
+                if (startWords.some(w => tic.includes(w))) return 'start';
+                if (middleWords.some(w => tic.includes(w))) return 'middle';
+                
+                return 'flexible';
+            },
+            
+            // ════════════════════════════════════════
+            // INJECTION NATURELLE
+            // ════════════════════════════════════════
+            
+            // Injecter tics dans réponse
+            inject(response) {
+                // Combine learned + default
+                const allTics = [...this.personalTics.learned, ...this.personalTics.default];
+                
+                if (allTics.length === 0) return response;
+                
+                // Probabilité d'injection (30%)
+                if (Math.random() > 0.3) return response;
+                
+                // Choisir un tic aléatoire pondéré par fréquence
+                const tic = this.selectWeightedTic(allTics);
+                
+                if (!tic) return response;
+                
+                // Injecter selon position
+                const injected = this.injectAtPosition(response, tic);
+                
+                console.log(`💬 Tic injected: "${tic.text}"`);
+                
+                return injected;
+            },
+            
+            // Sélectionner tic pondéré
+            selectWeightedTic(tics) {
+                const totalWeight = tics.reduce((sum, t) => sum + (t.frequency || 0.15), 0);
+                let random = Math.random() * totalWeight;
+                
+                for (const tic of tics) {
+                    random -= (tic.frequency || 0.15);
+                    if (random <= 0) return tic;
+                }
+                
+                return tics[0]; // Fallback
+            },
+            
+            // Injecter à la position appropriée
+            injectAtPosition(response, tic) {
+                const sentences = response.split(/([.!?]+\s+)/);
+                
+                if (sentences.length < 2) {
+                    // Réponse courte, injecter au début
+                    return `${this.capitalize(tic.text)}, ${response.charAt(0).toLowerCase()}${response.slice(1)}`;
+                }
+                
+                switch (tic.position) {
+                    case 'start':
+                        // Au début de la réponse
+                        return `${this.capitalize(tic.text)}, ${response.charAt(0).toLowerCase()}${response.slice(1)}`;
+                    
+                    case 'middle':
+                        // Au milieu (après 1ère ou 2ème phrase)
+                        const insertIndex = sentences.length > 4 ? 2 : 1;
+                        let position = 0;
+                        for (let i = 0; i < insertIndex * 2; i++) {
+                            position += sentences[i].length;
+                        }
+                        return response.slice(0, position) + ` ${tic.text}, ` + response.slice(position);
+                    
+                    case 'flexible':
+                    default:
+                        // Aléatoire début ou milieu
+                        return Math.random() < 0.5
+                            ? this.injectAtPosition(response, { ...tic, position: 'start' })
+                            : this.injectAtPosition(response, { ...tic, position: 'middle' });
+                }
+            },
+            
+            // Capitaliser première lettre
+            capitalize(text) {
+                return text.charAt(0).toUpperCase() + text.slice(1);
+            },
+            
+            // ════════════════════════════════════════
+            // VARIATION & NATUREL
+            // ════════════════════════════════════════
+            
+            // Ajouter variation naturelle
+            addNaturalVariation(response) {
+                // Éviter répétitions robotiques
+                // Exemple: "Je pense que" → "Il me semble que" / "À mon avis"
+                
+                const variations = {
+                    "je pense que": ["il me semble que", "à mon avis", "je crois que", "je dirais que"],
+                    "je crois que": ["je pense que", "il me semble que", "j'ai l'impression que"],
+                    "c'est intéressant": ["c'est fascinant", "c'est captivant", "c'est pertinent"],
+                    "par exemple": ["comme", "notamment", "ainsi", "prenons le cas de"]
+                };
+                
+                let varied = response;
+                
+                Object.entries(variations).forEach(([original, alternatives]) => {
+                    const regex = new RegExp(original, 'gi');
+                    if (regex.test(varied) && Math.random() < 0.4) {
+                        const alternative = alternatives[Math.floor(Math.random() * alternatives.length)];
+                        varied = varied.replace(regex, alternative);
+                    }
+                });
+                
+                return varied;
+            },
+            
+            // Export pour rapport
+            getReport() {
+                return {
+                    personalTics: {
+                        learned: this.personalTics.learned,
+                        learnedCount: this.personalTics.learned.length,
+                        defaultUsed: this.personalTics.default.length
+                    },
+                    patterns: this.patterns,
+                    statistics: {
+                        totalTicsAvailable: this.personalTics.learned.length + this.personalTics.default.length,
+                        injectionRate: 0.3,
+                        topTics: this.personalTics.learned.slice(0, 5)
+                    }
+                };
+            }
+        };
+
+        // ============================================
+        // MODULE 13: UPDATE DISPLAY
+        // ============================================
+        
+        function updateIntelligenceDisplay() {
+            const intelligenceSection = document.getElementById('intelligenceSection');
+            if (!intelligenceSection) return;
+            
+            // Show section after 10 messages
+            if (state.responseCount >= 10) {
+                intelligenceSection.style.display = 'block';
+            }
+            
+            // Update memory stats
+            const memoryMessagesCount = document.getElementById('memoryMessagesCount');
+            const memoryTopicsCount = document.getElementById('memoryTopicsCount');
+            const memoryMood = document.getElementById('memoryMood');
+            
+            if (memoryMessagesCount) {
+                memoryMessagesCount.textContent = LongTermMemory.storage.messages.length;
+            }
+            
+            if (memoryTopicsCount) {
+                memoryTopicsCount.textContent = LongTermMemory.context.topics.length;
+            }
+            
+            if (memoryMood) {
+                const mood = LongTermMemory.context.mood;
+                const moodEmojis = {
+                    happy: '😊',
+                    sad: '😔',
+                    anxious: '😰',
+                    calm: '😌',
+                    angry: '😠',
+                    excited: '🤩',
+                    neutral: '😐'
+                };
+                memoryMood.textContent = `${moodEmojis[mood] || '😐'} ${mood}`;
+            }
+            
+            // Update tics
+            const ticsList = document.getElementById('ticsList');
+            const ticsStatus = document.getElementById('ticsStatus');
+            
+            if (ticsList && TextualMicroExpressions.personalTics.learned.length > 0) {
+                ticsList.innerHTML = '';
+                
+                TextualMicroExpressions.personalTics.learned.slice(0, 8).forEach(tic => {
+                    const badge = document.createElement('div');
+                    badge.className = 'tic-badge';
+                    badge.innerHTML = `
+                        "${tic.text}"
+                        <span class="tic-freq">${(tic.frequency * 100).toFixed(0)}%</span>
+                    `;
+                    ticsList.appendChild(badge);
+                });
+                
+                if (ticsStatus) {
+                    ticsStatus.textContent = `${TextualMicroExpressions.personalTics.learned.length} tic${TextualMicroExpressions.personalTics.learned.length > 1 ? 's' : ''} appris`;
+                }
+            } else if (ticsStatus) {
+                if (state.responseCount < 15) {
+                    ticsStatus.textContent = 'Apprentissage en cours... (15+ messages nécessaires)';
+                } else {
+                    ticsStatus.textContent = 'Aucun tic récurrent détecté';
+                }
+            }
+        }
+
+        // ============================================
         // INITIALIZATION
         // ============================================
         async function init() {
@@ -5739,6 +6807,34 @@
                             ? FeedbackSystem.feedbacks.reduce((sum, f) => sum + f.score, 0) / FeedbackSystem.feedbacks.length
                             : null,
                         feedbacks: FeedbackSystem.feedbacks
+                    },
+                    longTermMemory: {
+                        context: LongTermMemory.context,
+                        statistics: {
+                            totalMessages: LongTermMemory.storage.messages.length,
+                            topTopics: LongTermMemory.context.topics
+                                .sort((a, b) => b.mentions - a.mentions)
+                                .slice(0, 5)
+                                .map(t => ({ topic: t.topic, mentions: t.mentions })),
+                            currentMood: LongTermMemory.context.mood,
+                            topicClusters: LongTermMemory.storage.topicClusters.slice(0, 3),
+                            conversationDepth: LongTermMemory.calculateConversationDepth()
+                        },
+                        report: LongTermMemory.getReport()
+                    },
+                    textualMicroExpressions: {
+                        personalTics: {
+                            learned: TextualMicroExpressions.personalTics.learned,
+                            default: TextualMicroExpressions.personalTics.default
+                        },
+                        statistics: {
+                            totalTicsAvailable: TextualMicroExpressions.personalTics.learned.length + 
+                                               TextualMicroExpressions.personalTics.default.length,
+                            learnedCount: TextualMicroExpressions.personalTics.learned.length,
+                            injectionRate: 0.3,
+                            topLearned: TextualMicroExpressions.personalTics.learned.slice(0, 5)
+                        },
+                        report: TextualMicroExpressions.getReport()
                     }
                 };
 
