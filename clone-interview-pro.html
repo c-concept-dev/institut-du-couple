@@ -733,6 +733,241 @@
             color: var(--primary);
         }
 
+        /* Concordance Dashboard Styles */
+        .concordance-section {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        body.dark .concordance-section {
+            background: #0f172a;
+        }
+
+        .concordance-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .concordance-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .concordance-score-display {
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .concordance-score {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .concordance-status {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .concordance-progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        body.dark .concordance-progress-bar {
+            background: #1e293b;
+        }
+
+        .concordance-bar {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 0.5s ease, background-color 0.3s ease;
+        }
+
+        .concordance-dimensions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .concordance-dimension {
+            display: grid;
+            grid-template-columns: 120px 1fr 60px;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .dimension-label {
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .dimension-bar-container {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        body.dark .dimension-bar-container {
+            background: #1e293b;
+        }
+
+        .dimension-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease, background-color 0.3s ease;
+        }
+
+        .dimension-value {
+            text-align: right;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .concordance-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .concordance-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .concordance-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(143, 175, 177, 0.3);
+        }
+
+        .concordance-btn.secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+
+        .concordance-btn.secondary:hover {
+            background: var(--bg-light);
+        }
+
+        body.dark .concordance-btn.secondary:hover {
+            background: #1e293b;
+        }
+
+        /* Feedback Request Styles */
+        .feedback-request {
+            border-left: 3px solid var(--accent);
+            background: linear-gradient(135deg, var(--bg-light) 0%, white 100%);
+        }
+
+        body.dark .feedback-request {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        .feedback-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .feedback-btn {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: 1.5px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        body.dark .feedback-btn {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .feedback-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .feedback-btn.positive {
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .feedback-btn.positive:hover {
+            background: #10b981;
+            color: white;
+        }
+
+        .feedback-btn.neutral {
+            border-color: #f59e0b;
+            color: #f59e0b;
+        }
+
+        .feedback-btn.neutral:hover {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .feedback-btn.negative {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .feedback-btn.negative:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .feedback-details-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .detail-option {
+            padding: 0.5rem 0.75rem;
+            background: white;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        body.dark .detail-option {
+            background: #1e293b;
+        }
+
+        .detail-option:hover {
+            background: var(--primary);
+            color: white;
+        }
+
         .revelations-toggle {
             position: fixed;
             right: 1rem;
@@ -1720,6 +1955,33 @@
                             <span class="metric-label">Style</span>
                             <span class="metric-value" id="paraverbalStyle">--</span>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Concordance Dashboard -->
+                <div class="concordance-section" id="concordanceSection" style="display: none;">
+                    <h4>Concordance Clone</h4>
+                    <div class="concordance-header">
+                        <div class="concordance-score-display">
+                            <span class="concordance-score" id="concordanceScore">--</span>
+                            <span class="concordance-status" id="concordanceStatus">--</span>
+                        </div>
+                        <div class="concordance-progress-bar">
+                            <div class="concordance-bar" id="concordanceBar"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="concordance-dimensions" id="concordanceDimensions">
+                        <!-- Dimensions seront remplies dynamiquement -->
+                    </div>
+                    
+                    <div class="concordance-actions">
+                        <button class="concordance-btn" id="improveConcordanceBtn" style="display: none;">
+                            Améliorer vers 85%
+                        </button>
+                        <button class="concordance-btn secondary" id="diagnoseConcordanceBtn">
+                            Diagnostic détaillé
+                        </button>
                     </div>
                 </div>
             </div>
@@ -3233,11 +3495,14 @@
         // ============================================
         // MESSAGE HANDLING
         // ============================================
-        function addMessage(role, content) {
-            state.messages.push({ role, content });
+        function addMessage(role, content, messageId = null) {
+            state.messages.push({ role, content, id: messageId });
 
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${role}`;
+            if (messageId) {
+                messageDiv.id = messageId;
+            }
             messageDiv.innerHTML = `
                 <div class="message-avatar">${role === 'assistant' ? 'C' : 'V'}</div>
                 <div class="message-content">${content}</div>
@@ -3308,7 +3573,55 @@
 
             const response = await sendToAPI(message);
             if (response) {
-                addMessage('assistant', response);
+                const messageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                addMessage('assistant', response, messageId);
+                
+                // Feedback System: Check if should ask feedback
+                const feedbackDecision = await FeedbackSystem.shouldAskFeedback({ id: messageId, content: response });
+                if (feedbackDecision.should) {
+                    setTimeout(() => {
+                        FeedbackSystem.askConversationalFeedback(messageId);
+                    }, 3000 + Math.random() * 5000);
+                }
+                
+                // Calculate concordance after 10+ responses
+                if (state.responseCount >= 10 && state.responseCount % 10 === 0) {
+                    setTimeout(async () => {
+                        const score = await ConcordanceSystem.calculateConcordance();
+                        ConcordanceSystem.updateDisplay();
+                        
+                        // Show concordance section
+                        const concordanceSection = document.getElementById('concordanceSection');
+                        if (concordanceSection) {
+                            concordanceSection.style.display = 'block';
+                        }
+                        
+                        // Show improve button if score < 85%
+                        const improveBtn = document.getElementById('improveConcordanceBtn');
+                        if (improveBtn && score < 85) {
+                            improveBtn.style.display = 'block';
+                        }
+                        
+                        // Check activation status
+                        const status = ConcordanceSystem.getStatus();
+                        if (!status.active) {
+                            Utils.showToast(
+                                `⚠️ Concordance : ${score.toFixed(1)}% - ${status.message}`,
+                                'warning'
+                            );
+                        } else if (score >= 75 && score < 85) {
+                            Utils.showToast(
+                                `✅ Clone activé ! Concordance : ${score.toFixed(1)}%`,
+                                'success'
+                            );
+                        } else if (score >= 85) {
+                            Utils.showToast(
+                                `⭐ Clone optimal ! Concordance : ${score.toFixed(1)}%`,
+                                'success'
+                            );
+                        }
+                    }, 1000);
+                }
             }
         }
 
@@ -4421,6 +4734,662 @@
         };
 
         // ============================================
+        // MODULE 12: SYSTÈME CONCORDANCE ÉVOLUTIF
+        // ============================================
+        const ConcordanceSystem = {
+            
+            metrics: {
+                traitsMatch: 0,
+                paraverbalMatch: 0,
+                behavioralMatch: 0,
+                emotionalMatch: 0,
+                contextualMatch: 0,
+                overall: 0,
+                history: [],
+                lastCalculated: null
+            },
+            
+            config: {
+                weights: {
+                    traits: 0.25,
+                    paraverbal: 0.20,
+                    behavioral: 0.25,
+                    emotional: 0.15,
+                    contextual: 0.15
+                },
+                thresholds: {
+                    minimal: 75,
+                    optimal: 85,
+                    worldClass: 90
+                }
+            },
+            
+            // Calculer concordance globale
+            async calculateConcordance() {
+                console.log('🎯 Calculating concordance...');
+                
+                const scores = {
+                    traits: await this.measureTraits(),
+                    paraverbal: await this.measureParaverbal(),
+                    behavioral: await this.measureBehavioral(),
+                    emotional: await this.measureEmotional(),
+                    contextual: await this.measureContextual()
+                };
+                
+                const overall = (
+                    scores.traits * this.config.weights.traits +
+                    scores.paraverbal * this.config.weights.paraverbal +
+                    scores.behavioral * this.config.weights.behavioral +
+                    scores.emotional * this.config.weights.emotional +
+                    scores.contextual * this.config.weights.contextual
+                );
+                
+                // Update metrics
+                this.metrics.traitsMatch = scores.traits;
+                this.metrics.paraverbalMatch = scores.paraverbal;
+                this.metrics.behavioralMatch = scores.behavioral;
+                this.metrics.emotionalMatch = scores.emotional;
+                this.metrics.contextualMatch = scores.contextual;
+                this.metrics.overall = overall;
+                this.metrics.lastCalculated = Date.now();
+                
+                // Add to history
+                this.metrics.history.push({
+                    timestamp: Date.now(),
+                    scores: { ...scores },
+                    overall: overall
+                });
+                
+                console.log(`✅ Concordance calculated: ${overall.toFixed(1)}%`, scores);
+                
+                return overall;
+            },
+            
+            // Mesurer concordance traits Big Five
+            async measureTraits() {
+                if (!state.initialTraits || !state.finalTraits) {
+                    return 80; // Default si pas de données
+                }
+                
+                const traits = ['openness', 'conscientiousness', 'extraversion', 'agreeableness', 'emotionalStability'];
+                let totalDistance = 0;
+                
+                traits.forEach(trait => {
+                    const distance = Math.abs(state.finalTraits[trait] - state.initialTraits[trait]) / 10;
+                    totalDistance += distance;
+                });
+                
+                const avgDistance = totalDistance / 5;
+                const similarity = Math.max(0, 100 - (avgDistance * 15));
+                
+                return similarity;
+            },
+            
+            // Mesurer concordance paraverbale
+            async measureParaverbal() {
+                const report = Paraverbal.getReport();
+                
+                if (!report || report.meta.messagesAnalyzed < 5) {
+                    return 75; // Default si pas assez de données
+                }
+                
+                let score = 80; // Base
+                
+                // Rythme cohérent
+                if (report.rhythm.pattern === 'thoughtful' || report.rhythm.pattern === 'balanced') {
+                    score += 5;
+                }
+                
+                // Expressivité appropriée
+                if (report.expressiveness.emphasisLevel === 'moderate') {
+                    score += 3;
+                }
+                
+                // Vocabulaire riche
+                if (report.depth.uniqueVocabularySize > 300) {
+                    score += 5;
+                } else if (report.depth.uniqueVocabularySize > 200) {
+                    score += 3;
+                }
+                
+                // Style cohérent
+                if (report.patterns.linguisticStyle.includes('reflective')) {
+                    score += 4;
+                }
+                
+                return Math.min(100, score);
+            },
+            
+            // Mesurer concordance comportementale
+            async measureBehavioral() {
+                // Basé sur feedbacks utilisateur si disponibles
+                const feedbacks = FeedbackSystem.getAllFeedbacks();
+                
+                if (feedbacks.length === 0) {
+                    return 78; // Default
+                }
+                
+                // Moyenne des feedbacks
+                const avgFeedback = feedbacks.reduce((sum, f) => sum + f.score, 0) / feedbacks.length;
+                
+                // Convertir score 1-5 en pourcentage
+                const behavioral = (avgFeedback / 5) * 100;
+                
+                return behavioral;
+            },
+            
+            // Mesurer concordance émotionnelle
+            async measureEmotional() {
+                const report = Paraverbal.getReport();
+                
+                if (!report) return 75;
+                
+                let score = 75; // Base
+                
+                // Vocabulaire émotionnel varié
+                const vocabSize = Object.keys(report.emotional.vocabulary).length;
+                if (vocabSize > 10) {
+                    score += 10;
+                } else if (vocabSize > 5) {
+                    score += 5;
+                }
+                
+                // Intensité dans range normal
+                const intensity = report.emotional.averageIntensity;
+                if (intensity >= 4 && intensity <= 7) {
+                    score += 10;
+                } else if (intensity >= 3 && intensity <= 8) {
+                    score += 5;
+                }
+                
+                return Math.min(100, score);
+            },
+            
+            // Mesurer concordance contextuelle
+            async measureContextual() {
+                // Pour l'instant, basé sur diversité des réponses
+                const messagesCount = state.responseCount;
+                
+                let score = 70; // Base
+                
+                // Plus de messages = plus de contextes variés
+                if (messagesCount > 30) {
+                    score += 15;
+                } else if (messagesCount > 20) {
+                    score += 10;
+                } else if (messagesCount > 10) {
+                    score += 5;
+                }
+                
+                return Math.min(100, score);
+            },
+            
+            // Déterminer statut du clone
+            getStatus() {
+                const score = this.metrics.overall;
+                
+                if (score < this.config.thresholds.minimal) {
+                    return {
+                        level: 'insufficient',
+                        label: 'Insuffisant',
+                        color: '#ef4444',
+                        active: false,
+                        message: 'Concordance insuffisante pour activation'
+                    };
+                } else if (score < this.config.thresholds.optimal) {
+                    return {
+                        level: 'minimal',
+                        label: 'Minimal Fonctionnel',
+                        color: '#f59e0b',
+                        active: true,
+                        message: 'Clone prêt à l\'emploi'
+                    };
+                } else if (score < this.config.thresholds.worldClass) {
+                    return {
+                        level: 'optimal',
+                        label: 'Optimal',
+                        color: '#10b981',
+                        active: true,
+                        message: 'Excellente concordance'
+                    };
+                } else {
+                    return {
+                        level: 'worldClass',
+                        label: 'Classe Mondiale',
+                        color: '#8b5cf6',
+                        active: true,
+                        message: 'Clone d\'excellence'
+                    };
+                }
+            },
+            
+            // Diagnostic automatique
+            async diagnose() {
+                const current = this.metrics;
+                const diagnosis = {
+                    status: this.getStatus(),
+                    weakPoints: [],
+                    recommendations: []
+                };
+                
+                // Identifier points faibles (< 80%)
+                if (current.traitsMatch < 80) {
+                    diagnosis.weakPoints.push({
+                        dimension: 'Traits Big Five',
+                        score: current.traitsMatch,
+                        priority: 'high'
+                    });
+                    diagnosis.recommendations.push({
+                        action: 'mini_interview_traits',
+                        message: '10 questions sur tes traits de personnalité',
+                        estimatedGain: '+8-12%'
+                    });
+                }
+                
+                if (current.paraverbalMatch < 80) {
+                    diagnosis.weakPoints.push({
+                        dimension: 'Paraverbal',
+                        score: current.paraverbalMatch,
+                        priority: 'medium'
+                    });
+                    diagnosis.recommendations.push({
+                        action: 'mini_interview_style',
+                        message: '10 questions sur ton style de communication',
+                        estimatedGain: '+5-8%'
+                    });
+                }
+                
+                if (current.behavioralMatch < 75) {
+                    diagnosis.weakPoints.push({
+                        dimension: 'Comportemental',
+                        score: current.behavioralMatch,
+                        priority: 'critical'
+                    });
+                    diagnosis.recommendations.push({
+                        action: 'feedback_collection',
+                        message: 'Interactions supplémentaires pour affiner les réponses',
+                        estimatedGain: '+10-15%'
+                    });
+                }
+                
+                if (current.emotionalMatch < 80) {
+                    diagnosis.weakPoints.push({
+                        dimension: 'Émotionnel',
+                        score: current.emotionalMatch,
+                        priority: 'medium'
+                    });
+                }
+                
+                if (current.contextualMatch < 80) {
+                    diagnosis.weakPoints.push({
+                        dimension: 'Contextuel',
+                        score: current.contextualMatch,
+                        priority: 'medium'
+                    });
+                    diagnosis.recommendations.push({
+                        action: 'context_mapping',
+                        message: 'Exploration de différents contextes d\'utilisation',
+                        estimatedGain: '+5-10%'
+                    });
+                }
+                
+                return diagnosis;
+            },
+            
+            // Détecter dérive temporelle
+            async detectDrift() {
+                const history = this.metrics.history;
+                
+                if (history.length < 5) {
+                    return { alert: false, message: 'Pas assez de données' };
+                }
+                
+                const last30Days = history.filter(h => 
+                    h.timestamp > Date.now() - (30 * 24 * 60 * 60 * 1000)
+                );
+                
+                if (last30Days.length < 2) {
+                    return { alert: false, message: 'Pas assez de mesures récentes' };
+                }
+                
+                const firstScore = last30Days[0].overall;
+                const lastScore = last30Days[last30Days.length - 1].overall;
+                const delta = lastScore - firstScore;
+                
+                // Dérive > 5%
+                if (Math.abs(delta) > 5) {
+                    return {
+                        alert: true,
+                        type: delta < 0 ? 'declining' : 'improving',
+                        magnitude: Math.abs(delta),
+                        message: delta < 0 
+                            ? `Concordance a baissé de ${Math.abs(delta).toFixed(1)}% ce mois`
+                            : `Concordance s'est améliorée de ${delta.toFixed(1)}% ce mois`,
+                        recommendation: delta < 0 ? 'recalibration_suggested' : 'continue'
+                    };
+                }
+                
+                return { alert: false, message: 'Concordance stable' };
+            },
+            
+            // Update dashboard display
+            updateDisplay() {
+                const concordanceScoreEl = document.getElementById('concordanceScore');
+                const concordanceBarEl = document.getElementById('concordanceBar');
+                const concordanceStatusEl = document.getElementById('concordanceStatus');
+                const concordanceDimensionsEl = document.getElementById('concordanceDimensions');
+                
+                if (!concordanceScoreEl) return;
+                
+                const status = this.getStatus();
+                const score = this.metrics.overall;
+                
+                // Score global
+                concordanceScoreEl.textContent = `${score.toFixed(1)}%`;
+                concordanceScoreEl.style.color = status.color;
+                
+                // Barre de progression
+                if (concordanceBarEl) {
+                    concordanceBarEl.style.width = `${score}%`;
+                    concordanceBarEl.style.backgroundColor = status.color;
+                }
+                
+                // Statut
+                if (concordanceStatusEl) {
+                    concordanceStatusEl.textContent = status.label;
+                    concordanceStatusEl.style.color = status.color;
+                }
+                
+                // Dimensions détaillées
+                if (concordanceDimensionsEl) {
+                    concordanceDimensionsEl.innerHTML = `
+                        <div class="concordance-dimension">
+                            <span class="dimension-label">Traits Big Five</span>
+                            <div class="dimension-bar-container">
+                                <div class="dimension-bar" style="width: ${this.metrics.traitsMatch}%; background: ${this.getColorForScore(this.metrics.traitsMatch)}"></div>
+                            </div>
+                            <span class="dimension-value">${this.metrics.traitsMatch.toFixed(1)}%</span>
+                        </div>
+                        <div class="concordance-dimension">
+                            <span class="dimension-label">Paraverbal</span>
+                            <div class="dimension-bar-container">
+                                <div class="dimension-bar" style="width: ${this.metrics.paraverbalMatch}%; background: ${this.getColorForScore(this.metrics.paraverbalMatch)}"></div>
+                            </div>
+                            <span class="dimension-value">${this.metrics.paraverbalMatch.toFixed(1)}%</span>
+                        </div>
+                        <div class="concordance-dimension">
+                            <span class="dimension-label">Comportemental</span>
+                            <div class="dimension-bar-container">
+                                <div class="dimension-bar" style="width: ${this.metrics.behavioralMatch}%; background: ${this.getColorForScore(this.metrics.behavioralMatch)}"></div>
+                            </div>
+                            <span class="dimension-value">${this.metrics.behavioralMatch.toFixed(1)}%</span>
+                        </div>
+                        <div class="concordance-dimension">
+                            <span class="dimension-label">Émotionnel</span>
+                            <div class="dimension-bar-container">
+                                <div class="dimension-bar" style="width: ${this.metrics.emotionalMatch}%; background: ${this.getColorForScore(this.metrics.emotionalMatch)}"></div>
+                            </div>
+                            <span class="dimension-value">${this.metrics.emotionalMatch.toFixed(1)}%</span>
+                        </div>
+                        <div class="concordance-dimension">
+                            <span class="dimension-label">Contextuel</span>
+                            <div class="dimension-bar-container">
+                                <div class="dimension-bar" style="width: ${this.metrics.contextualMatch}%; background: ${this.getColorForScore(this.metrics.contextualMatch)}"></div>
+                            </div>
+                            <span class="dimension-value">${this.metrics.contextualMatch.toFixed(1)}%</span>
+                        </div>
+                    `;
+                }
+            },
+            
+            getColorForScore(score) {
+                if (score >= 85) return '#10b981';
+                if (score >= 75) return '#f59e0b';
+                return '#ef4444';
+            }
+        };
+
+        // ============================================
+        // SYSTÈME DE FEEDBACK HYBRIDE
+        // ============================================
+        const FeedbackSystem = {
+            
+            mode: 'learning', // learning | monitoring
+            messageCount: 0,
+            weekStartDate: Date.now(),
+            feedbacks: [],
+            
+            config: {
+                week1Duration: 7 * 24 * 60 * 60 * 1000, // 7 jours
+                conversationalFrequency: {
+                    week1: 5,      // 1 fois / 5 messages
+                    after: 20      // 1 fois / 20 messages
+                }
+            },
+            
+            // Décider si demander feedback
+            async shouldAskFeedback(message) {
+                this.messageCount++;
+                
+                const isWeek1 = this.isWeek1();
+                const frequency = isWeek1 
+                    ? this.config.conversationalFrequency.week1
+                    : this.config.conversationalFrequency.after;
+                
+                // Demander feedback basé sur fréquence
+                if (this.messageCount % frequency === 0) {
+                    return {
+                        should: true,
+                        method: 'conversational',
+                        mode: isWeek1 ? 'learning' : 'monitoring'
+                    };
+                }
+                
+                return { should: false };
+            },
+            
+            // Vérifier si semaine 1
+            isWeek1() {
+                const elapsed = Date.now() - this.weekStartDate;
+                return elapsed < this.config.week1Duration;
+            },
+            
+            // Demander feedback de manière conversationnelle
+            async askConversationalFeedback(targetMessageId) {
+                // Attendre 3-8 secondes (naturel)
+                await new Promise(resolve => setTimeout(resolve, 3000 + Math.random() * 5000));
+                
+                const questions = [
+                    "Au fait, ma réponse te ressemblait ?",
+                    "C'était bien mon style de réponse ?",
+                    "Ça sonnait comme toi ?",
+                    "Tu aurais répondu comme ça ?",
+                    "Est-ce que ça capte bien ton approche ?",
+                    "Mon ton était juste sur ce coup ?"
+                ];
+                
+                const question = questions[Math.floor(Math.random() * questions.length)];
+                
+                // Créer message de feedback
+                const feedbackMsg = document.createElement('div');
+                feedbackMsg.className = 'message assistant feedback-request';
+                feedbackMsg.dataset.targetMessage = targetMessageId;
+                feedbackMsg.innerHTML = `
+                    <div class="message-avatar">C</div>
+                    <div class="message-content">
+                        ${question}
+                        <div class="feedback-buttons">
+                            <button class="feedback-btn positive" data-score="5">👍 Oui</button>
+                            <button class="feedback-btn neutral" data-score="3">🤔 Moyen</button>
+                            <button class="feedback-btn negative" data-score="1">👎 Non</button>
+                        </div>
+                    </div>
+                `;
+                
+                elements.messages.appendChild(feedbackMsg);
+                elements.messages.scrollTop = elements.messages.scrollHeight;
+                
+                // Event listeners pour les boutons
+                feedbackMsg.querySelectorAll('.feedback-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const score = parseInt(e.target.dataset.score);
+                        this.captureFeedback(targetMessageId, score, 'conversational');
+                        
+                        // Remplacer les boutons par confirmation
+                        const contentDiv = feedbackMsg.querySelector('.message-content');
+                        contentDiv.innerHTML = score >= 4 
+                            ? "Super ! Merci 🙏"
+                            : "Noté ! Je vais m'améliorer 💪";
+                        
+                        // Si feedback négatif, demander détails après 2s
+                        if (score < 4) {
+                            setTimeout(() => this.askFeedbackDetails(targetMessageId, score), 2000);
+                        }
+                    });
+                });
+            },
+            
+            // Demander détails si feedback négatif
+            async askFeedbackDetails(messageId, initialScore) {
+                const detailsMsg = document.createElement('div');
+                detailsMsg.className = 'message assistant feedback-details';
+                detailsMsg.innerHTML = `
+                    <div class="message-avatar">C</div>
+                    <div class="message-content">
+                        Qu'est-ce qui n'allait pas ?
+                        <div class="feedback-details-options">
+                            <button class="detail-option" data-reason="too_formal">Trop formel</button>
+                            <button class="detail-option" data-reason="wrong_tone">Pas mon ton</button>
+                            <button class="detail-option" data-reason="too_long">Trop long</button>
+                            <button class="detail-option" data-reason="not_warm">Manque chaleur</button>
+                            <button class="detail-option" data-reason="skip">Passer</button>
+                        </div>
+                    </div>
+                `;
+                
+                elements.messages.appendChild(detailsMsg);
+                elements.messages.scrollTop = elements.messages.scrollHeight;
+                
+                // Event listeners
+                detailsMsg.querySelectorAll('.detail-option').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const reason = e.target.dataset.reason;
+                        
+                        if (reason !== 'skip') {
+                            this.captureDetailedFeedback(messageId, initialScore, reason);
+                        }
+                        
+                        // Confirmation
+                        const contentDiv = detailsMsg.querySelector('.message-content');
+                        contentDiv.innerHTML = reason !== 'skip' 
+                            ? "Compris ! Je prends note 📝"
+                            : "Pas de souci 👍";
+                    });
+                });
+            },
+            
+            // Capturer feedback
+            captureFeedback(messageId, score, method) {
+                const feedback = {
+                    messageId: messageId,
+                    score: score, // 1-5
+                    method: method,
+                    timestamp: Date.now(),
+                    week: this.isWeek1() ? 1 : 2
+                };
+                
+                this.feedbacks.push(feedback);
+                
+                console.log('📝 Feedback captured:', feedback);
+                
+                // Recalculer concordance
+                this.triggerConcordanceUpdate();
+            },
+            
+            // Capturer feedback détaillé
+            captureDetailedFeedback(messageId, score, reason) {
+                const detailed = {
+                    messageId: messageId,
+                    score: score,
+                    reason: reason,
+                    timestamp: Date.now()
+                };
+                
+                // Trouver et enrichir le feedback existant
+                const existingFeedback = this.feedbacks.find(f => f.messageId === messageId);
+                if (existingFeedback) {
+                    existingFeedback.details = detailed;
+                }
+                
+                console.log('📝 Detailed feedback captured:', detailed);
+            },
+            
+            // Micro-feedback passif (comportement)
+            captureMicroFeedback(messageElement, userAction) {
+                // Capturer signaux comportementaux
+                const signals = {
+                    readingTime: userAction.readingTime || 0,
+                    didScroll: userAction.didScroll || false,
+                    didCopy: userAction.didCopy || false,
+                    nextMessageDelay: userAction.nextMessageDelay || 0
+                };
+                
+                // Interpréter
+                let implicitScore = 5; // Neutre
+                
+                if (signals.readingTime < 5 && signals.nextMessageDelay < 10) {
+                    implicitScore = 5; // Satisfait, fluide
+                } else if (signals.didCopy) {
+                    implicitScore = 5; // Utile
+                } else if (signals.nextMessageDelay > 60) {
+                    implicitScore = 2; // Possible insatisfaction
+                }
+                
+                // Enregistrer comme feedback implicite
+                this.feedbacks.push({
+                    messageId: messageElement.id,
+                    score: implicitScore,
+                    method: 'micro_passive',
+                    signals: signals,
+                    timestamp: Date.now(),
+                    implicit: true
+                });
+            },
+            
+            // Récupérer tous les feedbacks
+            getAllFeedbacks() {
+                return this.feedbacks;
+            },
+            
+            // Trigger recalcul concordance
+            async triggerConcordanceUpdate() {
+                // Attendre un peu pour agréger
+                setTimeout(async () => {
+                    const newScore = await ConcordanceSystem.calculateConcordance();
+                    ConcordanceSystem.updateDisplay();
+                    
+                    // Vérifier si amélioration déclenchée
+                    if (newScore < 80) {
+                        this.triggerAutoImprovement(newScore);
+                    }
+                }, 1000);
+            },
+            
+            // Déclencher amélioration automatique
+            async triggerAutoImprovement(currentScore) {
+                const diagnosis = await ConcordanceSystem.diagnose();
+                
+                if (diagnosis.recommendations.length > 0) {
+                    // Afficher notification
+                    Utils.showToast(
+                        `Concordance : ${currentScore.toFixed(1)}% - Amélioration possible`,
+                        'info'
+                    );
+                }
+            }
+        };
+
+        // ============================================
         // INITIALIZATION
         // ============================================
         async function init() {
@@ -4589,6 +5558,44 @@
                 });
             }
 
+            // Concordance buttons
+            const improveConcordanceBtn = document.getElementById('improveConcordanceBtn');
+            if (improveConcordanceBtn) {
+                improveConcordanceBtn.addEventListener('click', async () => {
+                    Utils.showToast('Fonction d\'amélioration en cours de développement...', 'info');
+                    // TODO: Implement mini-interview for improvement
+                });
+            }
+
+            const diagnoseConcordanceBtn = document.getElementById('diagnoseConcordanceBtn');
+            if (diagnoseConcordanceBtn) {
+                diagnoseConcordanceBtn.addEventListener('click', async () => {
+                    const diagnosis = await ConcordanceSystem.diagnose();
+                    
+                    let message = `📊 Diagnostic Concordance\n\n`;
+                    message += `Statut : ${diagnosis.status.label} (${ConcordanceSystem.metrics.overall.toFixed(1)}%)\n\n`;
+                    
+                    if (diagnosis.weakPoints.length > 0) {
+                        message += `Points faibles détectés :\n`;
+                        diagnosis.weakPoints.forEach(point => {
+                            message += `• ${point.dimension} : ${point.score.toFixed(1)}%\n`;
+                        });
+                        message += `\n`;
+                    }
+                    
+                    if (diagnosis.recommendations.length > 0) {
+                        message += `Recommandations :\n`;
+                        diagnosis.recommendations.forEach((rec, i) => {
+                            message += `${i + 1}. ${rec.message} (${rec.estimatedGain})\n`;
+                        });
+                    } else {
+                        message += `Aucune amélioration nécessaire ! 🎉`;
+                    }
+                    
+                    alert(message);
+                });
+            }
+
             // Start timer
             startTimer();
         }
@@ -4678,6 +5685,10 @@
                 console.log('Final traits captured:', state.finalTraits);
                 console.log('Traits evolution:', traitsEvolution);
                 
+                // Calculate final concordance
+                const finalConcordance = await ConcordanceSystem.calculateConcordance();
+                console.log('Final concordance:', finalConcordance);
+                
                 // Generate comprehensive profile
                 const profile = {
                     metadata: {
@@ -4707,7 +5718,28 @@
                     contexts: state.contexts,
                     contradictions: state.contradictions,
                     reflectionNotes: state.reflectionNotes,
-                    paraverbal: Paraverbal.getReport()
+                    paraverbal: Paraverbal.getReport(),
+                    concordance: {
+                        metrics: {
+                            overall: ConcordanceSystem.metrics.overall,
+                            traits: ConcordanceSystem.metrics.traitsMatch,
+                            paraverbal: ConcordanceSystem.metrics.paraverbalMatch,
+                            behavioral: ConcordanceSystem.metrics.behavioralMatch,
+                            emotional: ConcordanceSystem.metrics.emotionalMatch,
+                            contextual: ConcordanceSystem.metrics.contextualMatch
+                        },
+                        status: ConcordanceSystem.getStatus(),
+                        history: ConcordanceSystem.metrics.history,
+                        lastCalculated: ConcordanceSystem.metrics.lastCalculated
+                    },
+                    feedback: {
+                        mode: FeedbackSystem.mode,
+                        totalFeedbacks: FeedbackSystem.feedbacks.length,
+                        averageScore: FeedbackSystem.feedbacks.length > 0
+                            ? FeedbackSystem.feedbacks.reduce((sum, f) => sum + f.score, 0) / FeedbackSystem.feedbacks.length
+                            : null,
+                        feedbacks: FeedbackSystem.feedbacks
+                    }
                 };
 
                 // Export JSON
