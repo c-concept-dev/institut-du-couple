@@ -16774,7 +16774,7 @@ console.log('[Video] 📦 Module 24 helpers loaded');
         // ============================================
         const CONFIG = {
             // ⚠️ À CONFIGURER : Remplacez par votre URL Worker Cloudflare
-            WORKER_URL: 'https://clone-proxy.11drumboy11.workers.dev',
+            WORKER_URL: 'YOUR_CLOUDFLARE_WORKER_URL_HERE',
             MODEL: 'claude-sonnet-4-20250514',
             MAX_TOKENS: 4000,
             AUTOSAVE_INTERVAL: 30000, // 30 secondes
@@ -22976,27 +22976,15 @@ console.log('[Video] 📦 Module 24 helpers loaded');
         function startInterview() {
             elements.chatContainer.style.display = 'flex';
             
-            // Capture initial traits (with safety check)
-            if (typeof Avatar !== 'undefined' && Avatar.state && Avatar.state.traits) {
-                state.initialTraits = {
-                    openness: Avatar.state.traits.openness || 0.5,
-                    conscientiousness: Avatar.state.traits.conscientiousness || 0.5,
-                    extraversion: Avatar.state.traits.extraversion || 0.5,
-                    agreeableness: Avatar.state.traits.agreeableness || 0.5,
-                    emotionalStability: Avatar.state.traits.emotionalStability || 0.5,
-                    timestamp: new Date().toISOString()
-                };
-            } else {
-                // Fallback to default values
-                state.initialTraits = {
-                    openness: 0.5,
-                    conscientiousness: 0.5,
-                    extraversion: 0.5,
-                    agreeableness: 0.5,
-                    emotionalStability: 0.5,
-                    timestamp: new Date().toISOString()
-                };
-            }
+            // Capture initial traits
+            state.initialTraits = {
+                openness: Avatar.state.traits.openness,
+                conscientiousness: Avatar.state.traits.conscientiousness,
+                extraversion: Avatar.state.traits.extraversion,
+                agreeableness: Avatar.state.traits.agreeableness,
+                emotionalStability: Avatar.state.traits.emotionalStability,
+                timestamp: new Date().toISOString()
+            };
             console.log('Initial traits captured:', state.initialTraits);
             
             // Get user name if provided
@@ -23530,27 +23518,15 @@ console.log('[Video] 📦 Module 24 helpers loaded');
                     console.log('[ExportProfile] ✅ Phase 6 already executed, using cached results');
                 }
                 
-                // 2. Capture final traits (with safety check)
-                if (typeof Avatar !== 'undefined' && Avatar.state && Avatar.state.traits) {
-                    state.finalTraits = {
-                        openness: Avatar.state.traits.openness || 0.5,
-                        conscientiousness: Avatar.state.traits.conscientiousness || 0.5,
-                        extraversion: Avatar.state.traits.extraversion || 0.5,
-                        agreeableness: Avatar.state.traits.agreeableness || 0.5,
-                        emotionalStability: Avatar.state.traits.emotionalStability || 0.5,
-                        timestamp: new Date().toISOString()
-                    };
-                } else {
-                    // Fallback to default values
-                    state.finalTraits = {
-                        openness: 0.5,
-                        conscientiousness: 0.5,
-                        extraversion: 0.5,
-                        agreeableness: 0.5,
-                        emotionalStability: 0.5,
-                        timestamp: new Date().toISOString()
-                    };
-                }
+                // 2. Capture final traits
+                state.finalTraits = {
+                    openness: Avatar.state.traits.openness,
+                    conscientiousness: Avatar.state.traits.conscientiousness,
+                    extraversion: Avatar.state.traits.extraversion,
+                    agreeableness: Avatar.state.traits.agreeableness,
+                    emotionalStability: Avatar.state.traits.emotionalStability,
+                    timestamp: new Date().toISOString()
+                };
                 
                 console.log('[ExportProfile] Final traits captured:', state.finalTraits);
                 
