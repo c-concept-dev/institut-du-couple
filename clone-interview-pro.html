@@ -27,7 +27,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clone Interview Pro v16.7.6 GOOGLE CLOUD TTS - Institut du Couple</title>
+    <title>Clone Interview Pro v16.7.7 MARKDOWN FIX - Institut du Couple</title>
     
     <!-- Google Fonts - Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -2808,6 +2808,9 @@ class TTSQueue {
      * Jouer avec ElevenLabs
      */
     async playElevenLabs(text, resolve, reject) {
+        // Clean markdown formatting before TTS
+        text = this.cleanTextForTTS(text);
+        
         try {
             const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${state.elevenLabsVoiceId}`, {
                 method: 'POST',
@@ -2859,10 +2862,41 @@ class TTSQueue {
     }
     
     /**
+     * Nettoyer le texte du formatage Markdown pour TTS (v16.7.6)
+     */
+    cleanTextForTTS(text) {
+        return text
+            // Supprimer le gras (**texte**)
+            .replace(/\*\*([^*]+)\*\*/g, '$1')
+            // Supprimer l'italique (*texte*)
+            .replace(/\*([^*]+)\*/g, '$1')
+            // Supprimer le gras souligné (__texte__)
+            .replace(/__([^_]+)__/g, '$1')
+            // Supprimer l'italique souligné (_texte_)
+            .replace(/_([^_]+)_/g, '$1')
+            // Supprimer les liens [texte](url)
+            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+            // Supprimer les titres (## Titre)
+            .replace(/^#{1,6}\s+/gm, '')
+            // Supprimer les listes (- item ou * item)
+            .replace(/^[\*\-]\s+/gm, '')
+            // Supprimer le code inline (`code`)
+            .replace(/`([^`]+)`/g, '$1')
+            // Supprimer les astérisques restants
+            .replace(/\*/g, '')
+            // Nettoyer les espaces multiples
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+    
+    /**
      * Jouer avec Google Cloud Text-to-Speech (v16.7.6)
      */
     async playGoogleTTS(text, resolve, reject) {
         const startTime = performance.now();
+        
+        // Clean markdown formatting before TTS
+        text = this.cleanTextForTTS(text);
         
         try {
             console.log('[TTSQueue] 🌐 Calling Google Cloud TTS...');
@@ -2956,6 +2990,9 @@ class TTSQueue {
      * Jouer avec Web Speech API
      */
     playWebSpeech(text, resolve, reject) {
+        // Clean markdown formatting before TTS
+        text = this.cleanTextForTTS(text);
+        
         const utterance = new SpeechSynthesisUtterance(text);
         
         // Utiliser voix sélectionnée
@@ -7084,7 +7121,7 @@ document.getElementById('response-input').addEventListener('input', updateWordCo
 // INIT
 // ============================================================================
 console.log('═══════════════════════════════════════════════════════════');
-console.log('  Clone Interview Pro v16.7.6 - GOOGLE CLOUD TTS INTEGRATION                      ');
+console.log('  Clone Interview Pro v16.7.7 - MARKDOWN FIX                      ');
 console.log('  Institut du Couple - Concordance 101%+                  ');
 console.log('  Modules Psycho 23-32 + ElevenLabs TTS                   ');
 console.log('═══════════════════════════════════════════════════════════');
