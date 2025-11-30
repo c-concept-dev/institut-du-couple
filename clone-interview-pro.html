@@ -2,12 +2,19 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════╗
 ║                                                                          ║
-║    CLONE INTERVIEW PRO v16.8.3 - MEMORY SYSTEM 🧠                       ║
+║    CLONE INTERVIEW PRO v16.8.4 - MEMORY SYSTEM 🧠                       ║
 ║    Mémoire Sémantique + Injection Contextuelle + Continuité             ║
 ║    Institut du Couple - Christophe Bonnet                               ║
 ║                                                                          ║
 ║  Copyright © 2025 Institut du Couple                                    ║
 ║  Licence: CC BY-NC-ND 4.0                                               ║
+║                                                                          ║
+║  ✨ UX IMPROVEMENT in v16.8.4:                                           ║
+║    💬 Questions COURTES et SIMPLES (max 15 mots)                        ║
+║    ✓ UNE seule question par tour (jamais 4-5-6 questions)               ║
+║    ✓ Exemples explicites dans le prompt                                 ║
+║    ✓ max_tokens réduit (300) pour forcer concision                      ║
+║    ✓ Règles strictes anti-questions multiples                           ║
 ║                                                                          ║
 ║  ✨ IMPROVEMENT in v16.8.3:                                              ║
 ║    🎯 Prompt d'extraction renforcé avec format EXPLICITE                ║
@@ -51,7 +58,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clone Interview Pro v16.8.3 MEMORY SYSTEM - Institut du Couple</title>
+    <title>Clone Interview Pro v16.8.4 MEMORY SYSTEM - Institut du Couple</title>
     
     <!-- Google Fonts - Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -5746,7 +5753,7 @@ class ConversationalSystem {
                 },
                 body: JSON.stringify({
                     model: 'claude-sonnet-4-20250514',
-                    max_tokens: 600,
+                    max_tokens: 300,  // v16.8.4: Réduit de 600 à 300 pour forcer questions courtes
                     temperature: 1.0,
                     system: systemPrompt,  // ✅ CORRECT: system comme paramètre séparé
                     messages: context      // ✅ CORRECT: seulement user/assistant
@@ -5871,11 +5878,33 @@ ${recentEmotion ? `🎭 ÉMOTION DÉTECTÉE : ${recentEmotion.emotion} (${recent
    - Change de sujet si résistance ou réponses évasives
    - **Connecte** les sujets entre eux : "Comment ça se relie à ce que tu m'as dit sur..."
 
-4. **STYLE THÉRAPEUTE** :
-   - Questions courtes (15-25 mots)
-   - Ton : "Comment tu te sens quand...", "Raconte-moi plus sur...", "Qu'est-ce qui est important pour toi dans..."
-   - Évite questions fermées oui/non
-   - Montre que tu écoutes : "Tu as mentionné que... peux-tu m'en dire plus ?"
+🚨 RÈGLE ABSOLUE - QUESTIONS SIMPLES ET COURTES 🚨
+
+4. **STYLE QUESTIONS (OBLIGATOIRE)** :
+   
+   ✅ TOUJOURS FAIRE :
+   - UNE SEULE question courte à la fois (max 10-15 mots)
+   - Question simple et directe
+   - Pas de sous-questions, pas de "et" qui enchaîne
+   - Laisser l'utilisateur répondre tranquillement
+   
+   ❌ NE JAMAIS FAIRE :
+   - Questions multiples (4-5-6 questions en une)
+   - Questions avec "et" qui rajoute une sous-question
+   - Listes de points d'interrogation
+   - Questions composées ou à tiroir
+   
+   📝 EXEMPLES BONS (à suivre) :
+   ✅ "Qu'est-ce qui t'a amené vers la création d'IA ?"
+   ✅ "Comment te sens-tu le matin au réveil ?"
+   ✅ "Qu'est-ce qui te passionne dans la musique ?"
+   ✅ "Parle-moi de ta journée type."
+   ✅ "Comment gères-tu le stress ?"
+   
+   ❌ EXEMPLES MAUVAIS (à éviter ABSOLUMENT) :
+   ❌ "Qu'est-ce qui t'a amené vers la création d'IA ? Est-ce lié à ton travail ? Comment ta femme réagit-elle ?"
+   ❌ "Parle-moi de tes hobbies. La musique, c'est important pour toi ? Et comment est-ce que ça s'articule avec ton travail ?"
+   ❌ "Comment te sens-tu le matin ? Es-tu plutôt du matin ou du soir ? Et ton énergie dans la journée ?"
 
 🎯 STRATÉGIE :
 - Priorité 1 : Thèmes avec score < 50% (à explorer ou démarrés)
@@ -5884,7 +5913,9 @@ ${recentEmotion ? `🎭 ÉMOTION DÉTECTÉE : ${recentEmotion.emotion} (${recent
 - Adaptation : Si utilisateur très expressif → moins de questions (qualité), si concis → plus de questions (quantité)
 
 FORMAT RÉPONSE :
-Retourne UNIQUEMENT ta prochaine intervention conversationnelle (question, réponse à sa question, ou clarification), sans préambule ni explication.`;
+Retourne UNIQUEMENT ta prochaine intervention conversationnelle (UNE question courte, UNE réponse, OU UNE clarification), sans préambule ni explication.
+
+RAPPEL FINAL : UNE SEULE QUESTION COURTE À LA FOIS. Jamais 2, 3, 4 ou 5 questions d'un coup.`;
 
         // v16.8.0 - Injection contexte mémorisé via ContextInjector
         if (window.contextInjector) {
