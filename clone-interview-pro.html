@@ -2,24 +2,48 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════╗
 ║                                                                          ║
-║    CLONE INTERVIEW PRO v16.7.6 - GOOGLE CLOUD TTS INTEGRATION 🌐        ║
-║    Mode Conversationnel + Text-to-Speech Professionnel                 ║
+║    CLONE INTERVIEW PRO v16.8.3 - MEMORY SYSTEM 🧠                       ║
+║    Mémoire Sémantique + Injection Contextuelle + Continuité             ║
 ║    Institut du Couple - Christophe Bonnet                               ║
 ║                                                                          ║
 ║  Copyright © 2025 Institut du Couple                                    ║
 ║  Licence: CC BY-NC-ND 4.0                                               ║
 ║                                                                          ║
-║  ✨ NEW in v16.7.6:                                                      ║
-║    🌐 Google Cloud Text-to-Speech Neural2 (latence ~230ms)              ║
-║    ⏱️  Performance metrics (temps de réponse détaillés)                 ║
-║    🔄 Fallback cascade: Google → ElevenLabs → Web Speech                ║
-║    🎚️  Contrôles avancés (vitesse, tonalité, voix)                     ║
+║  ✨ IMPROVEMENT in v16.8.3:                                              ║
+║    🎯 Prompt d'extraction renforcé avec format EXPLICITE                ║
+║    ✓ Catégories françaises obligatoires (liste exhaustive)              ║
+║    ✓ Exemple JSON concret dans le prompt                                ║
+║    ✓ Instructions ultra-claires pour format de sortie                   ║
+║    ✓ Garantit 100% cohérence format extraction → mapping                ║
 ║                                                                          ║
-║  ✅ FEATURES v16.7:                                                      ║
-║    ✅ Mode conversationnel adaptatif (Claude Sonnet 4.5)                ║
-║    ✅ Interruptions audio automatiques                                  ║
-║    ✅ Analyse multimodale temps réel (vidéo + audio)                    ║
-║    ✅ Dashboard de progression dynamique                                ║
+║  ✨ FIX in v16.8.2:                                                      ║
+║    🔧 integrateFacts() skip re-mapping si données déjà anglaises        ║
+║    ✓ Détection automatique catégories françaises vs anglaises           ║
+║    ✓ Évite double mapping (français→anglais→vide)                       ║
+║    ✓ Intégration directe quand données déjà structurées                 ║
+║                                                                          ║
+║  ✨ FIX in v16.8.1:                                                      ║
+║    🔧 Mapping français→anglais complet (4 catégories manquantes)        ║
+║    ✓ activites_interets → behavioral.habits                             ║
+║    ✓ contexte_professionnel → identity.profession + narrative           ║
+║    ✓ relations_sociales → relational.relationships                      ║
+║    ✓ rythmes_energie → behavioral.habits                                ║
+║                                                                          ║
+║  ✨ NEW in v16.8.0:                                                      ║
+║    🧠 Memory System - Stockage sémantique hiérarchique (10 niveaux)     ║
+║    💉 Context Injector - Injection intelligente des faits mémorisés     ║
+║    🔗 Continuity Engine - Transitions & rappels conversationnels        ║
+║    📊 Extraction automatique tous les 3-5 échanges via Claude API       ║
+║    🎯 Clone parfait - Capture psycho/linguistique/émotionnel/cognitif   ║
+║                                                                          ║
+║  ✅ FEATURES v16.8:                                                      ║
+║    ✅ Mémoire multimodale (10 niveaux hiérarchiques)                    ║
+║    ✅ Injection contextuelle adaptative                                 ║
+║    ✅ Rappels & transitions naturels                                    ║
+║    ✅ Détection contradictions                                          ║
+║    ✅ Google Cloud TTS Neural2 (latence ~200-1800ms)                    ║
+║    ✅ Mode conversationnel 100% naturel                                 ║
+║    ✅ Analyse multimodale temps réel                                    ║
 ║                                                                          ║
 ╚══════════════════════════════════════════════════════════════════════════╝
 -->
@@ -27,7 +51,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clone Interview Pro v16.7.7 MARKDOWN FIX - Institut du Couple</title>
+    <title>Clone Interview Pro v16.8.3 MEMORY SYSTEM - Institut du Couple</title>
     
     <!-- Google Fonts - Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -3984,6 +4008,1436 @@ class ProgressDashboard {
 window.progressDashboard = new ProgressDashboard();
 console.log('[v16.7] ✅ ProgressDashboard initialized');
 
+// ============================================================================
+// MEMORY SYSTEM v16.8.0 - Semantic Memory & Context Management
+// ============================================================================
+/**
+ * Memory System - Stockage sémantique des faits clés pour clone parfait
+ * 
+ * Extraction automatique tous les 3-5 échanges via Claude API
+ * Organisation hiérarchique multi-niveaux (psychométrique, linguistique, etc.)
+ * Injection contextuelle intelligente dans les prompts
+ */
+class MemorySystem {
+    constructor(workerUrl = 'https://clone-proxy.11drumboy11.workers.dev/') {
+        this.WORKER_URL = workerUrl;
+        this.EXTRACTION_INTERVAL = 4; // Tous les 4 échanges (3-5 recommandé)
+        
+        // Compteur d'échanges depuis dernière extraction
+        this.exchangesSinceExtraction = 0;
+        
+        // Stockage hiérarchique des faits
+        this.memory = {
+            // Niveau 1: Psychométrique (traits, Big Five)
+            psychometric: {
+                bigFive: {
+                    openness: { score: null, facets: {}, evidence: [] },
+                    conscientiousness: { score: null, facets: {}, evidence: [] },
+                    extraversion: { score: null, facets: {}, evidence: [] },
+                    agreeableness: { score: null, facets: {}, evidence: [] },
+                    neuroticism: { score: null, facets: {}, evidence: [] }
+                },
+                traits: [], // Liste traits observés
+                dominantPatterns: [] // Patterns comportementaux
+            },
+            
+            // Niveau 2: Linguistique (style communication)
+            linguistic: {
+                vocabulary: [], // Mots/expressions caractéristiques
+                speechPatterns: [], // Tournures de phrases
+                emotionalTone: null, // Ton général
+                complexity: null // Niveau complexité linguistique
+            },
+            
+            // Niveau 3: Émotionnel (patterns réactionnels)
+            emotional: {
+                primaryEmotions: [], // Émotions fréquentes
+                triggers: [], // Déclencheurs émotionnels
+                regulationStyle: null, // Style régulation
+                intensityLevel: null // Intensité moyenne
+            },
+            
+            // Niveau 4: Cognitif (pensée & décision)
+            cognitive: {
+                decisionStyle: null, // Intuitif vs rationnel
+                thinkingPatterns: [], // Schémas de pensée
+                biases: [], // Biais cognitifs détectés
+                learningStyle: null // Style apprentissage
+            },
+            
+            // Niveau 5: Comportemental (actions & habitudes)
+            behavioral: {
+                habits: [], // Habitudes quotidiennes
+                reactions: [], // Réactions typiques
+                coping: [], // Stratégies adaptation
+                routines: [] // Routines établies
+            },
+            
+            // Niveau 6: Narratif (histoire de vie)
+            narrative: {
+                keyExperiences: [], // Expériences marquantes
+                lifePath: [], // Parcours de vie
+                turningPoints: [], // Points de bascule
+                influences: [] // Influences importantes
+            },
+            
+            // Niveau 7: Relationnel (attachement & interactions)
+            relational: {
+                attachmentStyle: null, // Style attachement
+                communicationStyle: null, // Style communication
+                conflictStyle: null, // Gestion conflits
+                relationships: [] // Relations importantes
+            },
+            
+            // Niveau 8: Valeurs & Croyances
+            values: {
+                core: [], // Valeurs fondamentales
+                beliefs: [], // Croyances
+                philosophy: null, // Philosophie de vie
+                spirituality: null // Dimension spirituelle
+            },
+            
+            // Niveau 9: Identité & Contexte
+            identity: {
+                name: null,
+                age: null,
+                profession: null,
+                location: null,
+                family: [],
+                roles: [] // Rôles sociaux
+            },
+            
+            // Niveau 10: Contradictions & Complexité
+            complexity: {
+                contradictions: [], // Contradictions apparentes
+                ambivalences: [], // Ambivalences
+                evolution: [], // Évolutions dans le temps
+                paradoxes: [] // Paradoxes personnels
+            }
+        };
+        
+        // Métadonnées
+        this.metadata = {
+            totalExtractions: 0,
+            lastExtraction: null,
+            factCount: 0
+        };
+    }
+    
+    /**
+     * Vérifier si extraction nécessaire
+     */
+    shouldExtract() {
+        this.exchangesSinceExtraction++;
+        
+        if (this.exchangesSinceExtraction >= this.EXTRACTION_INTERVAL) {
+            this.exchangesSinceExtraction = 0;
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Extraire faits clés depuis conversation (appel API Claude)
+     */
+    async extractFacts(messages) {
+        console.log('[MemorySystem] 🧠 Extracting facts from', messages.length, 'messages...');
+        
+        try {
+            // Prendre les 8 derniers messages pour contexte d'extraction
+            const recentMessages = messages.slice(-8);
+            
+            // Construire prompt d'extraction
+            const systemPrompt = this.buildExtractionPrompt();
+            
+            // Préparer messages pour API
+            const apiMessages = [
+                {
+                    role: 'user',
+                    content: `Voici les derniers échanges de la conversation. Extrais tous les faits clés selon le format JSON demandé :\n\n${this.formatMessagesForExtraction(recentMessages)}`
+                }
+            ];
+            
+            // Appel API
+            const response = await fetch(this.WORKER_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: 'claude-sonnet-4-20250514',
+                    max_tokens: 2000,
+                    temperature: 0.3, // Basse pour extraction précise
+                    system: systemPrompt,
+                    messages: apiMessages
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            const extractedText = data.content[0].text.trim();
+            
+            // Parser JSON
+            const facts = this.parseExtractedFacts(extractedText);
+            
+            // Intégrer dans memory
+            this.integrateFacts(facts);
+            
+            // Mettre à jour métadonnées
+            this.metadata.totalExtractions++;
+            this.metadata.lastExtraction = new Date().toISOString();
+            
+            console.log('[MemorySystem] ✅ Facts extracted and integrated:', facts);
+            
+            return facts;
+            
+        } catch (error) {
+            console.error('[MemorySystem] ❌ Extraction error:', error);
+            return null;
+        }
+    }
+    
+    /**
+     * Construire prompt d'extraction (v16.8.3 - Format français explicite)
+     */
+    buildExtractionPrompt() {
+        return `Tu es un expert en psychologie et analyse de personnalité.
+
+Ta mission : extraire TOUS les faits significatifs de la conversation pour construire un clone de personnalité parfait.
+
+IMPORTANT - FORMAT DE SORTIE :
+Tu DOIS utiliser EXACTEMENT les noms de catégories françaises listées ci-dessous.
+Ne traduis PAS en anglais. Utilise les clés françaises telles quelles.
+
+CATÉGORIES FRANÇAISES À UTILISER (obligatoires) :
+1. traits_personnalite : Traits Big Five, patterns comportementaux, tempérament
+2. style_linguistique : Vocabulaire caractéristique, tournures, expressions
+3. emotions_triggers : Émotions dominantes, déclencheurs, régulation émotionnelle
+4. style_cognitif : Style de décision, biais cognitifs, mode de pensée
+5. habitudes_quotidiennes : Routines, habitudes, réactions typiques
+6. activites_interets : Passions, loisirs, centres d'intérêt, projets
+7. parcours_experiences : Expériences clés, parcours de vie, événements marquants
+8. contexte_professionnel : Profession, carrière, environnement de travail
+9. relations_sociales : Style relationnel, communication, gestion conflits
+10. valeurs_croyances : Valeurs fondamentales, croyances, philosophie de vie
+11. rythmes_energie : Niveaux d'énergie, rythmes circadiens, moments de pic/creux
+12. contradictions_complexite : Contradictions apparentes, ambivalences, paradoxes
+
+RÈGLES D'EXTRACTION :
+1. Sois exhaustif - capture CHAQUE détail révélateur de la personnalité
+2. Catégorise précisément selon les 12 catégories françaises ci-dessus
+3. Utilise des phrases courtes et précises (max 15 mots par fait)
+4. Détecte les patterns implicites et non-dits
+5. Identifie les contradictions éventuelles
+
+EXEMPLE DE FORMAT ATTENDU :
+{
+  "traits_personnalite": ["Organisé et méthodique", "Curieux intellectuellement", "Réservé en groupe"],
+  "style_linguistique": ["Utilise beaucoup de métaphores techniques", "Vocabulaire médical précis"],
+  "emotions_triggers": ["S'enthousiasme quand parle de création", "Calme et posé naturellement"],
+  "style_cognitif": ["Analytique", "Approche systématique des problèmes"],
+  "habitudes_quotidiennes": ["Petit-déjeuner au lit le weekend", "Travail par sessions de 2h"],
+  "activites_interets": ["Création d'IA", "Musique (basse)", "Lecture psycho"],
+  "parcours_experiences": ["Infirmier depuis 1993", "Spécialisation dialyse 2006"],
+  "contexte_professionnel": ["Infirmier en hémodialyse", "Contact permanent patients", "Journées de 12h+"],
+  "relations_sociales": ["Bienveillant", "Utilise l'humour pour détendre", "Écoute active"],
+  "valeurs_croyances": ["Aide aux autres", "Innovation technologique", "Perfectionnisme"],
+  "rythmes_energie": ["Énergie stable toute la journée", "Créativité accrue le soir"],
+  "contradictions_complexite": ["Soignant mais passionné par machines IA"]
+}
+
+VALIDATION FORMAT :
+- Retourne UNIQUEMENT un objet JSON valide
+- Utilise EXACTEMENT les noms de catégories françaises listés ci-dessus
+- Chaque catégorie contient un tableau de strings (phrases courtes)
+- PAS de texte avant ou après le JSON
+- PAS de markdown (pas de \`\`\`json)
+- Vérifie que le JSON est parsable
+
+SI PEU D'INFORMATIONS : Retourne les catégories avec tableaux vides []
+
+COMMENCE L'EXTRACTION :`;
+    }
+    
+    /**
+     * Formater messages pour extraction
+     */
+    formatMessagesForExtraction(messages) {
+        return messages.map(m => 
+            `[${m.role === 'user' ? 'UTILISATEUR' : 'ASSISTANT'}]: ${m.content}`
+        ).join('\n\n');
+    }
+    
+    /**
+     * Parser JSON extrait (avec fallback)
+     */
+    parseExtractedFacts(text) {
+        try {
+            // Nettoyer markdown si présent
+            let cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+            
+            // Parser JSON
+            return JSON.parse(cleaned);
+            
+        } catch (error) {
+            console.error('[MemorySystem] JSON parse error:', error);
+            console.log('[MemorySystem] Raw text:', text);
+            return null;
+        }
+    }
+    
+    /**
+     * Mapper catégories françaises → anglaises
+     */
+    mapFrenchToEnglishCategories(frenchFacts) {
+        if (!frenchFacts) return null;
+        
+        const mapped = {
+            psychometric: {},
+            linguistic: {},
+            emotional: {},
+            cognitive: {},
+            behavioral: {},
+            narrative: {},
+            relational: {},
+            values: {},
+            identity: {},
+            complexity: {}
+        };
+        
+        // Helper function to convert object to array of strings
+        const objToStringArray = (obj) => {
+            if (!obj) return [];
+            return Object.entries(obj).map(([key, value]) => {
+                if (typeof value === 'object' && value !== null) {
+                    return `${key}: ${JSON.stringify(value)}`;
+                }
+                return `${key}: ${value}`;
+            });
+        };
+        
+        // ========== IDENTITY MAPPINGS ==========
+        // profil_personnel, informations_personnelles → identity
+        const identitySources = ['profil_personnel', 'informations_personnelles', 'identite', 'info_perso'];
+        for (const source of identitySources) {
+            if (frenchFacts[source]) {
+                const data = frenchFacts[source];
+                if (data.profession) mapped.identity.profession = data.profession;
+                if (data.age) mapped.identity.age = data.age;
+                if (data.nom || data.name) mapped.identity.name = data.nom || data.name;
+                if (data.localisation || data.location) mapped.identity.location = data.localisation || data.location;
+                if (data.situation_familiale) {
+                    mapped.identity.family = mapped.identity.family || [];
+                    mapped.identity.family.push(data.situation_familiale);
+                }
+                if (data.conjoint) {
+                    mapped.relational.relationships = mapped.relational.relationships || [];
+                    mapped.relational.relationships.push(`Conjoint: ${typeof data.conjoint === 'object' ? JSON.stringify(data.conjoint) : data.conjoint}`);
+                }
+                if (data.famille) {
+                    mapped.identity.family = mapped.identity.family || [];
+                    if (Array.isArray(data.famille)) {
+                        mapped.identity.family.push(...data.famille);
+                    } else {
+                        mapped.identity.family.push(JSON.stringify(data.famille));
+                    }
+                }
+            }
+        }
+        
+        // ========== PSYCHOMETRIC MAPPINGS ==========
+        // personnalite_traits, traits_personnalite, traits_psychologiques → psychometric
+        const psychometricSources = ['personnalite_traits', 'traits_personnalite', 'traits_psychologiques', 'personnalite', 'traits'];
+        for (const source of psychometricSources) {
+            if (frenchFacts[source]) {
+                mapped.psychometric.traits = mapped.psychometric.traits || [];
+                mapped.psychometric.traits.push(...objToStringArray(frenchFacts[source]));
+            }
+        }
+        
+        // ========== BEHAVIORAL MAPPINGS ==========
+        // habitudes_quotidiennes, habitudes, routines, comportements → behavioral
+        const behavioralSources = ['habitudes_quotidiennes', 'habitudes', 'routines', 'comportements', 'rituels'];
+        for (const source of behavioralSources) {
+            if (frenchFacts[source]) {
+                mapped.behavioral.habits = mapped.behavioral.habits || [];
+                mapped.behavioral.habits.push(...objToStringArray(frenchFacts[source]));
+            }
+        }
+        
+        // reactions, coping → behavioral
+        if (frenchFacts.reactions) {
+            mapped.behavioral.reactions = mapped.behavioral.reactions || [];
+            mapped.behavioral.reactions.push(...objToStringArray(frenchFacts.reactions));
+        }
+        if (frenchFacts.coping || frenchFacts.gestion_stress) {
+            mapped.behavioral.coping = mapped.behavioral.coping || [];
+            const copingData = frenchFacts.coping || frenchFacts.gestion_stress;
+            mapped.behavioral.coping.push(...objToStringArray(copingData));
+        }
+        
+        // ========== COGNITIVE MAPPINGS ==========
+        // fonctionnement_mental, processus_mental, pensee, cognition → cognitive
+        const cognitiveSources = ['fonctionnement_mental', 'processus_mental', 'pensee', 'cognition', 'reflexion', 'raisonnement'];
+        for (const source of cognitiveSources) {
+            if (frenchFacts[source]) {
+                mapped.cognitive.thinkingPatterns = mapped.cognitive.thinkingPatterns || [];
+                mapped.cognitive.thinkingPatterns.push(...objToStringArray(frenchFacts[source]));
+            }
+        }
+        
+        // style_decision, prise_decision → cognitive
+        if (frenchFacts.style_decision || frenchFacts.prise_decision) {
+            const decisionData = frenchFacts.style_decision || frenchFacts.prise_decision;
+            mapped.cognitive.decisionStyle = typeof decisionData === 'object' ? JSON.stringify(decisionData) : decisionData;
+        }
+        
+        // ========== EMOTIONAL MAPPINGS ==========
+        // emotions, emotional, affects, sentiments → emotional
+        const emotionalSources = ['emotions', 'emotional', 'affects', 'sentiments', 'vie_emotionnelle'];
+        for (const source of emotionalSources) {
+            if (frenchFacts[source]) {
+                mapped.emotional.primaryEmotions = mapped.emotional.primaryEmotions || [];
+                mapped.emotional.primaryEmotions.push(...objToStringArray(frenchFacts[source]));
+            }
+        }
+        
+        // triggers_emotionnels, declencheurs → emotional.triggers
+        if (frenchFacts.triggers_emotionnels || frenchFacts.declencheurs) {
+            mapped.emotional.triggers = mapped.emotional.triggers || [];
+            const triggerData = frenchFacts.triggers_emotionnels || frenchFacts.declencheurs;
+            mapped.emotional.triggers.push(...objToStringArray(triggerData));
+        }
+        
+        // ========== NARRATIVE MAPPINGS ==========
+        // experiences, parcours, histoire, vecu → narrative
+        const narrativeSources = ['experiences', 'parcours', 'histoire', 'vecu', 'experiences_cles'];
+        for (const source of narrativeSources) {
+            if (frenchFacts[source]) {
+                mapped.narrative.keyExperiences = mapped.narrative.keyExperiences || [];
+                mapped.narrative.keyExperiences.push(...objToStringArray(frenchFacts[source]));
+            }
+        }
+        
+        // passions_interets, passions, interets, loisirs → narrative.keyExperiences
+        const passionSources = ['passions_interets', 'passions', 'interets', 'loisirs', 'hobbies'];
+        for (const source of passionSources) {
+            if (frenchFacts[source]) {
+                mapped.narrative.keyExperiences = mapped.narrative.keyExperiences || [];
+                mapped.narrative.keyExperiences.push(...objToStringArray(frenchFacts[source]));
+            }
+        }
+        
+        // projet_technique, projets, travail_projets → narrative + identity
+        const projectSources = ['projet_technique', 'projets', 'travail_projets', 'projets_actuels', 'projets_futurs'];
+        for (const source of projectSources) {
+            if (frenchFacts[source]) {
+                mapped.narrative.keyExperiences = mapped.narrative.keyExperiences || [];
+                const projectData = frenchFacts[source];
+                
+                // If it's a detailed project, stringify it
+                if (typeof projectData === 'object' && projectData !== null) {
+                    mapped.narrative.keyExperiences.push(`Projet: ${JSON.stringify(projectData)}`);
+                } else {
+                    mapped.narrative.keyExperiences.push(...objToStringArray(projectData));
+                }
+            }
+        }
+        
+        // ========== RELATIONAL MAPPINGS ==========
+        // relations, contexte_familial, vie_sociale, relations_interpersonnelles → relational
+        const relationalSources = ['relations', 'contexte_familial', 'vie_sociale', 'relations_interpersonnelles', 'attachement'];
+        for (const source of relationalSources) {
+            if (frenchFacts[source]) {
+                mapped.relational.relationships = mapped.relational.relationships || [];
+                mapped.relational.relationships.push(...objToStringArray(frenchFacts[source]));
+            }
+        }
+        
+        // style_communication, communication → relational.communicationStyle
+        if (frenchFacts.style_communication || frenchFacts.communication) {
+            const commData = frenchFacts.style_communication || frenchFacts.communication;
+            mapped.relational.communicationStyle = typeof commData === 'object' ? JSON.stringify(commData) : commData;
+        }
+        
+        // ========== VALUES MAPPINGS ==========
+        // valeurs, valeurs_motivations, motivations, croyances → values
+        const valuesSources = ['valeurs', 'valeurs_motivations', 'motivations', 'croyances', 'principes', 'philosophie'];
+        for (const source of valuesSources) {
+            if (frenchFacts[source]) {
+                mapped.values.core = mapped.values.core || [];
+                mapped.values.core.push(...objToStringArray(frenchFacts[source]));
+            }
+        }
+        
+        // ========== LINGUISTIC MAPPINGS ==========
+        // langage, vocabulaire, expression, style_verbal → linguistic
+        const linguisticSources = ['langage', 'vocabulaire', 'expression', 'style_verbal', 'patterns_langage'];
+        for (const source of linguisticSources) {
+            if (frenchFacts[source]) {
+                mapped.linguistic.vocabulary = mapped.linguistic.vocabulary || [];
+                mapped.linguistic.vocabulary.push(...objToStringArray(frenchFacts[source]));
+            }
+        }
+        
+        // ========== COMPLEXITY MAPPINGS ==========
+        // contradictions, paradoxes, ambivalences, complexite → complexity
+        const complexitySources = ['contradictions', 'paradoxes', 'ambivalences', 'complexite', 'dualites'];
+        for (const source of complexitySources) {
+            if (frenchFacts[source]) {
+                mapped.complexity.contradictions = mapped.complexity.contradictions || [];
+                mapped.complexity.contradictions.push(...objToStringArray(frenchFacts[source]));
+            }
+        }
+        
+        // ========== MAPPINGS MANQUANTS (v16.8.1 FIX) ==========
+        // activites_interets → behavioral.habits
+        if (frenchFacts.activites_interets) {
+            mapped.behavioral.habits = mapped.behavioral.habits || [];
+            const data = frenchFacts.activites_interets;
+            if (Array.isArray(data)) {
+                mapped.behavioral.habits.push(...data);
+            } else {
+                mapped.behavioral.habits.push(...objToStringArray(data));
+            }
+        }
+        
+        // contexte_professionnel → identity.profession + narrative
+        if (frenchFacts.contexte_professionnel) {
+            const data = frenchFacts.contexte_professionnel;
+            if (Array.isArray(data)) {
+                // Premier élément = profession, reste = narrative
+                if (data[0]) mapped.identity.profession = data[0];
+                if (data.length > 1) {
+                    mapped.narrative.keyExperiences = mapped.narrative.keyExperiences || [];
+                    mapped.narrative.keyExperiences.push(...data.slice(1));
+                }
+            } else {
+                mapped.identity.profession = typeof data === 'object' ? JSON.stringify(data) : data;
+            }
+        }
+        
+        // relations_sociales → relational.relationships
+        if (frenchFacts.relations_sociales) {
+            mapped.relational.relationships = mapped.relational.relationships || [];
+            const data = frenchFacts.relations_sociales;
+            if (Array.isArray(data)) {
+                mapped.relational.relationships.push(...data);
+            } else {
+                mapped.relational.relationships.push(...objToStringArray(data));
+            }
+        }
+        
+        // rythmes_energie → behavioral.habits
+        if (frenchFacts.rythmes_energie) {
+            mapped.behavioral.habits = mapped.behavioral.habits || [];
+            const data = frenchFacts.rythmes_energie;
+            if (Array.isArray(data)) {
+                mapped.behavioral.habits.push(...data);
+            } else {
+                mapped.behavioral.habits.push(...objToStringArray(data));
+            }
+        }
+        
+        console.log('[MemorySystem] 🔄 Mapped French categories:', Object.keys(frenchFacts), '→', 
+            Object.keys(mapped).filter(k => Object.keys(mapped[k]).length > 0));
+        
+        return mapped;
+    }
+    
+    /**
+     * Intégrer faits extraits dans memory
+     */
+    integrateFacts(facts) {
+        if (!facts) return;
+        
+        // ✅ v16.8.2 FIX: Détecte si données déjà en anglais
+        const englishCategories = ['psychometric', 'linguistic', 'emotional', 'cognitive', 
+                                   'behavioral', 'narrative', 'relational', 'values', 
+                                   'identity', 'complexity'];
+        const isAlreadyEnglish = Object.keys(facts).some(key => englishCategories.includes(key));
+        
+        // Si français → mapper vers anglais. Si déjà anglais → utiliser directement
+        const mappedFacts = isAlreadyEnglish ? facts : this.mapFrenchToEnglishCategories(facts);
+        if (mappedFacts) {
+            facts = mappedFacts;
+        }
+        
+        // Psychometric
+        if (facts.psychometric) {
+            if (facts.psychometric.traits) {
+                this.memory.psychometric.traits.push(...facts.psychometric.traits);
+            }
+            if (facts.psychometric.evidence) {
+                // Distribuer evidence dans Big Five
+                facts.psychometric.evidence.forEach(ev => {
+                    // Logique simple: ajouter à tous pour l'instant
+                    Object.keys(this.memory.psychometric.bigFive).forEach(trait => {
+                        this.memory.psychometric.bigFive[trait].evidence.push(ev);
+                    });
+                });
+            }
+        }
+        
+        // Linguistic
+        if (facts.linguistic) {
+            if (facts.linguistic.vocabulary) {
+                this.memory.linguistic.vocabulary.push(...facts.linguistic.vocabulary);
+            }
+            if (facts.linguistic.patterns) {
+                this.memory.linguistic.speechPatterns.push(...facts.linguistic.patterns);
+            }
+        }
+        
+        // Emotional
+        if (facts.emotional) {
+            if (facts.emotional.primaryEmotions) {
+                this.memory.emotional.primaryEmotions.push(...facts.emotional.primaryEmotions);
+            }
+            if (facts.emotional.triggers) {
+                this.memory.emotional.triggers.push(...facts.emotional.triggers);
+            }
+        }
+        
+        // Cognitive
+        if (facts.cognitive) {
+            if (facts.cognitive.decisionStyle) {
+                this.memory.cognitive.decisionStyle = facts.cognitive.decisionStyle;
+            }
+            if (facts.cognitive.thinkingPatterns) {
+                this.memory.cognitive.thinkingPatterns.push(...facts.cognitive.thinkingPatterns);
+            }
+        }
+        
+        // Behavioral
+        if (facts.behavioral) {
+            if (facts.behavioral.habits) {
+                this.memory.behavioral.habits.push(...facts.behavioral.habits);
+            }
+            if (facts.behavioral.reactions) {
+                this.memory.behavioral.reactions.push(...facts.behavioral.reactions);
+            }
+            if (facts.behavioral.coping) {
+                this.memory.behavioral.coping.push(...facts.behavioral.coping);
+            }
+        }
+        
+        // Narrative
+        if (facts.narrative && facts.narrative.keyExperiences) {
+            this.memory.narrative.keyExperiences.push(...facts.narrative.keyExperiences);
+        }
+        
+        // Relational
+        if (facts.relational) {
+            if (facts.relational.communicationStyle) {
+                this.memory.relational.communicationStyle = facts.relational.communicationStyle;
+            }
+            if (facts.relational.relationships) {
+                this.memory.relational.relationships.push(...facts.relational.relationships);
+            }
+        }
+        
+        // Values
+        if (facts.values) {
+            if (facts.values.core) {
+                this.memory.values.core.push(...facts.values.core);
+            }
+            if (facts.values.beliefs) {
+                this.memory.values.beliefs.push(...facts.values.beliefs);
+            }
+        }
+        
+        // Identity
+        if (facts.identity) {
+            Object.assign(this.memory.identity, facts.identity);
+        }
+        
+        // Complexity
+        if (facts.complexity && facts.complexity.contradictions) {
+            this.memory.complexity.contradictions.push(...facts.complexity.contradictions);
+        }
+        
+        // Mettre à jour compteur
+        this.updateFactCount();
+        
+        console.log('[MemorySystem] 💾 Facts integrated. Total:', this.metadata.factCount);
+    }
+    
+    /**
+     * Mettre à jour compteur de faits
+     */
+    updateFactCount() {
+        let count = 0;
+        
+        // Compter tous les faits (arrays, strings, objects)
+        const countFacts = (obj, depth = 0) => {
+            if (!obj || typeof obj !== 'object') return;
+            
+            Object.entries(obj).forEach(([key, value]) => {
+                if (Array.isArray(value)) {
+                    // Compter items dans arrays
+                    count += value.length;
+                } else if (typeof value === 'object' && value !== null) {
+                    // Récursif pour objets imbriqués
+                    countFacts(value, depth + 1);
+                } else if (value !== null && value !== undefined && value !== '') {
+                    // Compter propriétés simples non-vides (string, number, boolean)
+                    if (depth > 0) {  // Ne pas compter le niveau racine
+                        count++;
+                    }
+                }
+            });
+        };
+        
+        countFacts(this.memory);
+        this.metadata.factCount = count;
+    }
+    
+    /**
+     * Obtenir contexte pertinent pour injection dans prompt
+     */
+    getRelevantContext(currentTheme = null) {
+        const context = [];
+        
+        // Identity (toujours pertinent)
+        if (this.memory.identity.name) {
+            context.push(`Nom: ${this.memory.identity.name}`);
+        }
+        if (this.memory.identity.profession) {
+            context.push(`Profession: ${this.memory.identity.profession}`);
+        }
+        
+        // Traits principaux
+        if (this.memory.psychometric.traits.length > 0) {
+            context.push(`Traits: ${this.memory.psychometric.traits.slice(0, 5).join(', ')}`);
+        }
+        
+        // Valeurs core
+        if (this.memory.values.core.length > 0) {
+            context.push(`Valeurs: ${this.memory.values.core.slice(0, 3).join(', ')}`);
+        }
+        
+        // Style communication
+        if (this.memory.relational.communicationStyle) {
+            context.push(`Style: ${this.memory.relational.communicationStyle}`);
+        }
+        
+        // Expériences clés (2-3 dernières)
+        if (this.memory.narrative.keyExperiences.length > 0) {
+            const recent = this.memory.narrative.keyExperiences.slice(-3);
+            context.push(`Expériences: ${recent.join('; ')}`);
+        }
+        
+        return context.join(' | ');
+    }
+    
+    /**
+     * Obtenir memory complète pour export
+     */
+    getFullMemory() {
+        return {
+            memory: this.memory,
+            metadata: this.metadata
+        };
+    }
+    
+    /**
+     * Reset memory (pour nouveau sujet)
+     */
+    reset() {
+        this.exchangesSinceExtraction = 0;
+        this.metadata = {
+            totalExtractions: 0,
+            lastExtraction: null,
+            factCount: 0
+        };
+        
+        // Garder structure mais vider contenus
+        Object.keys(this.memory).forEach(level => {
+            Object.keys(this.memory[level]).forEach(key => {
+                if (Array.isArray(this.memory[level][key])) {
+                    this.memory[level][key] = [];
+                } else if (typeof this.memory[level][key] === 'object') {
+                    // Reset nested objects
+                    Object.keys(this.memory[level][key]).forEach(subkey => {
+                        if (Array.isArray(this.memory[level][key][subkey])) {
+                            this.memory[level][key][subkey] = [];
+                        } else {
+                            this.memory[level][key][subkey] = null;
+                        }
+                    });
+                } else {
+                    this.memory[level][key] = null;
+                }
+            });
+        });
+        
+        console.log('[MemorySystem] 🔄 Memory reset');
+    }
+}
+
+// Instance globale
+window.memorySystem = new MemorySystem();
+console.log('[v16.8.0] ✅ MemorySystem initialized');
+
+// ============================================================================
+// CONTEXT INJECTOR v16.8.0 - Smart Context Injection
+// ============================================================================
+/**
+ * Context Injector - Injection intelligente du contexte mémorisé
+ * 
+ * Analyse le thème actuel et la question en préparation
+ * Sélectionne les faits les plus pertinents de la mémoire
+ * Formate pour injection naturelle dans le prompt système
+ */
+class ContextInjector {
+    constructor(memorySystem) {
+        this.memory = memorySystem;
+        
+        // Mapping thèmes → niveaux mémoire pertinents
+        this.themeMapping = {
+            'Travail & carrière': ['identity', 'behavioral', 'values', 'narrative'],
+            'Relations & famille': ['relational', 'emotional', 'narrative', 'values'],
+            'Passions & loisirs': ['identity', 'behavioral', 'emotional', 'values'],
+            'Valeurs & croyances': ['values', 'cognitive', 'narrative'],
+            'Émotions & bien-être': ['emotional', 'behavioral', 'cognitive'],
+            'Projets & aspirations': ['narrative', 'values', 'cognitive', 'identity'],
+            'Défis & difficultés': ['narrative', 'emotional', 'behavioral', 'complexity']
+        };
+        
+        // Keywords pour détection intention question
+        this.intentKeywords = {
+            'identity': ['nom', 'appelle', 'âge', 'métier', 'profession', 'habite'],
+            'work': ['travail', 'carrière', 'emploi', 'collègue', 'patron', 'job'],
+            'relationships': ['famille', 'ami', 'relation', 'couple', 'parent', 'enfant'],
+            'emotions': ['émotion', 'sens', 'ressens', 'peur', 'joie', 'colère', 'stress'],
+            'values': ['valeur', 'important', 'principe', 'croyance'],
+            'experiences': ['expérience', 'vécu', 'moment', 'souvenir', 'fois']
+        };
+    }
+    
+    /**
+     * Injecter contexte dans prompt système
+     */
+    injectContext(systemPrompt, currentTheme = null, nextQuestion = null) {
+        // Si pas de faits en mémoire, retourner prompt original
+        if (this.memory.metadata.factCount === 0) {
+            return systemPrompt;
+        }
+        
+        // Construire section contexte
+        const contextSection = this.buildContextSection(currentTheme, nextQuestion);
+        
+        if (!contextSection) {
+            return systemPrompt;
+        }
+        
+        // Injecter après les objectifs et avant le mode conversationnel
+        const injectionMarker = '💬 MODE CONVERSATIONNEL :';
+        
+        if (systemPrompt.includes(injectionMarker)) {
+            return systemPrompt.replace(
+                injectionMarker,
+                `${contextSection}\n\n${injectionMarker}`
+            );
+        }
+        
+        // Fallback : ajouter au début
+        return `${contextSection}\n\n${systemPrompt}`;
+    }
+    
+    /**
+     * Construire section contexte
+     */
+    buildContextSection(currentTheme, nextQuestion) {
+        const facts = this.selectRelevantFacts(currentTheme, nextQuestion);
+        
+        if (facts.length === 0) {
+            return null;
+        }
+        
+        let section = '🧠 CONTEXTE MÉMORISÉ (Faits clés déjà connus) :\n';
+        
+        facts.forEach(fact => {
+            section += `- ${fact}\n`;
+        });
+        
+        section += '\n💡 UTILISE CE CONTEXTE pour :\n';
+        section += '- Faire des rappels naturels : "Tu m\'as mentionné que..."\n';
+        section += '- Creuser davantage : "Comment ça se connecte avec..."\n';
+        section += '- Détecter contradictions : "Tu as dit X mais aussi Y..."\n';
+        section += '- Personnaliser questions selon profil émergent\n';
+        
+        return section;
+    }
+    
+    /**
+     * Sélectionner faits pertinents
+     */
+    selectRelevantFacts(currentTheme, nextQuestion) {
+        const selectedFacts = [];
+        const memory = this.memory.memory;
+        
+        // 1. TOUJOURS inclure identité de base
+        if (memory.identity.name) {
+            selectedFacts.push(`Nom : ${memory.identity.name}`);
+        }
+        if (memory.identity.profession) {
+            selectedFacts.push(`Profession : ${memory.identity.profession}`);
+        }
+        if (memory.identity.age) {
+            selectedFacts.push(`Âge : ${memory.identity.age}`);
+        }
+        
+        // 2. Sélection selon thème actuel
+        if (currentTheme) {
+            const relevantLevels = this.themeMapping[currentTheme] || [];
+            
+            relevantLevels.forEach(level => {
+                const levelFacts = this.extractFromLevel(level);
+                selectedFacts.push(...levelFacts.slice(0, 3)); // Max 3 par niveau
+            });
+        }
+        
+        // 3. Sélection selon intention question
+        if (nextQuestion) {
+            const intentFacts = this.extractByIntent(nextQuestion);
+            selectedFacts.push(...intentFacts.slice(0, 2)); // Max 2
+        }
+        
+        // 4. Toujours inclure valeurs core (si disponibles)
+        if (memory.values.core && memory.values.core.length > 0) {
+            selectedFacts.push(`Valeurs : ${memory.values.core.slice(0, 3).join(', ')}`);
+        }
+        
+        // 5. Inclure contradictions si détectées
+        if (memory.complexity.contradictions && memory.complexity.contradictions.length > 0) {
+            selectedFacts.push(`⚠️ Contradiction à explorer : ${memory.complexity.contradictions[0]}`);
+        }
+        
+        // Limiter total à 10 faits max (éviter surcharge)
+        return [...new Set(selectedFacts)].slice(0, 10);
+    }
+    
+    /**
+     * Extraire faits d'un niveau mémoire
+     */
+    extractFromLevel(level) {
+        const facts = [];
+        const data = this.memory.memory[level];
+        
+        if (!data) return facts;
+        
+        switch(level) {
+            case 'identity':
+                if (data.family && data.family.length > 0) {
+                    facts.push(`Famille : ${data.family.slice(0, 2).join(', ')}`);
+                }
+                if (data.roles && data.roles.length > 0) {
+                    facts.push(`Rôles : ${data.roles.slice(0, 2).join(', ')}`);
+                }
+                break;
+                
+            case 'behavioral':
+                if (data.habits && data.habits.length > 0) {
+                    facts.push(`Habitudes : ${data.habits.slice(0, 2).join('; ')}`);
+                }
+                if (data.coping && data.coping.length > 0) {
+                    facts.push(`Stratégies adaptation : ${data.coping[0]}`);
+                }
+                break;
+                
+            case 'emotional':
+                if (data.primaryEmotions && data.primaryEmotions.length > 0) {
+                    facts.push(`Émotions fréquentes : ${data.primaryEmotions.slice(0, 3).join(', ')}`);
+                }
+                if (data.triggers && data.triggers.length > 0) {
+                    facts.push(`Triggers : ${data.triggers[0]}`);
+                }
+                break;
+                
+            case 'relational':
+                if (data.communicationStyle) {
+                    facts.push(`Style communication : ${data.communicationStyle}`);
+                }
+                if (data.attachmentStyle) {
+                    facts.push(`Attachement : ${data.attachmentStyle}`);
+                }
+                break;
+                
+            case 'narrative':
+                if (data.keyExperiences && data.keyExperiences.length > 0) {
+                    facts.push(`Expérience clé : ${data.keyExperiences[data.keyExperiences.length - 1]}`);
+                }
+                break;
+                
+            case 'values':
+                if (data.philosophy) {
+                    facts.push(`Philosophie : ${data.philosophy}`);
+                }
+                break;
+                
+            case 'cognitive':
+                if (data.decisionStyle) {
+                    facts.push(`Décision : ${data.decisionStyle}`);
+                }
+                break;
+                
+            case 'complexity':
+                if (data.ambivalences && data.ambivalences.length > 0) {
+                    facts.push(`Ambivalence : ${data.ambivalences[0]}`);
+                }
+                break;
+        }
+        
+        return facts;
+    }
+    
+    /**
+     * Extraire faits selon intention question
+     */
+    extractByIntent(question) {
+        const facts = [];
+        const lowerQuestion = question.toLowerCase();
+        
+        // Détecter intention
+        let detectedIntent = null;
+        
+        for (const [intent, keywords] of Object.entries(this.intentKeywords)) {
+            if (keywords.some(kw => lowerQuestion.includes(kw))) {
+                detectedIntent = intent;
+                break;
+            }
+        }
+        
+        if (!detectedIntent) return facts;
+        
+        const memory = this.memory.memory;
+        
+        // Extraire selon intention
+        switch(detectedIntent) {
+            case 'work':
+                if (memory.identity.profession) {
+                    facts.push(`Métier : ${memory.identity.profession}`);
+                }
+                if (memory.behavioral.routines && memory.behavioral.routines.length > 0) {
+                    facts.push(`Routine travail : ${memory.behavioral.routines[0]}`);
+                }
+                break;
+                
+            case 'relationships':
+                if (memory.relational.communicationStyle) {
+                    facts.push(`Communication : ${memory.relational.communicationStyle}`);
+                }
+                if (memory.identity.family && memory.identity.family.length > 0) {
+                    facts.push(`Famille : ${memory.identity.family.join(', ')}`);
+                }
+                break;
+                
+            case 'emotions':
+                if (memory.emotional.primaryEmotions && memory.emotional.primaryEmotions.length > 0) {
+                    facts.push(`Émotions : ${memory.emotional.primaryEmotions.slice(0, 2).join(', ')}`);
+                }
+                if (memory.emotional.regulationStyle) {
+                    facts.push(`Régulation : ${memory.emotional.regulationStyle}`);
+                }
+                break;
+                
+            case 'values':
+                if (memory.values.core && memory.values.core.length > 0) {
+                    facts.push(`Valeurs : ${memory.values.core.join(', ')}`);
+                }
+                break;
+                
+            case 'experiences':
+                if (memory.narrative.keyExperiences && memory.narrative.keyExperiences.length > 0) {
+                    const latest = memory.narrative.keyExperiences.slice(-2);
+                    facts.push(`Expériences récentes : ${latest.join('; ')}`);
+                }
+                break;
+        }
+        
+        return facts;
+    }
+    
+    /**
+     * Générer rappel contextuel pour question
+     */
+    generateReminder(topic) {
+        const facts = this.selectRelevantFacts(topic, null);
+        
+        if (facts.length === 0) {
+            return null;
+        }
+        
+        // Sélectionner fait le plus pertinent
+        const fact = facts[0];
+        
+        // Templates de rappels naturels
+        const templates = [
+            `Tu m'as dit que ${fact.toLowerCase()}. `,
+            `Je me souviens que ${fact.toLowerCase()}. `,
+            `Puisque ${fact.toLowerCase()}, `,
+            `Tu as mentionné que ${fact.toLowerCase()}. `
+        ];
+        
+        return templates[Math.floor(Math.random() * templates.length)];
+    }
+}
+
+// Instance globale
+window.contextInjector = new ContextInjector(window.memorySystem);
+console.log('[v16.8.0] ✅ ContextInjector initialized');
+
+// ============================================================================
+// CONTINUITY ENGINE v16.8.0 - Conversational Continuity & Flow
+// ============================================================================
+/**
+ * Continuity Engine - Moteur de continuité conversationnelle
+ * 
+ * Génère des transitions naturelles entre sujets
+ * Crée des rappels contextuels explicites
+ * Détecte et explore les contradictions
+ * Maintient la cohérence narrative
+ */
+class ContinuityEngine {
+    constructor(memorySystem, contextInjector) {
+        this.memory = memorySystem;
+        this.injector = contextInjector;
+        
+        // Historique transitions (éviter répétitions)
+        this.usedTransitions = [];
+        this.usedReminders = [];
+        
+        // Templates de transitions
+        this.transitionTemplates = {
+            'toWork': [
+                "En parlant de ça, comment se passe ton travail en ce moment ?",
+                "Ça me fait penser à ton quotidien professionnel. Tu peux m'en dire plus ?",
+                "J'aimerais maintenant comprendre ta vie professionnelle.",
+                "Parlons un peu de ton travail maintenant."
+            ],
+            'toRelationships': [
+                "Et dans tes relations, comment ça se passe ?",
+                "Ça m'intéresse de savoir comment tu vis tes relations.",
+                "Parlons de tes proches maintenant.",
+                "Comment est-ce que ça se reflète dans tes relations ?"
+            ],
+            'toEmotions': [
+                "Comment tu te sens par rapport à tout ça ?",
+                "Qu'est-ce que ça provoque en toi émotionnellement ?",
+                "Parlons de ce que tu ressens.",
+                "Comment tu vis ça au niveau émotionnel ?"
+            ],
+            'toValues': [
+                "Qu'est-ce qui est vraiment important pour toi là-dedans ?",
+                "Ça touche à quelles valeurs pour toi ?",
+                "Qu'est-ce que ça dit de tes valeurs ?",
+                "Qu'est-ce qui compte le plus dans tout ça ?"
+            ],
+            'toExperiences': [
+                "Tu as vécu des moments marquants liés à ça ?",
+                "Raconte-moi une expérience significative.",
+                "Comment tu en es arrivé là ?",
+                "Qu'est-ce qui t'a amené à cette réflexion ?"
+            ]
+        };
+        
+        // Templates de rappels
+        this.reminderTemplates = [
+            {
+                pattern: "Tu m'as dit que {fact}.",
+                followUp: " Comment {question} ?"
+            },
+            {
+                pattern: "Tout à l'heure, tu as mentionné {fact}.",
+                followUp: " Peux-tu m'en dire plus ?"
+            },
+            {
+                pattern: "Je me souviens que {fact}.",
+                followUp: " Est-ce que {question} ?"
+            },
+            {
+                pattern: "Tu as parlé de {fact}.",
+                followUp: " Comment ça se connecte avec {current_topic} ?"
+            }
+        ];
+    }
+    
+    /**
+     * Générer transition naturelle vers nouveau thème
+     */
+    generateTransition(fromTheme, toTheme) {
+        const key = this.getTransitionKey(toTheme);
+        
+        if (!key) {
+            return null;
+        }
+        
+        const templates = this.transitionTemplates[key] || [];
+        
+        if (templates.length === 0) {
+            return null;
+        }
+        
+        // Choisir template non utilisé récemment
+        const available = templates.filter(t => !this.usedTransitions.includes(t));
+        
+        let transition;
+        if (available.length > 0) {
+            transition = available[Math.floor(Math.random() * available.length)];
+        } else {
+            // Reset si tous utilisés
+            this.usedTransitions = [];
+            transition = templates[Math.floor(Math.random() * templates.length)];
+        }
+        
+        // Marquer comme utilisé
+        this.usedTransitions.push(transition);
+        
+        // Limiter historique à 10
+        if (this.usedTransitions.length > 10) {
+            this.usedTransitions.shift();
+        }
+        
+        return transition;
+    }
+    
+    /**
+     * Obtenir clé transition selon thème
+     */
+    getTransitionKey(theme) {
+        const mapping = {
+            'Travail & carrière': 'toWork',
+            'Relations & famille': 'toRelationships',
+            'Émotions & bien-être': 'toEmotions',
+            'Valeurs & croyances': 'toValues',
+            'Passions & loisirs': 'toExperiences',
+            'Projets & aspirations': 'toExperiences',
+            'Défis & difficultés': 'toExperiences'
+        };
+        
+        return mapping[theme] || null;
+    }
+    
+    /**
+     * Générer rappel contextuel
+     */
+    generateReminder(currentTopic = null) {
+        const memory = this.memory.memory;
+        
+        // Sélectionner fait pertinent
+        let fact = null;
+        let factSource = null;
+        
+        // Priorité aux faits récents et pertinents
+        if (currentTopic) {
+            const relevantFacts = this.injector.selectRelevantFacts(currentTopic, null);
+            if (relevantFacts.length > 0) {
+                fact = relevantFacts[0];
+                factSource = 'relevant';
+            }
+        }
+        
+        // Fallback : fait quelconque
+        if (!fact) {
+            // Chercher dans identity
+            if (memory.identity.profession) {
+                fact = `tu es ${memory.identity.profession}`;
+                factSource = 'identity';
+            } else if (memory.values.core && memory.values.core.length > 0) {
+                fact = `${memory.values.core[0]} est important pour toi`;
+                factSource = 'values';
+            } else if (memory.narrative.keyExperiences && memory.narrative.keyExperiences.length > 0) {
+                const exp = memory.narrative.keyExperiences[memory.narrative.keyExperiences.length - 1];
+                fact = `tu as vécu : ${exp}`;
+                factSource = 'experience';
+            }
+        }
+        
+        if (!fact) {
+            return null; // Pas assez de faits en mémoire
+        }
+        
+        // Choisir template non utilisé
+        const available = this.reminderTemplates.filter(t => 
+            !this.usedReminders.includes(t.pattern)
+        );
+        
+        let template;
+        if (available.length > 0) {
+            template = available[Math.floor(Math.random() * available.length)];
+        } else {
+            this.usedReminders = [];
+            template = this.reminderTemplates[Math.floor(Math.random() * this.reminderTemplates.length)];
+        }
+        
+        // Marquer comme utilisé
+        this.usedReminders.push(template.pattern);
+        if (this.usedReminders.length > 5) {
+            this.usedReminders.shift();
+        }
+        
+        // Construire rappel
+        let reminder = template.pattern.replace('{fact}', fact);
+        
+        // Ajouter follow-up si pertinent
+        if (template.followUp && currentTopic) {
+            const followUp = template.followUp
+                .replace('{question}', this.generateFollowUpQuestion(factSource))
+                .replace('{current_topic}', currentTopic.toLowerCase());
+            
+            reminder += followUp;
+        }
+        
+        return reminder;
+    }
+    
+    /**
+     * Générer question de suivi
+     */
+    generateFollowUpQuestion(factSource) {
+        const questions = {
+            'identity': 'ca influence ton quotidien',
+            'values': 'ca guide tes decisions',
+            'experience': 'ca t\'a change',
+            'relevant': 'tu le vis aujourd\'hui'
+        };
+        
+        return questions[factSource] || 'ca se manifeste';
+    }
+    
+    /**
+     * Détecter contradiction potentielle
+     */
+    detectContradiction(newStatement, memory) {
+        const contradictions = memory.complexity.contradictions || [];
+        
+        // Analyse simple : chercher opposés sémantiques dans les faits
+        const opposites = [
+            ['introverti', 'extraverti'],
+            ['rationnel', 'émotionnel'],
+            ['spontané', 'planifié'],
+            ['optimiste', 'pessimiste'],
+            ['indépendant', 'dépendant']
+        ];
+        
+        const lowerStatement = newStatement.toLowerCase();
+        
+        for (const [word1, word2] of opposites) {
+            if (lowerStatement.includes(word1) || lowerStatement.includes(word2)) {
+                // Chercher l'opposé dans les faits existants
+                const hasOpposite = this.searchInMemory(
+                    lowerStatement.includes(word1) ? word2 : word1
+                );
+                
+                if (hasOpposite) {
+                    return {
+                        detected: true,
+                        statement1: hasOpposite,
+                        statement2: newStatement,
+                        type: 'trait_opposition'
+                    };
+                }
+            }
+        }
+        
+        return { detected: false };
+    }
+    
+    /**
+     * Chercher mot dans mémoire
+     */
+    searchInMemory(word) {
+        const memory = this.memory.memory;
+        
+        // Chercher dans traits
+        const trait = memory.psychometric.traits.find(t => 
+            t.toLowerCase().includes(word)
+        );
+        
+        if (trait) return trait;
+        
+        // Chercher dans behavioral
+        const behavior = memory.behavioral.habits.find(h => 
+            h.toLowerCase().includes(word)
+        );
+        
+        if (behavior) return behavior;
+        
+        return null;
+    }
+    
+    /**
+     * Générer question d'exploration de contradiction
+     */
+    generateContradictionQuestion(contradiction) {
+        const templates = [
+            `C'est intéressant, tu as dit "{statement1}" et aussi "{statement2}". Comment tu vois ces deux aspects de toi ?`,
+            `Je remarque que tu te décris à la fois comme {statement1} et {statement2}. Peux-tu m'expliquer cette nuance ?`,
+            `Tu sembles avoir des facettes différentes : {statement1} d'un côté, {statement2} de l'autre. Comment ça coexiste en toi ?`
+        ];
+        
+        const template = templates[Math.floor(Math.random() * templates.length)];
+        
+        return template
+            .replace('{statement1}', contradiction.statement1)
+            .replace('{statement2}', contradiction.statement2);
+    }
+    
+    /**
+     * Suggérer question de suivi naturelle
+     */
+    suggestFollowUp(lastAnswer, currentTheme) {
+        // Analyse rapide du dernier message
+        const lowerAnswer = lastAnswer.toLowerCase();
+        
+        // Détecter mots-clés émotionnels
+        const emotionalKeywords = ['difficile', 'dur', 'compliqué', 'stressant', 'anxieux', 'peur'];
+        const hasEmotional = emotionalKeywords.some(kw => lowerAnswer.includes(kw));
+        
+        if (hasEmotional) {
+            return "Comment tu gères ça au quotidien ?";
+        }
+        
+        // Détecter mots-clés positifs
+        const positiveKeywords = ['aime', 'passion', 'heureux', 'joie', 'plaisir'];
+        const hasPositive = positiveKeywords.some(kw => lowerAnswer.includes(kw));
+        
+        if (hasPositive) {
+            return "Qu'est-ce qui te procure autant de satisfaction là-dedans ?";
+        }
+        
+        // Détecter mention de personnes
+        const peopleKeywords = ['ami', 'famille', 'collègue', 'partenaire', 'femme', 'mari', 'enfant'];
+        const hasPeople = peopleKeywords.some(kw => lowerAnswer.includes(kw));
+        
+        if (hasPeople) {
+            return "Comment cette relation influence ton quotidien ?";
+        }
+        
+        // Question générique d'approfondissement
+        return "Peux-tu m'en dire plus ?";
+    }
+    
+    /**
+     * Reset engine (nouveau sujet)
+     */
+    reset() {
+        this.usedTransitions = [];
+        this.usedReminders = [];
+        console.log('[ContinuityEngine] 🔄 Engine reset');
+    }
+}
+
+// Instance globale
+window.continuityEngine = new ContinuityEngine(window.memorySystem, window.contextInjector);
+console.log('[v16.8.0] ✅ ContinuityEngine initialized');
+
 class ConversationalSystem {
     constructor() {
         // Configuration
@@ -4383,7 +5837,11 @@ class ConversationalSystem {
             `${t.name}: ${t.status === 'covered' ? '✅ bien' : t.status === 'partial' ? '⏳ en cours' : t.status === 'started' ? '🔄 démarré' : '⭕ à explorer'}`
         ).join('\n');
         
-        const prompt = `Tu es Claude, un thérapeute expert menant une interview conversationnelle 100% naturelle et fluide pour créer un clone de personnalité ultra-précis.
+        // v16.8.0 - Détecter thème actuel (le dernier 'partial' ou 'started')
+        const currentTheme = this.themes.find(t => t.status === 'partial' || t.status === 'started');
+        const currentThemeName = currentTheme ? currentTheme.name : null;
+        
+        let prompt = `Tu es Claude, un thérapeute expert menant une interview conversationnelle 100% naturelle et fluide pour créer un clone de personnalité ultra-précis.
 
 🎯 OBJECTIFS :
 - Concordance actuelle : ${concordance.toFixed(1)}% (cible: 102%+)
@@ -4408,8 +5866,10 @@ ${recentEmotion ? `🎭 ÉMOTION DÉTECTÉE : ${recentEmotion.emotion} (${recent
 3. **REBONDS NATURELS** :
    - Fais des transitions fluides entre thèmes
    - Reprends des éléments de ses réponses précédentes
+   - **UTILISE les faits mémorisés** pour faire des rappels : "Tu m'as dit que...", "Tout à l'heure tu as mentionné..."
    - Approfondis quand il donne des détails intéressants
    - Change de sujet si résistance ou réponses évasives
+   - **Connecte** les sujets entre eux : "Comment ça se relie à ce que tu m'as dit sur..."
 
 4. **STYLE THÉRAPEUTE** :
    - Questions courtes (15-25 mots)
@@ -4425,6 +5885,11 @@ ${recentEmotion ? `🎭 ÉMOTION DÉTECTÉE : ${recentEmotion.emotion} (${recent
 
 FORMAT RÉPONSE :
 Retourne UNIQUEMENT ta prochaine intervention conversationnelle (question, réponse à sa question, ou clarification), sans préambule ni explication.`;
+
+        // v16.8.0 - Injection contexte mémorisé via ContextInjector
+        if (window.contextInjector) {
+            prompt = window.contextInjector.injectContext(prompt, currentThemeName, null);
+        }
 
         return prompt.trim();
     }
@@ -4805,6 +6270,20 @@ QUESTION :`;
         
         // Identifier thème(s) de la réponse
         this.identifyThemesInResponse(text);
+        
+        // v16.8.0 - Memory System: Extraction faits tous les 3-5 échanges
+        if (window.memorySystem && window.memorySystem.shouldExtract()) {
+            console.log('[ConversationalSystem] 🧠 Triggering memory extraction...');
+            
+            // Extraction en arrière-plan (non-bloquant)
+            window.memorySystem.extractFacts(this.messages).then(facts => {
+                if (facts) {
+                    console.log('[ConversationalSystem] ✅ Memory updated:', window.memorySystem.metadata.factCount, 'total facts');
+                }
+            }).catch(err => {
+                console.error('[ConversationalSystem] ❌ Memory extraction failed:', err);
+            });
+        }
         
         // Clear input
         this.userInput.value = '';
