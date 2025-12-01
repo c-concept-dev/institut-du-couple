@@ -1468,6 +1468,9 @@
                 </button>
                 <select id="voice-mode-select" onchange="changeVoiceMode()" style="margin-left: 10px; padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.2); color: white; font-size: 12px; cursor: pointer;">
                     <option value="google">🌐 Google Cloud TTS (Neural2)</option>
+                    <option value="google-journey">🔥 Google Journey (Chirp 3 - MEILLEURE)</option>
+                    <option value="google-studio">🎙️ Google Studio (Chirp 3 - Excellente)</option>
+                    <option value="google-polyglot">🆕 Google Polyglot (Chirp 3)</option>
                     <option value="elevenlabs">⚡ ElevenLabs (premium)</option>
                     <option value="webspeech">🔊 Web Speech (gratuit)</option>
                 </select>
@@ -2941,7 +2944,28 @@ class TTSQueue {
     /**
      * Jouer avec Google Cloud Text-to-Speech (v16.7.6)
      */
-    async playGoogleTTS(text, resolve, reject) {
+    async /**
+     * Obtenir le nom de la voix Google selon le mode sélectionné
+     */
+    getGoogleVoiceName(voiceMode, customVoice) {
+        // Si voix personnalisée spécifiée, l'utiliser
+        if (customVoice) return customVoice;
+        
+        // Sinon, utiliser selon le mode
+        switch(voiceMode) {
+            case 'google-journey':
+                return 'fr-FR-Journey-F'; // Voix féminine Journey (Chirp 3 HD)
+            case 'google-studio':
+                return 'fr-FR-Studio-O'; // Voix Studio (Chirp 3 HD)
+            case 'google-polyglot':
+                return 'fr-FR-Polyglot-1'; // Voix Polyglot (Chirp 3)
+            case 'google':
+            default:
+                return 'fr-FR-Neural2-B'; // Neural2 par défaut
+        }
+    }
+    
+    playGoogleTTS(text, resolve, reject) {
         const startTime = performance.now();
         
         // Clean markdown formatting before TTS
@@ -2959,7 +2983,7 @@ class TTSQueue {
                     input: { text: text },
                     voice: {
                         languageCode: 'fr-FR',
-                        name: state.googleTTSVoice || 'fr-FR-Neural2-B',
+                        name: this.getGoogleVoiceName(state.voiceMode, state.googleTTSVoice),
                         ssmlGender: 'MALE'
                     },
                     audioConfig: {
