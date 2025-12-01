@@ -1,5 +1,63 @@
 <!DOCTYPE html>
 <!--
+╔═══════════════════════════════════════════════════════════════════════════╗
+║  CLONE INTERVIEW PRO v17.0.1 WORLDCLASS                                  ║
+║  Institut du Couple - Concordance 101%+                                  ║
+║                                                                           ║
+║  🌟 NIVEAU 5 - PRODUCTION READY                                          ║
+║                                                                           ║
+║  📅 Date: 2024-12-01                                                     ║
+║  👤 Author: Christophe (avec Claude Sonnet 4)                            ║
+║  🔧 Version: 17.0.1 (Chirp 3 HD fix)                                     ║
+║                                                                           ║
+║  🔥 NOUVEAUTÉS v17.0:                                                    ║
+║    ✅ MultimodalFusionEngine (indicateurs psycho audio/vidéo)           ║
+║    ✅ BrainBuilderAIHelper (5 appels IA stratégiques)                   ║
+║    ✅ BrainJSONSchemaValidator (validation progressive)                 ║
+║                                                                           ║
+║  🔧 FIX v17.0.1:                                                         ║
+║    ✅ Google Chirp 3 HD voices (Journey, Studio, Polyglot)              ║
+║    ✅ playGoogleTTS() now calls getGoogleVoiceName()                    ║
+║    ✅ ssmlGender: MALE → FEMALE (Chirp 3 voices)                        ║
+║                                                                           ║
+║  📊 MÉTRIQUES:                                                           ║
+║    - Taille: 844 KB                                                      ║
+║    - Lignes: 23,317                                                      ║
+║    - Modules: 15+                                                        ║
+║    - Défauts: 0 ✅                                                       ║
+║                                                                           ║
+║  🔑 CONFIGURATION REQUISE:                                               ║
+║    - Clé API Google Cloud (ligne 1820)                                  ║
+║    - Navigateur moderne (Chrome, Edge, Firefox)                         ║
+║    - Webcam + Micro (pour mode vidéo)                                   ║
+║                                                                           ║
+║  📚 DOCUMENTATION:                                                       ║
+║    - DOCUMENTATION-V17-WORLDCLASS.md                                     ║
+║    - QUICK-START-V17.md                                                  ║
+║    - CORRECTION-CHIRP-3-HD.md                                            ║
+║                                                                           ║
+║  🚀 DÉMARRAGE RAPIDE:                                                    ║
+║    1. Double-clic ce fichier                                             ║
+║    2. ⚙️ Paramètres → Voix → Google Journey (Chirp 3)                   ║
+║    3. "Commencer l'interview" → Mode Vidéo + Audio                      ║
+║    4. Répondre naturellement 60-90 minutes                               ║
+║    5. "🧠 Générer Clone Complet" → Attendre 2-3 min                    ║
+║    6. "📦 Exporter ZIP" → 4 fichiers clone                              ║
+║                                                                           ║
+║  ⚠️ SÉCURITÉ:                                                           ║
+║    APRÈS UTILISATION: Révoquer clé API Google Cloud actuelle           ║
+║    https://console.cloud.google.com/apis/credentials                     ║
+║                                                                           ║
+║  📞 SUPPORT:                                                             ║
+║    Console (F12) pour diagnostics                                        ║
+║    Voir DEPANNAGE-INTERVIEW.md                                           ║
+║                                                                           ║
+║  🎉 PROFITE DE v17.0.1 WORLDCLASS !                                     ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+-->
+
+
+<!--
 ╔══════════════════════════════════════════════════════════════════════════╗
 ║                                                                          ║
 ║    CLONE INTERVIEW PRO v16.8.5 ULTIMATE - BRAIN BUILDER 🧠🚀            ║
@@ -2983,8 +3041,8 @@ class TTSQueue {
                     input: { text: text },
                     voice: {
                         languageCode: 'fr-FR',
-                        name: state.googleTTSVoice || 'fr-FR-Neural2-B',
-                        ssmlGender: 'MALE'
+                        name: this.getGoogleVoiceName(state.voiceMode) || 'fr-FR-Neural2-B',
+                        ssmlGender: 'FEMALE'  // Chirp 3 voix sont féminines
                     },
                     audioConfig: {
                         audioEncoding: 'MP3',
@@ -9581,7 +9639,7 @@ document.getElementById('response-input').addEventListener('input', updateWordCo
 // INIT
 // ============================================================================
 console.log('═══════════════════════════════════════════════════════════');
-console.log('  Clone Interview Pro v17.0 WORLDCLASS                      ');
+console.log('  Clone Interview Pro v17.0.1 WORLDCLASS                      ');
 console.log('  Institut du Couple - Concordance 101%+                  ');
 console.log('  Modules Psycho 23-32 + ElevenLabs TTS                   ');
 console.log('═══════════════════════════════════════════════════════════');
