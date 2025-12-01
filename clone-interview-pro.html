@@ -1,58 +1,60 @@
 <!DOCTYPE html>
 <!--
 ╔═══════════════════════════════════════════════════════════════════════════╗
-║  CLONE INTERVIEW PRO v17.3.0 UX ULTIMATE                                 ║
+║  CLONE INTERVIEW PRO v17.3.1 CLEAN ULTIMATE                               ║
 ║  C DevConcept - Professional AI Interview System                         ║
 ║                                                                           ║
 ║  NIVEAU 5 - PRODUCTION READY                                             ║
 ║                                                                           ║
 ║  Date: 2024-12-01                                                        ║
 ║  Author: Christophe - C DevConcept (avec Claude Sonnet 4)                ║
-║  Version: 17.3.0 (UX Ultimate + Charte Graphique)                        ║
+║  Version: 17.3.1 (Clean + Auto-start + API externalisée)                 ║
 ║                                                                           ║
-║  NOUVEAUTÉS v17.3.0 UX ULTIMATE:                                         ║
-║    ✅ Charte graphique appliquée (#8FAFB1 #C8D0C3 #E6D7C3)              ║
-║    ✅ Avatar de progression évolutif (discret)                           ║
-║    ✅ Emojis décoratifs supprimés (interface sobre)                      ║
-║    ✅ Mode Développeur/Production (Ctrl+D)                               ║
-║    ✅ Questions simplifiées (prompt système optimisé)                    ║
-║    ✅ Branding C DevConcept                                              ║
-║    ✅ Interface professionnelle et épurée                                ║
+║  NOUVEAUTÉS v17.3.1 CLEAN:                                               ║
+║    🎯 Auto-start analyse (observation passive continue)                  ║
+║    ⏸️  Bouton Pause (arrête TTS, continue capteurs)                      ║
+║    💾 Auto-save silencieux (récupération crash 30s)                      ║
+║    🔑 API Google TTS externalisée (localStorage)                         ║
+║    🗑️  Code ElevenLabs supprimé (non utilisé)                            ║
+║    📊 Avatar tooltip enrichi (6 infos temps réel)                        ║
+║    ⚠️  Message engagement 45-60 min au démarrage                         ║
+║    ✅ Dashboard flottant supprimé (interface clean)                      ║
 ║                                                                           ║
-║  FIX v17.2.0 ULTIMATE (conservés):                                       ║
-║    ✅ isGoogleMode fix (google-journey/google-* détectés)               ║
-║    ✅ Journey-F (femme Chirp 3 HD) qualité maximale                      ║
-║    ✅ Neural2-D (homme Standard) testé                                   ║
-║    ✅ ssmlGender dynamique (MALE/FEMALE auto)                            ║
-║    ✅ Interface simplifiée (3 options voix)                              ║
-║    ✅ Diagnostic erreur 400 détaillé                                     ║
+║  v17.3.0 UX (conservés):                                                 ║
+║    ✅ Charte graphique #8FAFB1 #C8D0C3 #E6D7C3                          ║
+║    ✅ Avatar évolutif 🌱→🌿→🌳→🎯                                       ║
+║    ✅ Interface sobre (emojis supprimés)                                ║
+║    ✅ Mode Dev/Prod (Ctrl+D)                                            ║
+║    ✅ Branding C DevConcept                                             ║
+║                                                                           ║
+║  PHILOSOPHIE v17.3.1:                                                    ║
+║    "L'authenticité se révèle dans les moments où on ne performe pas."   ║
+║    → Observation passive continue (silences = données précieuses)        ║
+║    → Pas de pause manuelle (engagement total 45-60 min)                  ║
+║    → Capture comportements réels, non préparés                           ║
 ║                                                                           ║
 ║  ARCHITECTURE:                                                           ║
-║    - MultimodalFusionEngine (analyse audio/vidéo)                        ║
+║    - MultimodalFusionEngine (analyse audio/vidéo 24/7)                   ║
 ║    - BrainBuilderAIHelper (génération profil psycho)                     ║
 ║    - BrainJSONSchemaValidator (validation progressive)                   ║
 ║    - ConversationalSystem (questions adaptatives)                        ║
 ║    - Concordance 101%+ (validation scientifique)                         ║
 ║                                                                           ║
-║  CONFIGURATION REQUISE:                                                  ║
-║    - Clé API Google Cloud Text-to-Speech                                 ║
+║  CONFIGURATION:                                                          ║
+║    - Google Cloud TTS (optionnel, config au 1er lancement)              ║
 ║    - Navigateur moderne (Chrome/Edge recommandé)                         ║
-║    - Webcam + Microphone (mode vidéo)                                    ║
+║    - Webcam + Microphone requis                                          ║
 ║                                                                           ║
 ║  DÉMARRAGE RAPIDE:                                                       ║
-║    1. Double-clic ce fichier                                             ║
-║    2. Paramètres → Voix → Google Journey (Chirp 3 HD)                   ║
-║    3. Commencer l'interview → Mode Vidéo + Audio                         ║
-║    4. Répondre naturellement 60-90 minutes                               ║
-║    5. Générer Clone Complet → Attendre 2-3 min                           ║
-║    6. Exporter ZIP → 4 fichiers clone                                    ║
+║    1. Ouvrir ce fichier dans navigateur                                  ║
+║    2. Configurer Google TTS (optionnel) ou Web Speech                    ║
+║    3. Commencer interview → Mode Vidéo                                   ║
+║    4. Laisser l'analyse démarrer automatiquement                         ║
+║    5. Être soi-même, naturellement (45-60 min)                           ║
+║    6. Exporter le clone complet                                          ║
 ║                                                                           ║
 ║  MODE DÉVELOPPEUR:                                                       ║
-║    Ctrl+D → Afficher/Masquer debug bar (émotions, audio features)        ║
-║                                                                           ║
-║  SÉCURITÉ:                                                               ║
-║    Révoquer clé API après utilisation                                    ║
-║    https://console.cloud.google.com/apis/credentials                     ║
+║    Ctrl+D → Debug bar (émotions, audio, concordance)                     ║
 ║                                                                           ║
 ║  C DevConcept - Professional AI Solutions                                ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
@@ -62,7 +64,7 @@
 <!--
 ╔══════════════════════════════════════════════════════════════════════════╗
 ║                                                                          ║
-║    CLONE INTERVIEW PRO v17.3.0 UX ULTIMATE                               ║
+║    CLONE INTERVIEW PRO v17.3.1 CLEAN ULTIMATE                            ║
 ║    Professional AI Interview & Personality Clone System                 ║
 ║    C DevConcept - Christophe                                             ║
 ║                                                                          ║
@@ -438,6 +440,40 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
+        }
+        
+        /* v17.3.1: Bouton Pause conversation */
+        .pause-btn {
+            width: 100%;
+            padding: 12px 24px;
+            border: 2px solid var(--mer);
+            border-radius: 8px;
+            background: white;
+            color: var(--mer);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+            display: none; /* Visible seulement pendant interview */
+        }
+        
+        .pause-btn:hover {
+            background: var(--mer);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(143, 175, 177, 0.3);
+        }
+        
+        .pause-btn.paused {
+            background: #f39c12;
+            border-color: #f39c12;
+            color: white;
+        }
+        
+        .pause-btn.paused:hover {
+            background: #e67e22;
+            border-color: #e67e22;
         }
         
         .analysis-status {
@@ -1518,19 +1554,44 @@
             top: 60px;
             right: 0;
             background: white;
-            padding: 12px 16px;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             font-size: 13px;
             color: var(--text);
             white-space: nowrap;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s;
+            border: 2px solid var(--mer);
+            min-width: 250px;
         }
         
         .progress-avatar:hover .progress-avatar-tooltip {
             opacity: 1;
+        }
+        
+        .tooltip-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 6px 0;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--sable);
+        }
+        
+        .tooltip-line:last-child {
+            border-bottom: none;
+        }
+        
+        .tooltip-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-right: 20px;
+        }
+        
+        .tooltip-value {
+            font-weight: 700;
+            color: var(--mer);
         }
         
         /* Mode Développeur: Debug Bar */
@@ -1606,7 +1667,30 @@
 <div class="progress-avatar" id="progress-avatar" title="Progression de l'interview">
     <span id="avatar-icon">🌱</span>
     <div class="progress-avatar-tooltip" id="avatar-tooltip">
-        Progression: 0%
+        <div class="tooltip-line">
+            <span class="tooltip-label">📊 Concordance</span>
+            <span class="tooltip-value" id="tooltip-concordance">0%</span>
+        </div>
+        <div class="tooltip-line">
+            <span class="tooltip-label">⏱️ Temps</span>
+            <span class="tooltip-value" id="tooltip-time">0:00</span>
+        </div>
+        <div class="tooltip-line">
+            <span class="tooltip-label">🎯 Progression</span>
+            <span class="tooltip-value" id="tooltip-progress">0%</span>
+        </div>
+        <div class="tooltip-line">
+            <span class="tooltip-label">📹 Analyse</span>
+            <span class="tooltip-value" id="tooltip-status">En attente</span>
+        </div>
+        <div class="tooltip-line">
+            <span class="tooltip-label">🎤 Audio</span>
+            <span class="tooltip-value" id="tooltip-audio">- dB</span>
+        </div>
+        <div class="tooltip-line">
+            <span class="tooltip-label">😊 Émotion</span>
+            <span class="tooltip-value" id="tooltip-emotion">-</span>
+        </div>
     </div>
 </div>
 
@@ -1645,55 +1729,7 @@
         </div>
     </div>
     
-    <!-- v16.7 PROGRESS DASHBOARD -->
-    <div id="progress-dashboard" class="progress-dashboard" style="display: none;">
-        <div class="progress-header" onclick="toggleProgressDashboard()">
-            <h3>Progression Interview</h3>
-            <button id="toggle-progress">−</button>
-        </div>
-        <div class="progress-content">
-            <!-- Concordance -->
-            <div class="progress-section">
-                <div class="progress-label">Concordance Personnalité</div>
-                <div class="progress-value concordance">
-                    <span id="concordance-progress">~0%</span>
-                    <span id="concordance-status">⏳</span>
-                </div>
-                <div class="progress-target">Cible: 102%+</div>
-            </div>
-            
-            <!-- Thèmes -->
-            <div class="progress-section">
-                <div class="progress-label">Thèmes Couverts</div>
-                <div id="themes-progress">
-                    <!-- Rempli dynamiquement -->
-                </div>
-            </div>
-            
-            <!-- Stats -->
-            <div class="progress-section">
-                <div class="progress-label">Statistiques</div>
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <div class="stat-value" id="response-count">0</div>
-                        <div class="stat-label">Réponses</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-value" id="interview-duration">0 min</div>
-                        <div class="stat-label">Durée</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Auto-Interruption Toggle -->
-            <div class="auto-interrupt-toggle">
-                <span>Auto-interruption</span>
-                <button class="toggle-btn" id="toggle-auto-interrupt" onclick="toggleAutoInterrupt()">
-                    <span id="interrupt-status">ON</span>
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- Dashboard flottant supprimé - Remplacé par avatar intelligent -->
     
     <!-- WELCOME SCREEN -->
     <div class="welcome-screen active" id="welcome-screen">
@@ -1702,13 +1738,34 @@
             Cette interview analyse votre personnalité en profondeur grâce à une analyse multi-modale 
             (texte, voix, expressions faciales) pour créer un profil uploadable dans une IA.
         </p>
+        
+        <div style="background: linear-gradient(135deg, rgba(143, 175, 177, 0.1) 0%, rgba(200, 208, 195, 0.1) 100%); padding: 20px; border-radius: 12px; border: 2px solid var(--mer); margin: 20px 0;">
+            <h3 style="color: var(--mer); margin-top: 0;">⏰ Cette interview dure 45-60 minutes CONTINUES</h3>
+            <p style="color: var(--text-secondary); margin: 10px 0;">
+                <strong>Engagement requis :</strong> Une vraie interview psychologique est un acte unique, continu et irréversible. 
+                Les silences, hésitations et temps morts sont des <strong>données précieuses</strong> qui révèlent votre authenticité.
+            </p>
+            
+            <h4 style="color: var(--text); margin: 15px 0 10px 0;">Préparez-vous :</h4>
+            <ul style="color: var(--text-secondary); line-height: 1.8;">
+                <li>✓ Endroit calme sans interruption</li>
+                <li>✓ Batterie chargée / ordinateur branché</li>
+                <li>✓ Connexion internet stable</li>
+                <li>✓ Caméra et micro fonctionnels</li>
+                <li>✓ Temps disponible pour aller jusqu'au bout</li>
+            </ul>
+            
+            <p style="color: var(--danger); font-weight: 600; margin-top: 15px; margin-bottom: 0;">
+                💡 L'analyse démarre automatiquement et vous observe en continu, même pendant les silences.
+            </p>
+        </div>
+        
         <p>
-            <strong>Durée :</strong> 45-60 minutes<br>
-            <strong>Questions :</strong> 40<br>
-            <strong>Concordance cible :</strong> 101%+ (mode vidéo)
+            <strong>Concordance cible :</strong> 101%+ (mode vidéo)<br>
+            <strong>Questions :</strong> Environ 40 (adaptatives)
         </p>
         <button class="start-btn" onclick="showModeSelection()">
-            Commencer l'interview
+            Je suis prêt · Commencer
         </button>
     </div>
     
@@ -1725,7 +1782,7 @@
                     <div class="stat-label">Question</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" id="response-count">0</div>
+                    <div class="stat-value" id="response-count-main">0</div>
                     <div class="stat-label">Réponses</div>
                 </div>
                 <div class="stat-card">
@@ -1748,6 +1805,11 @@
                 <div class="media-controls">
                     <button class="analyze-btn" id="analyze-btn" onclick="toggleAnalysis()">
                         <span id="analyze-text">Démarrer analyse en direct</span>
+                    </button>
+                    
+                    <!-- v17.3.1: Bouton Pause conversation -->
+                    <button class="pause-btn" id="pause-btn" onclick="togglePause()">
+                        <span id="pause-text">⏸ Pause conversation</span>
                     </button>
                     
                     <div class="transcription-panel" id="transcription-panel">
@@ -1894,51 +1956,37 @@
 </div>
 
 <!-- ELEVENLABS CONFIG MODAL -->
-<div class="config-modal" id="elevenlabs-config-modal">
+<!-- v17.3.1: Modal de configuration Google Cloud TTS -->
+<div class="config-modal" id="google-tts-config-modal">
     <div class="config-content">
         <div class="config-header">
-            🎤 Configuration ElevenLabs
+            🎤 Configuration Google Cloud TTS
         </div>
         
         <div class="config-field">
-            <label class="config-label">1️⃣ Clé API</label>
+            <label class="config-label">Clé API Google Cloud</label>
             <input 
                 type="text" 
-                id="elevenlabs-api-key" 
+                id="google-tts-api-key" 
                 class="config-input" 
-                placeholder="sk_xxxxxxxxxxxxxxxxxxxxx"
+                placeholder="AIzaSy..."
             />
             <div class="config-help">
-                Gratuit sur <a href="https://elevenlabs.io" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600;">elevenlabs.io</a> → Profile → API Keys
+                Pour obtenir une clé API gratuite :<br>
+                1. Aller sur <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color: var(--mer); text-decoration: none; font-weight: 600;">Google Cloud Console</a><br>
+                2. Créer un projet et activer "Cloud Text-to-Speech API"<br>
+                3. Créer une clé API dans "Identifiants"<br>
+                <br>
+                <strong>Note :</strong> Web Speech (gratuit) est utilisé par défaut si pas de clé.
             </div>
         </div>
         
-        <div class="config-field">
-            <label class="config-label">2️⃣ Choix de la voix</label>
-            <select id="elevenlabs-voice-select" class="config-select">
-                <option value="aQROLel5sQbj1vuIVi6B">🇫🇷 Nicolas (Homme, recommandé)</option>
-                <option value="cgSgspJ2msm6clMCkdW9">🇫🇷 Jessica (Femme, douce)</option>
-                <option value="ErXwobaYiN019PkySvjV">🇫🇷 Antoine (Homme, confiant)</option>
-                <option value="EXAVITQu4vr4xnSDxMaL">🇫🇷 Émilie (Femme, chaleureuse)</option>
-                <option value="VR6AewLTigWG4xSOukaG">🇫🇷 Thomas (Homme, posé)</option>
-                <option value="21m00Tcm4TlvDq8ikWAM">🇬🇧 Rachel (Femme, claire)</option>
-                <option value="custom">✍️ ID personnalisé...</option>
-            </select>
-            <input 
-                type="text" 
-                id="elevenlabs-voice-custom" 
-                class="config-input" 
-                placeholder="Collez votre Voice ID personnalisé"
-                style="display: none; margin-top: 10px;"
-            />
-        </div>
-        
         <div class="config-actions">
-            <button class="config-btn secondary" onclick="closeElevenLabsConfig()">
-                Annuler
+            <button class="config-btn secondary" onclick="closeGoogleTTSConfig()">
+                Utiliser Web Speech (gratuit)
             </button>
-            <button class="config-btn primary" onclick="saveElevenLabsConfig()">
-                💾 Enregistrer
+            <button class="config-btn primary" onclick="saveGoogleTTSConfig()">
+                💾 Enregistrer la clé
             </button>
         </div>
     </div>
@@ -1981,15 +2029,18 @@ const state = {
     isSpeaking: false,
     voiceSupported: false,
     afterSpeakingCallback: null,
-    // Google Cloud TTS (v16.7.6)
-    googleTTSApiKey: 'AIzaSyCo8nfkrMZWv5-7Ns1kaBlJ_0APMjeu4Ok', // Pré-configurée
+    // Google Cloud TTS (v17.3.1 - API key externalisée)
+    googleTTSApiKey: localStorage.getItem('googleTTSApiKey') || null, // Externalisée en localStorage
     googleTTSVoice: 'fr-FR-Neural2-B', // Voix masculine Neural2
     googleTTSSpeed: 1.0, // Vitesse de parole
     googleTTSPitch: 0.0, // Tonalité
-    // ElevenLabs
-    elevenLabsApiKey: null,
-    elevenLabsVoiceId: 'aQROLel5sQbj1vuIVi6B', // Nicolas (FR male)
-    voiceMode: 'google' // 'google', 'elevenlabs', 'webspeech', or 'auto'
+    voiceMode: localStorage.getItem('voiceMode') || 'webspeech', // Défaut: Web Speech (gratuit)
+    // Note: ElevenLabs supprimé complètement en v17.3.1 (trop cher, non utilisé)
+    
+    // v17.3.1: Auto-save silencieux
+    autoSaveEnabled: true,
+    autoSaveInterval: 30000, // 30 secondes
+    lastAutoSave: null
 };
 
 // ============================================================================
@@ -7707,6 +7758,11 @@ async function startInterview() {
     
     // Démarrer conversation
     await conversationalSystem.start();
+    
+    // v17.3.1: Auto-start de l'analyse (observation passive)
+    if (state.mode !== 'text') {
+        autoStartAnalysis();
+    }
 }
 
 function updateModeDisplay() {
@@ -23503,14 +23559,14 @@ if (document.readyState === 'loading') {
 // ============================================================================
 
 /**
- * Avatar de Progression Évolutif
+ * Avatar de Progression Évolutif v17.3.1
  * Graine 🌱 → Pousse 🌿 → Arbre 🌳 → Cible Atteinte 🎯
+ * + Tooltip enrichi avec infos temps réel
  */
 function updateProgressAvatar() {
     const avatarIcon = document.getElementById('avatar-icon');
-    const avatarTooltip = document.getElementById('avatar-tooltip');
     
-    if (!avatarIcon || !avatarTooltip) return;
+    if (!avatarIcon) return;
     
     // Récupérer la progression
     const concordanceText = document.getElementById('concordance-progress')?.textContent || '~0%';
@@ -23518,21 +23574,65 @@ function updateProgressAvatar() {
     
     // Déterminer l'avatar selon la progression
     let icon = '🌱';  // Graine (0-25%)
-    let message = 'Début de l\'interview';
     
     if (concordance >= 75) {
         icon = '🎯';  // Cible atteinte (75%+)
-        message = 'Excellent progrès !';
     } else if (concordance >= 50) {
         icon = '🌳';  // Arbre (50-75%)
-        message = 'Bonne progression';
     } else if (concordance >= 25) {
         icon = '🌿';  // Pousse (25-50%)
-        message = 'En développement';
     }
     
     avatarIcon.textContent = icon;
-    avatarTooltip.textContent = `Progression: ${concordance.toFixed(0)}% - ${message}`;
+    
+    // Mettre à jour le tooltip enrichi
+    updateAvatarTooltip();
+}
+
+/**
+ * v17.3.1: Mise à jour du tooltip enrichi de l'avatar
+ */
+function updateAvatarTooltip() {
+    // Concordance
+    const concordanceText = document.getElementById('concordance-progress')?.textContent || '~0%';
+    const tooltipConcordance = document.getElementById('tooltip-concordance');
+    if (tooltipConcordance) tooltipConcordance.textContent = concordanceText;
+    
+    // Temps écoulé
+    const interviewDuration = document.getElementById('interview-duration')?.textContent || '0 min';
+    const tooltipTime = document.getElementById('tooltip-time');
+    if (tooltipTime) tooltipTime.textContent = interviewDuration;
+    
+    // Progression (basée sur nombre de réponses)
+    const responseCount = state.responses?.length || 0;
+    const progressPercent = Math.min(Math.round((responseCount / 40) * 100), 100);
+    const tooltipProgress = document.getElementById('tooltip-progress');
+    if (tooltipProgress) tooltipProgress.textContent = `${progressPercent}%`;
+    
+    // Statut analyse
+    const tooltipStatus = document.getElementById('tooltip-status');
+    if (tooltipStatus) {
+        if (state.isAnalyzing) {
+            tooltipStatus.textContent = 'Active';
+            tooltipStatus.style.color = '#27ae60';
+        } else {
+            tooltipStatus.textContent = 'En pause';
+            tooltipStatus.style.color = '#f39c12';
+        }
+    }
+    
+    // Audio level (depuis debug data)
+    const tooltipAudio = document.getElementById('tooltip-audio');
+    if (tooltipAudio && window.lastAudioRMS) {
+        const dbLevel = Math.round(window.lastAudioRMS);
+        tooltipAudio.textContent = `${dbLevel} dB`;
+    }
+    
+    // Émotion détectée
+    const tooltipEmotion = document.getElementById('tooltip-emotion');
+    if (tooltipEmotion && window.lastDetectedEmotion) {
+        tooltipEmotion.textContent = window.lastDetectedEmotion;
+    }
 }
 
 /**
@@ -23600,6 +23700,244 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', updateProgressAvatar);
 } else {
     updateProgressAvatar();
+}
+
+// ============================================================================
+// v17.3.1 CLEAN: NOUVELLES FONCTIONNALITÉS
+// ============================================================================
+
+/**
+ * Pause/Reprise de la conversation
+ * La capture vidéo/audio continue, mais le TTS et les questions s'arrêtent
+ */
+let conversationPaused = false;
+
+function togglePause() {
+    conversationPaused = !conversationPaused;
+    const pauseBtn = document.getElementById('pause-btn');
+    const pauseText = document.getElementById('pause-text');
+    
+    if (conversationPaused) {
+        // Mode Pause
+        pauseBtn?.classList.add('paused');
+        if (pauseText) pauseText.textContent = '▶️ Reprendre';
+        
+        // Stopper le TTS si en cours
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+        
+        console.log('[v17.3.1] ⏸ Conversation en PAUSE (observation continue)');
+    } else {
+        // Mode Reprise
+        pauseBtn?.classList.remove('paused');
+        if (pauseText) pauseText.textContent = '⏸ Pause conversation';
+        
+        console.log('[v17.3.1] ▶️ Conversation REPRISE');
+    }
+}
+
+/**
+ * Auto-save silencieux toutes les 30 secondes
+ * Sauvegarde invisible pour l'utilisateur (récupération crash uniquement)
+ */
+function autoSaveState() {
+    if (!state.autoSaveEnabled) return;
+    
+    try {
+        const saveData = {
+            mode: state.mode,
+            responses: state.responses,
+            currentQuestionIndex: state.currentQuestionIndex,
+            totalWords: state.totalWords,
+            timestamp: Date.now(),
+            version: 'v17.3.1'
+        };
+        
+        localStorage.setItem('clone_interview_autosave', JSON.stringify(saveData));
+        state.lastAutoSave = Date.now();
+        
+        console.log('[v17.3.1] 💾 Auto-save silencieux effectué');
+    } catch (error) {
+        console.error('[v17.3.1] ❌ Erreur auto-save:', error);
+    }
+}
+
+/**
+ * Vérifier si une session interrompue existe
+ */
+function checkInterruptedSession() {
+    try {
+        const savedData = localStorage.getItem('clone_interview_autosave');
+        if (!savedData) return;
+        
+        const data = JSON.parse(savedData);
+        const elapsed = Date.now() - data.timestamp;
+        const minutes = Math.round(elapsed / 60000);
+        
+        // Proposer de reprendre si interruption < 10 minutes
+        if (elapsed < 600000 && data.responses && data.responses.length > 0) {
+            const resume = confirm(
+                `⚠️ Interview interrompue détectée (il y a ${minutes} min)\n\n` +
+                `Reprendre où vous étiez ? (${data.responses.length} réponses déjà données)\n\n` +
+                `Note: Cette reprise est une exception technique.\n` +
+                `Pour une vraie interview, prévoyez 45-60 min continues.`
+            );
+            
+            if (resume) {
+                // Restaurer l'état
+                state.mode = data.mode;
+                state.responses = data.responses;
+                state.currentQuestionIndex = data.currentQuestionIndex;
+                state.totalWords = data.totalWords;
+                
+                console.log('[v17.3.1] ↩️ Session restaurée depuis auto-save');
+                return true;
+            } else {
+                // Effacer la sauvegarde
+                localStorage.removeItem('clone_interview_autosave');
+            }
+        }
+    } catch (error) {
+        console.error('[v17.3.1] ❌ Erreur vérification session:', error);
+    }
+    return false;
+}
+
+/**
+ * Démarrage automatique de l'auto-save
+ */
+setInterval(autoSaveState, state.autoSaveInterval);
+
+/**
+ * Modal de configuration Google Cloud TTS
+ */
+function openGoogleTTSConfig() {
+    const modal = document.getElementById('google-tts-config-modal');
+    if (modal) modal.style.display = 'flex';
+    
+    // Pré-remplir si clé existe
+    const apiKeyInput = document.getElementById('google-tts-api-key');
+    if (apiKeyInput && state.googleTTSApiKey) {
+        apiKeyInput.value = state.googleTTSApiKey;
+    }
+}
+
+function closeGoogleTTSConfig() {
+    const modal = document.getElementById('google-tts-config-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+function saveGoogleTTSConfig() {
+    const apiKey = document.getElementById('google-tts-api-key')?.value.trim();
+    
+    if (!apiKey) {
+        alert('⚠️ Veuillez entrer une clé API valide');
+        return;
+    }
+    
+    // Sauvegarder en localStorage
+    localStorage.setItem('googleTTSApiKey', apiKey);
+    localStorage.setItem('voiceMode', 'google-journey'); // Activer Journey par défaut
+    
+    state.googleTTSApiKey = apiKey;
+    state.voiceMode = 'google-journey';
+    
+    // Mettre à jour le sélecteur de voix
+    const voiceSelect = document.getElementById('voice-mode-select');
+    if (voiceSelect) voiceSelect.value = 'google-journey';
+    
+    closeGoogleTTSConfig();
+    
+    alert('✅ Clé API Google Cloud TTS enregistrée !\n\nVoix Journey (Chirp 3 HD) activée.');
+    console.log('[v17.3.1] ✅ Google Cloud TTS configuré');
+}
+
+/**
+ * Vérifier si Google TTS est configuré au premier lancement
+ */
+function checkGoogleTTSConfig() {
+    // Si pas de clé et mode Google sélectionné, proposer configuration
+    if (!state.googleTTSApiKey && (state.voiceMode.startsWith('google'))) {
+        const configure = confirm(
+            '🎤 Configuration Google Cloud TTS\n\n' +
+            'Voulez-vous configurer une clé API Google Cloud pour bénéficier de voix HD ?\n\n' +
+            '• OUI → Ouvrir la configuration\n' +
+            '• NON → Utiliser Web Speech (gratuit)'
+        );
+        
+        if (configure) {
+            openGoogleTTSConfig();
+        } else {
+            // Basculer sur Web Speech
+            state.voiceMode = 'webspeech';
+            localStorage.setItem('voiceMode', 'webspeech');
+            const voiceSelect = document.getElementById('voice-mode-select');
+            if (voiceSelect) voiceSelect.value = 'webspeech';
+        }
+    }
+}
+
+/**
+ * Auto-start de l'analyse au démarrage de l'interview
+ * L'analyse démarre automatiquement, l'utilisateur est simplement observé
+ */
+function autoStartAnalysis() {
+    // Cette fonction sera appelée automatiquement quand l'interview démarre
+    // Elle remplace le clic manuel sur "Démarrer analyse"
+    
+    setTimeout(() => {
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        
+        if (analyzeBtn && !state.isAnalyzing) {
+            // Simuler le clic sur le bouton d'analyse
+            analyzeBtn.click();
+            
+            // Afficher le bouton Pause
+            if (pauseBtn) pauseBtn.style.display = 'block';
+            
+            console.log('[v17.3.1] 🎬 Analyse démarrée automatiquement (observation passive)');
+        }
+    }, 2000); // Délai de 2 secondes pour que la caméra se charge
+}
+
+/**
+ * Stocker les données audio/émotion pour le tooltip
+ */
+window.lastAudioRMS = 0;
+window.lastDetectedEmotion = '-';
+
+// Intercepter les updates audio/vidéo pour enrichir le tooltip
+const originalUpdateDebugBar = updateDebugBar;
+updateDebugBar = function(data) {
+    // Appeler la fonction originale
+    originalUpdateDebugBar(data);
+    
+    // Stocker pour le tooltip
+    if (data.rms !== undefined) window.lastAudioRMS = data.rms;
+    if (data.emotion) window.lastDetectedEmotion = data.emotion;
+    
+    // Mettre à jour le tooltip
+    updateAvatarTooltip();
+};
+
+console.log('[v17.3.1 CLEAN] ✅ Nouvelles fonctionnalités initialisées');
+console.log('[v17.3.1 CLEAN] - Pause conversation (observation continue)');
+console.log('[v17.3.1 CLEAN] - Auto-save silencieux (30s)');
+console.log('[v17.3.1 CLEAN] - Modal Google Cloud TTS');
+console.log('[v17.3.1 CLEAN] - Auto-start analyse');
+console.log('[v17.3.1 CLEAN] - Avatar tooltip enrichi');
+
+// Vérifier session interrompue au chargement
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        checkInterruptedSession();
+        checkGoogleTTSConfig();
+    });
+} else {
+    checkInterruptedSession();
+    checkGoogleTTSConfig();
 }
 
 console.log('[v17.3.0 UX] Avatar Évolutif & Mode Dev initialisés ✅');
