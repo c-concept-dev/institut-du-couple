@@ -1,18 +1,31 @@
 <!DOCTYPE html>
 <!--
 ╔═══════════════════════════════════════════════════════════════════════════╗
-║  CLONE INTERVIEW PRO v17.3.1 CLEAN ULTIMATE                               ║
+║  CLONE INTERVIEW PRO v17.3.2 FIX ULTIMATE                                 ║
 ║  C DevConcept - Professional AI Interview System                         ║
 ║                                                                           ║
 ║  NIVEAU 5 - PRODUCTION READY                                             ║
 ║                                                                           ║
 ║  Date: 2024-12-01                                                        ║
 ║  Author: Christophe - C DevConcept (avec Claude Sonnet 4)                ║
-║  Version: 17.3.1 (Clean + Auto-start + API externalisée)                 ║
+║  Version: 17.3.2 (Fix UX + Auto-start immédiat + API hardcodée)          ║
 ║                                                                           ║
-║  NOUVEAUTÉS v17.3.1 CLEAN:                                               ║
-║    🎯 Auto-start analyse (observation passive continue)                  ║
-║    ⏸️  Bouton Pause (arrête TTS, continue capteurs)                      ║
+║  CORRECTIFS v17.3.2 FIX:                                                 ║
+║    ✅ Auto-start IMMÉDIAT (analyse démarre vraiment automatiquement)     ║
+║    ✅ Bouton "Démarrer analyse" supprimé (indicateur de statut)          ║
+║    ✅ Bouton Pause visible et fonctionnel (conversation seulement)       ║
+║    ✅ Welcome screen refait (design cards, centré, sans puces)           ║
+║    ✅ Emojis tooltip supprimés (texte propre)                            ║
+║    ✅ API key HARDCODÉE (Christophe met sa clé une fois)                 ║
+║    ✅ Raccourci Cmd+Shift+K pour changer API key (mode dev)              ║
+║    ✅ Logs clarifiés (analyse 24/7 jamais interrompue)                   ║
+║                                                                           ║
+║  PHILOSOPHIE v17.3.2:                                                    ║
+║    "L'analyse observe 24/7, du début à la fin, sans interruption."      ║
+║    → Pause = arrête QUESTIONS seulement (pas l'analyse)                  ║
+║    → Silences = données précieuses (inconscient, authenticité)           ║
+║    → Caméra/micro tournent en continu (observation passive)              ║
+║                                                                           ║
 ║    💾 Auto-save silencieux (récupération crash 30s)                      ║
 ║    🔑 API Google TTS externalisée (localStorage)                         ║
 ║    🗑️  Code ElevenLabs supprimé (non utilisé)                            ║
@@ -1668,27 +1681,27 @@
     <span id="avatar-icon">🌱</span>
     <div class="progress-avatar-tooltip" id="avatar-tooltip">
         <div class="tooltip-line">
-            <span class="tooltip-label">📊 Concordance</span>
+            <span class="tooltip-label">Concordance</span>
             <span class="tooltip-value" id="tooltip-concordance">0%</span>
         </div>
         <div class="tooltip-line">
-            <span class="tooltip-label">⏱️ Temps</span>
+            <span class="tooltip-label">Temps</span>
             <span class="tooltip-value" id="tooltip-time">0:00</span>
         </div>
         <div class="tooltip-line">
-            <span class="tooltip-label">🎯 Progression</span>
+            <span class="tooltip-label">Progression</span>
             <span class="tooltip-value" id="tooltip-progress">0%</span>
         </div>
         <div class="tooltip-line">
-            <span class="tooltip-label">📹 Analyse</span>
+            <span class="tooltip-label">Analyse</span>
             <span class="tooltip-value" id="tooltip-status">En attente</span>
         </div>
         <div class="tooltip-line">
-            <span class="tooltip-label">🎤 Audio</span>
+            <span class="tooltip-label">Audio</span>
             <span class="tooltip-value" id="tooltip-audio">- dB</span>
         </div>
         <div class="tooltip-line">
-            <span class="tooltip-label">😊 Émotion</span>
+            <span class="tooltip-label">Émotion</span>
             <span class="tooltip-value" id="tooltip-emotion">-</span>
         </div>
     </div>
@@ -1731,40 +1744,67 @@
     
     <!-- Dashboard flottant supprimé - Remplacé par avatar intelligent -->
     
-    <!-- WELCOME SCREEN -->
+    <!-- WELCOME SCREEN v17.3.2 - Design Pro Centré -->
     <div class="welcome-screen active" id="welcome-screen">
         <h2>Bienvenue dans Clone Interview Pro</h2>
-        <p>
-            Cette interview analyse votre personnalité en profondeur grâce à une analyse multi-modale 
-            (texte, voix, expressions faciales) pour créer un profil uploadable dans une IA.
+        <p style="max-width: 600px; margin: 0 auto 40px; font-size: 16px; color: var(--text-secondary);">
+            Créez votre clone de personnalité grâce à une analyse multi-modale complète
         </p>
         
-        <div style="background: linear-gradient(135deg, rgba(143, 175, 177, 0.1) 0%, rgba(200, 208, 195, 0.1) 100%); padding: 20px; border-radius: 12px; border: 2px solid var(--mer); margin: 20px 0;">
-            <h3 style="color: var(--mer); margin-top: 0;">⏰ Cette interview dure 45-60 minutes CONTINUES</h3>
-            <p style="color: var(--text-secondary); margin: 10px 0;">
-                <strong>Engagement requis :</strong> Une vraie interview psychologique est un acte unique, continu et irréversible. 
-                Les silences, hésitations et temps morts sont des <strong>données précieuses</strong> qui révèlent votre authenticité.
+        <!-- Cards Info -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 800px; margin: 0 auto 40px;">
+            <div style="background: white; padding: 24px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 48px; margin-bottom: 12px;">📹</div>
+                <div style="font-weight: 600; color: var(--text); margin-bottom: 8px;">Multi-modal</div>
+                <div style="font-size: 14px; color: var(--text-secondary);">Texte · Audio · Vidéo</div>
+            </div>
+            <div style="background: white; padding: 24px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 48px; margin-bottom: 12px;">⏱️</div>
+                <div style="font-weight: 600; color: var(--text); margin-bottom: 8px;">45-60 minutes</div>
+                <div style="font-size: 14px; color: var(--text-secondary);">Session continue</div>
+            </div>
+            <div style="background: white; padding: 24px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 48px; margin-bottom: 12px;">🎯</div>
+                <div style="font-weight: 600; color: var(--text); margin-bottom: 8px;">101%+ Concordance</div>
+                <div style="font-size: 14px; color: var(--text-secondary);">Précision maximale</div>
+            </div>
+        </div>
+        
+        <!-- Encart engagement -->
+        <div style="background: linear-gradient(135deg, rgba(143, 175, 177, 0.1) 0%, rgba(200, 208, 195, 0.1) 100%); padding: 28px; border-radius: 12px; border: 2px solid var(--mer); margin: 0 auto 40px; max-width: 700px;">
+            <div style="font-size: 18px; font-weight: 600; color: var(--mer); margin-bottom: 16px; text-align: center;">
+                Engagement requis
+            </div>
+            <p style="color: var(--text-secondary); margin: 0 0 20px 0; line-height: 1.7; text-align: center;">
+                Une interview psychologique authentique est un acte unique et continu.<br>
+                Les silences et hésitations sont des <strong>données précieuses</strong>.
             </p>
             
-            <h4 style="color: var(--text); margin: 15px 0 10px 0;">Préparez-vous :</h4>
-            <ul style="color: var(--text-secondary); line-height: 1.8;">
-                <li>✓ Endroit calme sans interruption</li>
-                <li>✓ Batterie chargée / ordinateur branché</li>
-                <li>✓ Connexion internet stable</li>
-                <li>✓ Caméra et micro fonctionnels</li>
-                <li>✓ Temps disponible pour aller jusqu'au bout</li>
-            </ul>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--mer); font-size: 20px;">✓</span>
+                    <span style="color: var(--text-secondary); font-size: 14px;">Endroit calme</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--mer); font-size: 20px;">✓</span>
+                    <span style="color: var(--text-secondary); font-size: 14px;">Batterie chargée</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--mer); font-size: 20px;">✓</span>
+                    <span style="color: var(--text-secondary); font-size: 14px;">Connexion stable</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--mer); font-size: 20px;">✓</span>
+                    <span style="color: var(--text-secondary); font-size: 14px;">Caméra & micro OK</span>
+                </div>
+            </div>
             
-            <p style="color: var(--danger); font-weight: 600; margin-top: 15px; margin-bottom: 0;">
-                💡 L'analyse démarre automatiquement et vous observe en continu, même pendant les silences.
+            <p style="color: var(--text); font-size: 14px; margin: 20px 0 0 0; text-align: center; font-style: italic;">
+                L'analyse démarre automatiquement et observe en continu
             </p>
         </div>
         
-        <p>
-            <strong>Concordance cible :</strong> 101%+ (mode vidéo)<br>
-            <strong>Questions :</strong> Environ 40 (adaptatives)
-        </p>
-        <button class="start-btn" onclick="showModeSelection()">
+        <button class="start-btn" onclick="showModeSelection()" style="font-size: 16px; padding: 16px 48px;">
             Je suis prêt · Commencer
         </button>
     </div>
@@ -1803,12 +1843,24 @@
                     <video id="video-preview" class="video-preview" autoplay muted playsinline></video>
                 </div>
                 <div class="media-controls">
-                    <button class="analyze-btn" id="analyze-btn" onclick="toggleAnalysis()">
-                        <span id="analyze-text">Démarrer analyse en direct</span>
-                    </button>
+                    <!-- v17.3.2: Indicateur statut analyse (non-cliquable) -->
+                    <div class="analyze-status-indicator" id="analyze-status-indicator" style="
+                        width: 100%;
+                        padding: 12px 24px;
+                        border-radius: 8px;
+                        background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+                        color: white;
+                        font-size: 15px;
+                        font-weight: 600;
+                        text-align: center;
+                        margin-bottom: 15px;
+                        box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+                    ">
+                        <span id="analyze-status-text">✓ Analyse active</span>
+                    </div>
                     
-                    <!-- v17.3.1: Bouton Pause conversation -->
-                    <button class="pause-btn" id="pause-btn" onclick="togglePause()">
+                    <!-- v17.3.2: Bouton Pause conversation (arrête questions seulement) -->
+                    <button class="pause-btn" id="pause-btn" onclick="togglePause()" style="display: block;">
                         <span id="pause-text">⏸ Pause conversation</span>
                     </button>
                     
@@ -2029,15 +2081,22 @@ const state = {
     isSpeaking: false,
     voiceSupported: false,
     afterSpeakingCallback: null,
-    // Google Cloud TTS (v17.3.1 - API key externalisée)
-    googleTTSApiKey: localStorage.getItem('googleTTSApiKey') || null, // Externalisée en localStorage
+    
+    // ═══════════════════════════════════════════════════════════════════════════
+    // v17.3.2: API GOOGLE CLOUD TTS - HARDCODÉE (Pour Christophe uniquement)
+    // ═══════════════════════════════════════════════════════════════════════════
+    // ⚠️ REMPLACER PAR TA VRAIE CLÉ ICI ⬇️
+    googleTTSApiKey: 'AIzaSyCo8nfkrMZWv5-7Ns1kaBlJ_0APMjeu4Ok', // 🔑 METTRE TA CLÉ ICI
+    // Pour changer rapidement : Cmd+Shift+K dans le navigateur
+    // ═══════════════════════════════════════════════════════════════════════════
+    
     googleTTSVoice: 'fr-FR-Neural2-B', // Voix masculine Neural2
     googleTTSSpeed: 1.0, // Vitesse de parole
     googleTTSPitch: 0.0, // Tonalité
-    voiceMode: localStorage.getItem('voiceMode') || 'webspeech', // Défaut: Web Speech (gratuit)
-    // Note: ElevenLabs supprimé complètement en v17.3.1 (trop cher, non utilisé)
+    voiceMode: 'google-journey', // Défaut: Journey (Chirp 3 HD)
+    // Note: ElevenLabs supprimé complètement en v17.3.2 (trop cher, non utilisé)
     
-    // v17.3.1: Auto-save silencieux
+    // v17.3.2: Auto-save silencieux
     autoSaveEnabled: true,
     autoSaveInterval: 30000, // 30 secondes
     lastAutoSave: null
@@ -23658,12 +23717,21 @@ function toggleDevMode() {
 }
 
 /**
- * Raccourci clavier Ctrl+D
+ * Raccourcis clavier
+ * Ctrl+D : Mode Développeur
+ * Cmd+Shift+K (Mac) / Ctrl+Shift+K (Win) : Changer API key
  */
 document.addEventListener('keydown', function(e) {
+    // Ctrl+D : Mode Développeur
     if (e.ctrlKey && e.key === 'd') {
         e.preventDefault();
         toggleDevMode();
+    }
+    
+    // Cmd+Shift+K (Mac) ou Ctrl+Shift+K (Win) : API Key
+    if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'K') {
+        e.preventDefault();
+        openDevAPIKeyModal();
     }
 });
 
@@ -23707,8 +23775,9 @@ if (document.readyState === 'loading') {
 // ============================================================================
 
 /**
- * Pause/Reprise de la conversation
- * La capture vidéo/audio continue, mais le TTS et les questions s'arrêtent
+ * v17.3.2: Pause/Reprise de la conversation
+ * ⚠️ IMPORTANT: L'ANALYSE NE S'ARRÊTE JAMAIS (caméra/micro continuent)
+ * Seules les questions du clone s'arrêtent
  */
 let conversationPaused = false;
 
@@ -23718,22 +23787,22 @@ function togglePause() {
     const pauseText = document.getElementById('pause-text');
     
     if (conversationPaused) {
-        // Mode Pause
+        // Mode Pause CONVERSATION (analyse continue)
         pauseBtn?.classList.add('paused');
-        if (pauseText) pauseText.textContent = '▶️ Reprendre';
+        if (pauseText) pauseText.textContent = '▶️ Reprendre conversation';
         
         // Stopper le TTS si en cours
         if (window.speechSynthesis) {
             window.speechSynthesis.cancel();
         }
         
-        console.log('[v17.3.1] ⏸ Conversation en PAUSE (observation continue)');
+        console.log('[v17.3.2] ⏸ CONVERSATION en pause | ✓ ANALYSE continue (24/7)');
     } else {
         // Mode Reprise
         pauseBtn?.classList.remove('paused');
         if (pauseText) pauseText.textContent = '⏸ Pause conversation';
         
-        console.log('[v17.3.1] ▶️ Conversation REPRISE');
+        console.log('[v17.3.2] ▶️ CONVERSATION reprise | ✓ ANALYSE toujours active');
     }
 }
 
@@ -23879,27 +23948,168 @@ function checkGoogleTTSConfig() {
 }
 
 /**
+ * v17.3.2: Modal Développeur pour changer l'API key rapidement
+ * Raccourci: Cmd+Shift+K (Mac) ou Ctrl+Shift+K (Win)
+ */
+function openDevAPIKeyModal() {
+    const currentKey = state.googleTTSApiKey || '';
+    const maskedKey = currentKey ? currentKey.substring(0, 10) + '...' : '(aucune)';
+    
+    const modal = document.createElement('div');
+    modal.id = 'dev-api-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+    `;
+    
+    modal.innerHTML = `
+        <div style="
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        ">
+            <h3 style="margin: 0 0 10px 0; color: var(--text);">🔑 API Key Développeur</h3>
+            <p style="margin: 0 0 20px 0; color: var(--text-secondary); font-size: 14px;">
+                Clé actuelle: <strong>${maskedKey}</strong>
+            </p>
+            
+            <label style="display: block; margin-bottom: 8px; color: var(--text); font-weight: 600; font-size: 14px;">
+                Nouvelle clé Google Cloud TTS:
+            </label>
+            <input 
+                type="text" 
+                id="dev-api-input" 
+                placeholder="AIzaSy..."
+                value="${currentKey}"
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    border: 2px solid var(--mer);
+                    border-radius: 8px;
+                    font-family: monospace;
+                    font-size: 13px;
+                    margin-bottom: 20px;
+                    box-sizing: border-box;
+                "
+            />
+            
+            <div style="display: flex; gap: 12px;">
+                <button onclick="closeDevAPIKeyModal()" style="
+                    flex: 1;
+                    padding: 12px;
+                    border: 2px solid var(--text-secondary);
+                    border-radius: 8px;
+                    background: white;
+                    color: var(--text);
+                    font-weight: 600;
+                    cursor: pointer;
+                ">
+                    Annuler
+                </button>
+                <button onclick="saveDevAPIKey()" style="
+                    flex: 1;
+                    padding: 12px;
+                    border: none;
+                    border-radius: 8px;
+                    background: linear-gradient(135deg, var(--mer), var(--vert-sauge));
+                    color: white;
+                    font-weight: 600;
+                    cursor: pointer;
+                ">
+                    💾 Enregistrer
+                </button>
+            </div>
+            
+            <p style="margin: 20px 0 0 0; font-size: 12px; color: var(--text-secondary); font-style: italic;">
+                Raccourci: Cmd+Shift+K (Mac) ou Ctrl+Shift+K (Windows)
+            </p>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Focus sur l'input
+    setTimeout(() => {
+        document.getElementById('dev-api-input')?.focus();
+    }, 100);
+    
+    // Fermer avec Escape
+    modal.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeDevAPIKeyModal();
+    });
+}
+
+function closeDevAPIKeyModal() {
+    const modal = document.getElementById('dev-api-modal');
+    if (modal) modal.remove();
+}
+
+function saveDevAPIKey() {
+    const input = document.getElementById('dev-api-input');
+    const newKey = input?.value.trim();
+    
+    if (!newKey) {
+        alert('⚠️ Veuillez entrer une clé API valide');
+        return;
+    }
+    
+    // Validation basique format Google API key
+    if (!newKey.startsWith('AIza')) {
+        const proceed = confirm('⚠️ Cette clé ne semble pas avoir le bon format (devrait commencer par "AIza").\n\nContinuer quand même ?');
+        if (!proceed) return;
+    }
+    
+    // Sauvegarder
+    state.googleTTSApiKey = newKey;
+    localStorage.setItem('googleTTSApiKey', newKey);
+    
+    // Activer mode Google
+    state.voiceMode = 'google-journey';
+    localStorage.setItem('voiceMode', 'google-journey');
+    
+    closeDevAPIKeyModal();
+    
+    console.log('[v17.3.2 DEV] ✅ API key mise à jour');
+    alert('✅ API key enregistrée avec succès !\n\nVoix Journey (Chirp 3 HD) activée.');
+}
+
+/**
  * Auto-start de l'analyse au démarrage de l'interview
  * L'analyse démarre automatiquement, l'utilisateur est simplement observé
  */
+/**
+ * v17.3.2: Auto-start de l'analyse (immédiat, pas de bouton)
+ * L'analyse démarre automatiquement dès que l'interview commence
+ */
 function autoStartAnalysis() {
-    // Cette fonction sera appelée automatiquement quand l'interview démarre
-    // Elle remplace le clic manuel sur "Démarrer analyse"
-    
     setTimeout(() => {
-        const analyzeBtn = document.getElementById('analyze-btn');
-        const pauseBtn = document.getElementById('pause-btn');
-        
-        if (analyzeBtn && !state.isAnalyzing) {
-            // Simuler le clic sur le bouton d'analyse
-            analyzeBtn.click();
+        if (!state.isAnalyzing) {
+            // Démarrer l'analyse directement (pas de clic)
+            toggleAnalysis();
             
             // Afficher le bouton Pause
+            const pauseBtn = document.getElementById('pause-btn');
             if (pauseBtn) pauseBtn.style.display = 'block';
             
-            console.log('[v17.3.1] 🎬 Analyse démarrée automatiquement (observation passive)');
+            // Mettre à jour l'indicateur
+            const statusIndicator = document.getElementById('analyze-status-indicator');
+            if (statusIndicator) {
+                statusIndicator.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+                const statusText = document.getElementById('analyze-status-text');
+                if (statusText) statusText.textContent = '✓ Analyse active';
+            }
+            
+            console.log('[v17.3.2] 🎬 Analyse démarrée automatiquement (observation 24/7)');
         }
-    }, 2000); // Délai de 2 secondes pour que la caméra se charge
+    }, 1000); // Délai 1s pour que la caméra se charge
 }
 
 /**
