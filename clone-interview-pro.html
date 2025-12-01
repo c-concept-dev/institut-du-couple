@@ -5487,6 +5487,904 @@ class ContinuityEngine {
 window.continuityEngine = new ContinuityEngine(window.memorySystem, window.contextInjector);
 console.log('[v16.8.0] ✅ ContinuityEngine initialized');
 
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MULTIMODAL FUSION ENGINE v17.0 - WORLDCLASS
+// Génère indicateurs psycho synthétiques depuis audio + video
+// ═══════════════════════════════════════════════════════════════════════════
+
+class MultimodalFusionEngine {
+    constructor() {
+        this.version = "17.0-worldclass";
+        console.log('[MultimodalFusion] 🎯 Engine initialized');
+    }
+    
+    /**
+     * Générer contexte multimodal pour Claude
+     * Retourne indicateurs psycho synthétiques optimisés
+     */
+    generateContextForClaude() {
+        const audio = this.analyzeAudioProfile();
+        const facial = this.analyzeFacialProfile();
+        const congruence = this.computeCongruence(audio, facial);
+        
+        // Format optimisé pour compréhension Claude
+        return {
+            vocal_energy: audio.energy_level,
+            vocal_stability: audio.stability,
+            emotional_engagement: facial.engagement,
+            emotional_valence: facial.valence,
+            audio_video_congruence: congruence,
+            psychological_indicators: this.synthesizePsychologicalIndicators(audio, facial, congruence)
+        };
+    }
+    
+    /**
+     * Analyser profil audio (résumé statistique)
+     */
+    analyzeAudioProfile() {
+        if (!window.audioFeatures || window.audioFeatures.length === 0) {
+            return this.getDefaultAudioProfile();
+        }
+        
+        const recent = window.audioFeatures.slice(-100); // 100 derniers points
+        
+        // Extraire RMS (intensité vocale)
+        const rmsValues = recent.map(f => f.rms || 0);
+        const rmsAvg = this.average(rmsValues);
+        const rmsStd = this.standardDeviation(rmsValues);
+        
+        // Extraire Spectral Centroid (timbre vocal)
+        const centroidValues = recent.map(f => f.spectralCentroid || 0);
+        const centroidAvg = this.average(centroidValues);
+        
+        // Extraire ZCR (Zero Crossing Rate - clarté vocale)
+        const zcrValues = recent.map(f => f.zcr || 0);
+        const zcrAvg = this.average(zcrValues);
+        
+        // Synthèse psychologique
+        return {
+            energy_level: this.mapToScale(rmsAvg, 0, 0.1, 0, 10), // 0-10
+            stability: this.mapToScale(rmsStd, 0.05, 0, 0, 10), // Moins de variance = plus stable
+            pitch_tendency: centroidAvg > 200 ? "high" : centroidAvg > 100 ? "medium" : "low",
+            vocal_clarity: this.mapToScale(zcrAvg, 0, 200, 0, 10),
+            sample_size: recent.length
+        };
+    }
+    
+    /**
+     * Analyser profil facial (résumé émotionnel)
+     */
+    analyzeFacialProfile() {
+        if (!window.videoDetections || window.videoDetections.length === 0) {
+            return this.getDefaultFacialProfile();
+        }
+        
+        const recent = window.videoDetections.slice(-50); // 50 dernières détections
+        
+        // Compter émotions
+        const emotionCounts = {
+            neutral: 0, happy: 0, sad: 0, angry: 0, 
+            fearful: 0, disgusted: 0, surprised: 0
+        };
+        
+        let totalConfidence = 0;
+        
+        recent.forEach(detection => {
+            if (detection.emotion) {
+                emotionCounts[detection.emotion] = (emotionCounts[detection.emotion] || 0) + 1;
+                totalConfidence += detection.confidence || 0;
+            }
+        });
+        
+        // Trouver émotion dominante
+        let dominantEmotion = 'neutral';
+        let maxCount = 0;
+        
+        Object.entries(emotionCounts).forEach(([emotion, count]) => {
+            if (count > maxCount) {
+                maxCount = count;
+                dominantEmotion = emotion;
+            }
+        });
+        
+        const avgConfidence = recent.length > 0 ? totalConfidence / recent.length : 0;
+        
+        // Calculer engagement (inverse de neutral)
+        const neutralRatio = emotionCounts.neutral / recent.length;
+        const engagement = this.mapToScale(1 - neutralRatio, 0, 1, 0, 10);
+        
+        // Calculer valence émotionnelle (positif/négatif)
+        const positiveCount = emotionCounts.happy + emotionCounts.surprised;
+        const negativeCount = emotionCounts.sad + emotionCounts.angry + emotionCounts.fearful;
+        const valence = positiveCount > negativeCount ? "positive" : 
+                       negativeCount > positiveCount ? "negative" : "neutral";
+        
+        return {
+            dominant_emotion: dominantEmotion,
+            engagement: engagement, // 0-10
+            valence: valence, // positive/neutral/negative
+            confidence: avgConfidence,
+            emotional_variety: Object.values(emotionCounts).filter(c => c > 0).length,
+            sample_size: recent.length
+        };
+    }
+    
+    /**
+     * Calculer congruence audio-vidéo
+     */
+    computeCongruence(audio, facial) {
+        // Si pas de données, congruence neutre
+        if (audio.sample_size === 0 || facial.sample_size === 0) {
+            return 50; // Neutre
+        }
+        
+        let congruenceScore = 100;
+        
+        // Règle 1: Énergie vocale haute + engagement facial bas = incongruence
+        if (audio.energy_level > 7 && facial.engagement < 4) {
+            congruenceScore -= 30;
+        }
+        
+        // Règle 2: Énergie vocale basse + engagement facial haut = incongruence
+        if (audio.energy_level < 3 && facial.engagement > 7) {
+            congruenceScore -= 30;
+        }
+        
+        // Règle 3: Vocal stable + émotions variées = bonne congruence
+        if (audio.stability > 7 && facial.emotional_variety >= 3) {
+            congruenceScore += 10;
+        }
+        
+        // Règle 4: Valence positive + énergie haute = excellente congruence
+        if (facial.valence === 'positive' && audio.energy_level > 6) {
+            congruenceScore += 15;
+        }
+        
+        return Math.max(0, Math.min(100, congruenceScore));
+    }
+    
+    /**
+     * Synthétiser indicateurs psychologiques
+     */
+    synthesizePsychologicalIndicators(audio, facial, congruence) {
+        const indicators = [];
+        
+        // Énergie vocale
+        if (audio.energy_level > 7) {
+            indicators.push("Voix énergique et engagée");
+        } else if (audio.energy_level < 3) {
+            indicators.push("Voix calme et posée");
+        } else {
+            indicators.push("Énergie vocale modérée");
+        }
+        
+        // Stabilité
+        if (audio.stability > 8) {
+            indicators.push("Expression vocale très stable");
+        } else if (audio.stability < 4) {
+            indicators.push("Expression vocale variable (peut indiquer émotion ou hésitation)");
+        }
+        
+        // Engagement émotionnel
+        if (facial.engagement > 7) {
+            indicators.push("Très expressif émotionnellement");
+        } else if (facial.engagement < 3) {
+            indicators.push("Expression faciale neutre/réservée");
+        } else {
+            indicators.push("Expression émotionnelle modérée");
+        }
+        
+        // Valence
+        if (facial.valence === 'positive') {
+            indicators.push("Tonalité émotionnelle positive dominante");
+        } else if (facial.valence === 'negative') {
+            indicators.push("Signes d'émotions négatives détectés");
+        }
+        
+        // Congruence
+        if (congruence > 85) {
+            indicators.push("Excellente cohérence audio-visuelle");
+        } else if (congruence < 50) {
+            indicators.push("⚠️ Incohérence audio-visuelle détectée (peut indiquer stress ou masquage)");
+        }
+        
+        return indicators;
+    }
+    
+    /**
+     * Formater pour injection dans prompt Claude
+     */
+    formatForPrompt() {
+        const context = this.generateContextForClaude();
+        
+        let formatted = "\n🎭 ANALYSE MULTIMODALE TEMPS RÉEL :\n";
+        formatted += `- Énergie vocale : ${context.vocal_energy.toFixed(1)}/10\n`;
+        formatted += `- Stabilité vocale : ${context.vocal_stability.toFixed(1)}/10\n`;
+        formatted += `- Engagement émotionnel : ${context.emotional_engagement.toFixed(1)}/10\n`;
+        formatted += `- Tonalité émotionnelle : ${context.emotional_valence}\n`;
+        formatted += `- Congruence audio-vidéo : ${context.audio_video_congruence.toFixed(0)}%\n`;
+        formatted += "\n💡 INDICATEURS PSYCHOLOGIQUES :\n";
+        context.psychological_indicators.forEach(indicator => {
+            formatted += `- ${indicator}\n`;
+        });
+        formatted += "\n→ UTILISE ces indicateurs pour adapter ton empathie et tes questions.\n";
+        
+        return formatted;
+    }
+    
+    // ==================== UTILS ====================
+    
+    average(arr) {
+        if (arr.length === 0) return 0;
+        return arr.reduce((a, b) => a + b, 0) / arr.length;
+    }
+    
+    standardDeviation(arr) {
+        if (arr.length === 0) return 0;
+        const avg = this.average(arr);
+        const squareDiffs = arr.map(val => Math.pow(val - avg, 2));
+        return Math.sqrt(this.average(squareDiffs));
+    }
+    
+    mapToScale(value, inMin, inMax, outMin, outMax) {
+        const normalized = Math.max(0, Math.min(1, (value - inMin) / (inMax - inMin)));
+        return outMin + normalized * (outMax - outMin);
+    }
+    
+    getDefaultAudioProfile() {
+        return {
+            energy_level: 5,
+            stability: 5,
+            pitch_tendency: "medium",
+            vocal_clarity: 5,
+            sample_size: 0
+        };
+    }
+    
+    getDefaultFacialProfile() {
+        return {
+            dominant_emotion: 'neutral',
+            engagement: 5,
+            valence: 'neutral',
+            confidence: 0,
+            emotional_variety: 0,
+            sample_size: 0
+        };
+    }
+}
+
+// Initialiser engine global
+window.multimodalFusionEngine = new MultimodalFusionEngine();
+console.log('[v17.0] ✅ MultimodalFusionEngine initialized');
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BRAIN BUILDER AI HELPER v17.0 - 5 APPELS IA STRATÉGIQUES
+// ═══════════════════════════════════════════════════════════════════════════
+
+class BrainBuilderAIHelper {
+    constructor(workerUrl = 'https://clone-proxy.11drumboy11.workers.dev/') {
+        this.WORKER_URL = workerUrl;
+        this.conversationMessages = null;
+        this.memoryData = null;
+        console.log('[BrainBuilderAI] 🧠 Helper initialized');
+    }
+    
+    /**
+     * Initialiser avec données conversation + mémoire
+     */
+    init(messages, memory) {
+        this.conversationMessages = messages;
+        this.memoryData = memory;
+    }
+    
+    /**
+     * APPEL IA #1: Analyser tempérament (Big Five)
+     */
+    async analyzeTemperament() {
+        console.log('[BrainBuilderAI] 🎯 Analyzing temperament...');
+        
+        const prompt = `Tu es un expert en psychologie des traits de personnalité (Big Five).
+
+Analyse cette conversation et détermine les scores Big Five de l'utilisateur.
+
+CONVERSATION:
+${this.formatConversation()}
+
+${this.formatMemory()}
+
+TÂCHE: Génère un JSON avec scores Big Five (0-100) + facettes + justifications.
+
+FORMAT ATTENDU:
+{
+  "openness": {
+    "score": 75,
+    "level": "high",
+    "facets": {
+      "imagination": 80,
+      "artistic_interests": 70,
+      "emotionality": 65,
+      "adventurousness": 75,
+      "intellect": 85,
+      "liberalism": 70
+    },
+    "evidence": ["Phrase exacte de la conversation qui démontre ce trait"]
+  },
+  "conscientiousness": { ... },
+  "extraversion": { ... },
+  "agreeableness": { ... },
+  "neuroticism": { ... }
+}
+
+IMPORTANT: 
+- Sois précis (scores basés sur preuves conversation)
+- Cite phrases exactes comme evidence
+- level: "very_low", "low", "medium", "high", "very_high"
+
+Retourne UNIQUEMENT le JSON, sans texte avant/après.`;
+
+        return await this.callClaude(prompt, 2000);
+    }
+    
+    /**
+     * APPEL IA #2: Analyser valeurs (Schwartz)
+     */
+    async analyzeValues() {
+        console.log('[BrainBuilderAI] 💎 Analyzing values...');
+        
+        const prompt = `Tu es un expert en psychologie des valeurs (modèle Schwartz).
+
+Analyse cette conversation et identifie les valeurs fondamentales de l'utilisateur.
+
+CONVERSATION:
+${this.formatConversation()}
+
+${this.formatMemory()}
+
+TÂCHE: Génère un JSON avec valeurs Schwartz + importance + motivations.
+
+FORMAT ATTENDU:
+{
+  "core_values": [
+    {
+      "value": "self-direction",
+      "importance": 90,
+      "sub_values": ["autonomy", "creativity", "independence"],
+      "motivations": ["Créer ses propres outils", "Explorer nouvelles idées"],
+      "manifestations": ["Citations exactes montrant cette valeur"]
+    }
+  ],
+  "conflicting_values": [
+    {
+      "tension": "achievement vs benevolence",
+      "description": "Veut réussir mais aussi aider les autres",
+      "resolution": "Trouve équilibre en enseignant"
+    }
+  ],
+  "value_hierarchy": ["self-direction", "benevolence", "achievement", "..."]
+}
+
+VALEURS SCHWARTZ: self-direction, stimulation, hedonism, achievement, power, security, conformity, tradition, benevolence, universalism.
+
+Retourne UNIQUEMENT le JSON.`;
+
+        return await this.callClaude(prompt, 2000);
+    }
+    
+    /**
+     * APPEL IA #3: Analyser style communication
+     */
+    async analyzeCommunicationStyle() {
+        console.log('[BrainBuilderAI] 💬 Analyzing communication...');
+        
+        const prompt = `Tu es un expert en analyse linguistique et communication.
+
+Analyse le STYLE DE COMMUNICATION de l'utilisateur dans cette conversation.
+
+CONVERSATION:
+${this.formatConversation()}
+
+TÂCHE: Génère un JSON détaillé sur son style communication.
+
+FORMAT ATTENDU:
+{
+  "tone": {
+    "primary": "informal-warm",
+    "secondary": "analytical",
+    "formality_level": 40
+  },
+  "vocabulary": {
+    "complexity": "medium-high",
+    "domain_specific": ["hémodialyse", "psychométrique", "concordance"],
+    "characteristic_expressions": ["du coup", "en fait", "c'est clair"],
+    "technical_comfort": 85
+  },
+  "sentence_structure": {
+    "avg_length": "medium",
+    "complexity": "varied",
+    "subordination_freq": "moderate"
+  },
+  "rhetorical_patterns": [
+    "Utilise beaucoup de métaphores techniques",
+    "Pose questions rhétoriques pour engager",
+    "Structure pensée en listes/étapes"
+  ],
+  "emotional_expression": {
+    "frequency": "moderate",
+    "intensity": "moderate",
+    "preferred_emotions": ["enthusiasm", "curiosity"]
+  },
+  "interaction_style": {
+    "question_asker": true,
+    "story_teller": true,
+    "direct_vs_indirect": "direct",
+    "humor_usage": "frequent-self-deprecating"
+  }
+}
+
+Retourne UNIQUEMENT le JSON.`;
+
+        return await this.callClaude(prompt, 1800);
+    }
+    
+    /**
+     * APPEL IA #4: Analyser patterns cognitifs
+     */
+    async analyzeThinkingPatterns() {
+        console.log('[BrainBuilderAI] 🧩 Analyzing thinking patterns...');
+        
+        const prompt = `Tu es un expert en psychologie cognitive.
+
+Analyse les PATTERNS DE PENSÉE de l'utilisateur dans cette conversation.
+
+CONVERSATION:
+${this.formatConversation()}
+
+${this.formatMemory()}
+
+TÂCHE: Génère un JSON sur son fonctionnement cognitif.
+
+FORMAT ATTENDU:
+{
+  "decision_making": {
+    "primary_style": "analytical-intuitive-mix",
+    "speed": "deliberate",
+    "information_gathering": "comprehensive",
+    "risk_tolerance": 60
+  },
+  "problem_solving": {
+    "approach": "systematic-creative-hybrid",
+    "preferred_strategies": ["break down complex", "iterate", "test"],
+    "innovation_orientation": 80
+  },
+  "learning_style": {
+    "modality": "visual-kinesthetic",
+    "pace": "self-paced-fast",
+    "depth_vs_breadth": "depth-oriented"
+  },
+  "cognitive_biases": [
+    {
+      "bias": "confirmation_bias",
+      "strength": "moderate",
+      "context": "Cherche patterns dans observations patients"
+    }
+  ],
+  "meta_cognition": {
+    "self_awareness": 85,
+    "reflective_capacity": "high",
+    "growth_mindset": true
+  },
+  "complexity_handling": {
+    "comfort_with_ambiguity": 70,
+    "systems_thinking": 85,
+    "abstraction_level": "high"
+  }
+}
+
+Retourne UNIQUEMENT le JSON.`;
+
+        return await this.callClaude(prompt, 1800);
+    }
+    
+    /**
+     * APPEL IA #5: Analyser profil émotionnel
+     */
+    async analyzeEmotionalProfile() {
+        console.log('[BrainBuilderAI] 😊 Analyzing emotional profile...');
+        
+        const prompt = `Tu es un expert en intelligence émotionnelle.
+
+Analyse le PROFIL ÉMOTIONNEL de l'utilisateur dans cette conversation.
+
+CONVERSATION:
+${this.formatConversation()}
+
+${this.formatMemory()}
+
+TÂCHE: Génère un JSON sur sa vie émotionnelle.
+
+FORMAT ATTENDU:
+{
+  "baseline_mood": {
+    "typical_state": "calm-positive",
+    "stability": 75,
+    "default_energy": "moderate-high"
+  },
+  "emotional_range": {
+    "intensity": "moderate",
+    "variety": "good",
+    "expression_comfort": 70,
+    "suppression_tendency": "low"
+  },
+  "triggers": {
+    "positive": [
+      {"trigger": "création réussie", "intensity": "high"},
+      {"trigger": "apprentissage nouveau", "intensity": "medium-high"}
+    ],
+    "negative": [
+      {"trigger": "injustice", "intensity": "medium"},
+      {"trigger": "incompétence technique", "intensity": "low-medium"}
+    ]
+  },
+  "regulation_strategies": [
+    "humor",
+    "problem-solving",
+    "creative_expression",
+    "social_support"
+  ],
+  "empathy_profile": {
+    "cognitive_empathy": 85,
+    "affective_empathy": 75,
+    "compassion": 80
+  },
+  "stress_response": {
+    "primary_response": "active-coping",
+    "resilience": 75,
+    "recovery_speed": "moderate-fast"
+  }
+}
+
+Retourne UNIQUEMENT le JSON.`;
+
+        return await this.callClaude(prompt, 1800);
+    }
+    
+    // ==================== UTILS ====================
+    
+    formatConversation() {
+        if (!this.conversationMessages || this.conversationMessages.length === 0) {
+            return "Pas de conversation disponible.";
+        }
+        
+        // Prendre max 30 derniers messages (optimisation)
+        const messages = this.conversationMessages.slice(-30);
+        
+        return messages.map((msg, idx) => {
+            const role = msg.role === 'user' ? 'UTILISATEUR' : 'ASSISTANT';
+            return `[${idx + 1}] ${role}: ${msg.content}`;
+        }).join('\n\n');
+    }
+    
+    formatMemory() {
+        if (!this.memoryData || !this.memoryData.memory) {
+            return "";
+        }
+        
+        let formatted = "\nMÉMOIRE SYSTÈME (faits extraits):\n";
+        
+        // Extraire quelques faits clés par catégorie
+        const memory = this.memoryData.memory;
+        
+        if (memory.identity && memory.identity.name) {
+            formatted += `- Identité: ${memory.identity.name}, ${memory.identity.profession || 'profession inconnue'}\n`;
+        }
+        
+        if (memory.psychometric && memory.psychometric.traits && memory.psychometric.traits.length > 0) {
+            formatted += `- Traits: ${memory.psychometric.traits.slice(0, 5).join(', ')}\n`;
+        }
+        
+        if (memory.values && memory.values.core && memory.values.core.length > 0) {
+            formatted += `- Valeurs: ${memory.values.core.slice(0, 3).join(', ')}\n`;
+        }
+        
+        return formatted;
+    }
+    
+    async callClaude(systemPrompt, maxTokens = 2000) {
+        try {
+            const response = await fetch(this.WORKER_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: 'claude-sonnet-4-20250514',
+                    max_tokens: maxTokens,
+                    temperature: 0.3,
+                    system: systemPrompt,
+                    messages: [{
+                        role: 'user',
+                        content: 'Analyse et retourne le JSON demandé.'
+                    }]
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            const text = data.content[0].text.trim();
+            
+            // Parser JSON
+            const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+            return JSON.parse(cleaned);
+            
+        } catch (error) {
+            console.error('[BrainBuilderAI] ❌ Error:', error);
+            return null;
+        }
+    }
+}
+
+// Initialiser helper global
+window.brainBuilderAIHelper = new BrainBuilderAIHelper();
+console.log('[v17.0] ✅ BrainBuilderAIHelper initialized');
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// JSON SCHEMA VALIDATOR v17.0 - PROGRESSIVE VALIDATION
+// ═══════════════════════════════════════════════════════════════════════════
+
+class BrainJSONSchemaValidator {
+    constructor() {
+        this.schema = this.defineSchema();
+        console.log('[JSONSchema] 🔒 Validator initialized');
+    }
+    
+    /**
+     * Définir schéma JSON complet
+     */
+    defineSchema() {
+        return {
+            type: "object",
+            required: ["schema_version", "generated_at_utc", "clone_id", "identity", "global_config"],
+            properties: {
+                schema_version: { type: "string" },
+                generated_at_utc: { type: "string", format: "date-time" },
+                clone_id: { type: "string", minLength: 10 },
+                
+                source_interviews: {
+                    type: "array",
+                    items: {
+                        type: "object",
+                        required: ["session_id", "date_utc", "messages_count"],
+                        properties: {
+                            session_id: { type: "string" },
+                            date_utc: { type: "string" },
+                            duration_minutes: { type: "number" },
+                            questions_count: { type: "number" },
+                            messages_count: { type: "number", minimum: 1 },
+                            mode: { type: "string", enum: ["text", "audio", "video"] },
+                            tool_version: { type: "string" },
+                            concordance_score: { type: "number", minimum: 0, maximum: 150 }
+                        }
+                    }
+                },
+                
+                identity: {
+                    type: "object",
+                    required: ["display_name"],
+                    properties: {
+                        display_name: { type: "string", minLength: 1 },
+                        short_label: { type: "string" },
+                        role_primary: { type: "string" },
+                        roles_secondary: { type: "array", items: { type: "string" } },
+                        languages: { type: "array" },
+                        cultural_context: { type: "object" }
+                    }
+                },
+                
+                global_config: {
+                    type: "object",
+                    required: ["temperature", "creativity_mode"],
+                    properties: {
+                        temperature: { type: "number", minimum: 0, maximum: 2 },
+                        creativity_mode: { type: "string" },
+                        response_length: { type: "string" },
+                        formality: { type: "number", minimum: 0, maximum: 100 }
+                    }
+                },
+                
+                temperament: { type: "object" },
+                values: { type: "object" },
+                communication_style: { type: "object" },
+                thinking_patterns: { type: "object" },
+                emotional_profile: { type: "object" },
+                behavioral_patterns: { type: "object" },
+                expertise_outline: { type: "object" },
+                data_quality: { type: "object" }
+            }
+        };
+    }
+    
+    /**
+     * Valider JSON avec mode progressif
+     */
+    validate(brain, messageCount = 0) {
+        const errors = [];
+        const warnings = [];
+        
+        // Mode progressif selon nombre de messages
+        const strictMode = messageCount >= 50;
+        
+        console.log(`[JSONSchema] 🔍 Validating (${strictMode ? 'STRICT' : 'PERMISSIVE'} mode, ${messageCount} messages)...`);
+        
+        // Validation basique (toujours requise)
+        if (!brain.schema_version) {
+            errors.push("Missing schema_version");
+        }
+        
+        if (!brain.generated_at_utc) {
+            errors.push("Missing generated_at_utc");
+        }
+        
+        if (!brain.clone_id) {
+            errors.push("Missing clone_id");
+        }
+        
+        if (!brain.identity || !brain.identity.display_name) {
+            errors.push("Missing identity.display_name");
+        }
+        
+        if (!brain.global_config) {
+            errors.push("Missing global_config");
+        }
+        
+        // Validation stricte (si 50+ messages)
+        if (strictMode) {
+            // Vérifier sections critiques
+            const criticalSections = [
+                'temperament',
+                'values', 
+                'communication_style',
+                'thinking_patterns',
+                'emotional_profile'
+            ];
+            
+            criticalSections.forEach(section => {
+                if (!brain[section] || Object.keys(brain[section]).length === 0) {
+                    errors.push(`Missing or empty critical section: ${section}`);
+                }
+            });
+            
+            // Vérifier qualité données
+            if (!brain.data_quality) {
+                warnings.push("Missing data_quality section");
+            } else if (brain.data_quality.overall_grade) {
+                const grade = brain.data_quality.overall_grade;
+                if (grade === 'poor' || grade === 'insufficient') {
+                    warnings.push(`Low data quality grade: ${grade}`);
+                }
+            }
+            
+            // Vérifier nombre de messages dans source
+            if (brain.source_interviews && brain.source_interviews[0]) {
+                const msgCount = brain.source_interviews[0].messages_count;
+                if (msgCount < 40) {
+                    warnings.push(`Low message count: ${msgCount} (recommended: 50+)`);
+                }
+            }
+        }
+        
+        // Validation permissive (warnings seulement)
+        if (!strictMode) {
+            if (!brain.temperament || Object.keys(brain.temperament).length === 0) {
+                warnings.push("Temperament section empty (normal for short interviews)");
+            }
+            
+            if (!brain.values || Object.keys(brain.values).length === 0) {
+                warnings.push("Values section empty (normal for short interviews)");
+            }
+        }
+        
+        // Résultat validation
+        const isValid = errors.length === 0;
+        
+        const result = {
+            valid: isValid,
+            mode: strictMode ? 'strict' : 'permissive',
+            errors: errors,
+            warnings: warnings,
+            message_count: messageCount,
+            summary: this.generateSummary(isValid, errors, warnings, strictMode)
+        };
+        
+        console.log('[JSONSchema] 📊 Validation result:', result.summary);
+        
+        if (errors.length > 0) {
+            console.error('[JSONSchema] ❌ Validation errors:', errors);
+        }
+        
+        if (warnings.length > 0) {
+            console.warn('[JSONSchema] ⚠️ Validation warnings:', warnings);
+        }
+        
+        return result;
+    }
+    
+    generateSummary(isValid, errors, warnings, strictMode) {
+        if (isValid) {
+            if (warnings.length === 0) {
+                return `✅ JSON parfaitement valide (mode ${strictMode ? 'strict' : 'permissive'})`;
+            } else {
+                return `✅ JSON valide avec ${warnings.length} avertissement(s)`;
+            }
+        } else {
+            return `❌ JSON invalide: ${errors.length} erreur(s) critique(s)`;
+        }
+    }
+    
+    /**
+     * Réparer JSON si possible
+     */
+    repair(brain) {
+        console.log('[JSONSchema] 🔧 Attempting to repair JSON...');
+        
+        const repaired = { ...brain };
+        let repairsMade = 0;
+        
+        // Réparer champs manquants critiques
+        if (!repaired.schema_version) {
+            repaired.schema_version = "17.0-worldclass";
+            repairsMade++;
+        }
+        
+        if (!repaired.generated_at_utc) {
+            repaired.generated_at_utc = new Date().toISOString();
+            repairsMade++;
+        }
+        
+        if (!repaired.clone_id) {
+            repaired.clone_id = `clone-repaired-${Date.now()}`;
+            repairsMade++;
+        }
+        
+        if (!repaired.identity) {
+            repaired.identity = { display_name: "User" };
+            repairsMade++;
+        } else if (!repaired.identity.display_name) {
+            repaired.identity.display_name = "User";
+            repairsMade++;
+        }
+        
+        if (!repaired.global_config) {
+            repaired.global_config = {
+                temperature: 1.0,
+                creativity_mode: "balanced",
+                response_length: "adaptive",
+                formality: 50
+            };
+            repairsMade++;
+        }
+        
+        console.log(`[JSONSchema] ✅ Repair complete: ${repairsMade} field(s) repaired`);
+        
+        return {
+            repaired: repaired,
+            repairs_made: repairsMade
+        };
+    }
+}
+
+// Initialiser validator global
+window.brainJSONSchemaValidator = new BrainJSONSchemaValidator();
+console.log('[v17.0] ✅ BrainJSONSchemaValidator initialized');
+
+
+
+
 class ConversationalSystem {
     constructor() {
         // Configuration
@@ -5890,6 +6788,16 @@ class ConversationalSystem {
         const currentTheme = this.themes.find(t => t.status === 'partial' || t.status === 'started');
         const currentThemeName = currentTheme ? currentTheme.name : null;
         
+        // v17.0: Injecter contexte multimodal
+        let multimodalContext = "";
+        if (window.multimodalFusionEngine && state.mode !== 'text') {
+            try {
+                multimodalContext = window.multimodalFusionEngine.formatForPrompt();
+            } catch (error) {
+                console.warn('[ConversationalSystem] Multimodal context error:', error);
+            }
+        }
+        
         let prompt = `Tu es Claude, un thérapeute expert menant une interview conversationnelle 100% naturelle et fluide pour créer un clone de personnalité ultra-précis.
 
 🎯 OBJECTIFS :
@@ -5900,7 +6808,7 @@ class ConversationalSystem {
 ${themesStatus}
 
 ${recentEmotion ? `🎭 ÉMOTION DÉTECTÉE : ${recentEmotion.emotion} (${recentEmotion.confidence}%)\n→ Adapte ton empathie : ${this.getEmpathyGuidance(recentEmotion)}\n` : ''}
-
+${multimodalContext}
 💬 MODE CONVERSATIONNEL :
 1. **DÉTECTION INTENTION** :
    - Si l'utilisateur pose une question (ex: "Pourquoi tu me demandes ça ?") → Réponds de façon empathique puis rebondis naturellement
@@ -8673,7 +9581,7 @@ document.getElementById('response-input').addEventListener('input', updateWordCo
 // INIT
 // ============================================================================
 console.log('═══════════════════════════════════════════════════════════');
-console.log('  Clone Interview Pro v16.7.7 - MARKDOWN FIX                      ');
+console.log('  Clone Interview Pro v17.0 WORLDCLASS                      ');
 console.log('  Institut du Couple - Concordance 101%+                  ');
 console.log('  Modules Psycho 23-32 + ElevenLabs TTS                   ');
 console.log('═══════════════════════════════════════════════════════════');
@@ -19060,8 +19968,37 @@ class BrainBuilderUltimate {
      */
     async buildCompleteBrain() {
         console.log('[BrainBuilder] 🚀 Starting COMPLETE brain generation...');
+        console.log('[BrainBuilder] 🤖 Using AI-powered analysis (5 strategic calls)...');
         
         const startTime = Date.now();
+        
+        // v17.0: Initialiser AI Helper
+        if (window.brainBuilderAIHelper) {
+            window.brainBuilderAIHelper.init(
+                this.conversation?.messages || [],
+                this.memory
+            );
+        }
+        
+        // v17.0: Appels IA parallèles (optimisation)
+        const [aiTemperament, aiValues, aiCommunication, aiThinking, aiEmotional] = await Promise.all([
+            window.brainBuilderAIHelper?.analyzeTemperament() || Promise.resolve(null),
+            window.brainBuilderAIHelper?.analyzeValues() || Promise.resolve(null),
+            window.brainBuilderAIHelper?.analyzeCommunicationStyle() || Promise.resolve(null),
+            window.brainBuilderAIHelper?.analyzeThinkingPatterns() || Promise.resolve(null),
+            window.brainBuilderAIHelper?.analyzeEmotionalProfile() || Promise.resolve(null)
+        ]);
+        
+        console.log('[BrainBuilder] ✅ AI analysis complete');
+        
+        // Stocker pour utilisation dans méthodes
+        this.aiAnalysis = {
+            temperament: aiTemperament,
+            values: aiValues,
+            communication: aiCommunication,
+            thinking: aiThinking,
+            emotional: aiEmotional
+        };
         
         try {
             const brain = {
