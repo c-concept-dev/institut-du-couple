@@ -1,37 +1,28 @@
 <!DOCTYPE html>
 <!--
 ╔═══════════════════════════════════════════════════════════════════════════╗
-║  CLONE INTERVIEW PRO v17.3.2 FIX ULTIMATE                                 ║
+║  CLONE INTERVIEW PRO v17.3.3 FIX ULTIMATE                                 ║
 ║  C DevConcept - Professional AI Interview System                         ║
 ║                                                                           ║
 ║  NIVEAU 5 - PRODUCTION READY                                             ║
 ║                                                                           ║
 ║  Date: 2024-12-01                                                        ║
 ║  Author: Christophe - C DevConcept (avec Claude Sonnet 4)                ║
-║  Version: 17.3.2 (Fix UX + Auto-start immédiat + API hardcodée)          ║
+║  Version: 17.3.3 (Bugs audio + UX sobre + Indicateur audio)              ║
 ║                                                                           ║
-║  CORRECTIFS v17.3.2 FIX:                                                 ║
-║    ✅ Auto-start IMMÉDIAT (analyse démarre vraiment automatiquement)     ║
-║    ✅ Bouton "Démarrer analyse" supprimé (indicateur de statut)          ║
-║    ✅ Bouton Pause visible et fonctionnel (conversation seulement)       ║
-║    ✅ Welcome screen refait (design cards, centré, sans puces)           ║
-║    ✅ Emojis tooltip supprimés (texte propre)                            ║
-║    ✅ API key HARDCODÉE (Christophe met sa clé une fois)                 ║
-║    ✅ Raccourci Cmd+Shift+K pour changer API key (mode dev)              ║
-║    ✅ Logs clarifiés (analyse 24/7 jamais interrompue)                   ║
+║  CORRECTIFS v17.3.3 FIX:                                                 ║
+║    🐛 Seuil interruption × 5 (moins sensible, évite coupures TTS)        ║
+║    🎤 Reconnaissance vocale forcée avec logs debug                        ║
+║    🎨 Welcome screen SOBRE (comme ancienne version)                       ║
+║    🎨 Grosses barres → Petits badges discrets charte                      ║
+║    🎙️  Indicateur audio minimal (Silence / Vous parlez / Clone parle)    ║
+║    ✅ Pas d'emojis dans indicateur (charte graphique pure)               ║
 ║                                                                           ║
-║  PHILOSOPHIE v17.3.2:                                                    ║
-║    "L'analyse observe 24/7, du début à la fin, sans interruption."      ║
-║    → Pause = arrête QUESTIONS seulement (pas l'analyse)                  ║
-║    → Silences = données précieuses (inconscient, authenticité)           ║
-║    → Caméra/micro tournent en continu (observation passive)              ║
-║                                                                           ║
-║    💾 Auto-save silencieux (récupération crash 30s)                      ║
-║    🔑 API Google TTS externalisée (localStorage)                         ║
-║    🗑️  Code ElevenLabs supprimé (non utilisé)                            ║
-║    📊 Avatar tooltip enrichi (6 infos temps réel)                        ║
-║    ⚠️  Message engagement 45-60 min au démarrage                         ║
-║    ✅ Dashboard flottant supprimé (interface clean)                      ║
+║  PHILOSOPHIE v17.3.3:                                                    ║
+║    "Interface épurée, observation passive continue, authenticité."       ║
+║    → Analyse 24/7 sans interruption                                      ║
+║    → UI minimaliste (badges au lieu de barres)                            ║
+║    → Indicateur audio discret (feedback sans distraction)                ║
 ║                                                                           ║
 ║  v17.3.0 UX (conservés):                                                 ║
 ║    ✅ Charte graphique #8FAFB1 #C8D0C3 #E6D7C3                          ║
@@ -1744,94 +1735,45 @@
     
     <!-- Dashboard flottant supprimé - Remplacé par avatar intelligent -->
     
-    <!-- WELCOME SCREEN v17.3.2 - Design Pro Centré -->
+    <!-- WELCOME SCREEN v17.3.3 - Ultra sobre comme ancienne version -->
     <div class="welcome-screen active" id="welcome-screen">
         <h2>Bienvenue dans Clone Interview Pro</h2>
-        <p style="max-width: 600px; margin: 0 auto 40px; font-size: 16px; color: var(--text-secondary);">
-            Créez votre clone de personnalité grâce à une analyse multi-modale complète
+        <p style="max-width: 600px; margin: 0 auto 20px; font-size: 16px; color: var(--text-secondary); line-height: 1.6;">
+            Cette interview analyse votre personnalité en profondeur grâce à une analyse multi-modale 
+            (texte, voix, expressions faciales) pour créer un profil uploadable dans une IA.
         </p>
         
-        <!-- Cards Info -->
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 800px; margin: 0 auto 40px;">
-            <div style="background: white; padding: 24px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <div style="font-size: 48px; margin-bottom: 12px;">📹</div>
-                <div style="font-weight: 600; color: var(--text); margin-bottom: 8px;">Multi-modal</div>
-                <div style="font-size: 14px; color: var(--text-secondary);">Texte · Audio · Vidéo</div>
-            </div>
-            <div style="background: white; padding: 24px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <div style="font-size: 48px; margin-bottom: 12px;">⏱️</div>
-                <div style="font-weight: 600; color: var(--text); margin-bottom: 8px;">45-60 minutes</div>
-                <div style="font-size: 14px; color: var(--text-secondary);">Session continue</div>
-            </div>
-            <div style="background: white; padding: 24px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <div style="font-size: 48px; margin-bottom: 12px;">🎯</div>
-                <div style="font-weight: 600; color: var(--text); margin-bottom: 8px;">101%+ Concordance</div>
-                <div style="font-size: 14px; color: var(--text-secondary);">Précision maximale</div>
-            </div>
-        </div>
-        
-        <!-- Encart engagement -->
-        <div style="background: linear-gradient(135deg, rgba(143, 175, 177, 0.1) 0%, rgba(200, 208, 195, 0.1) 100%); padding: 28px; border-radius: 12px; border: 2px solid var(--mer); margin: 0 auto 40px; max-width: 700px;">
-            <div style="font-size: 18px; font-weight: 600; color: var(--mer); margin-bottom: 16px; text-align: center;">
-                Engagement requis
-            </div>
-            <p style="color: var(--text-secondary); margin: 0 0 20px 0; line-height: 1.7; text-align: center;">
-                Une interview psychologique authentique est un acte unique et continu.<br>
-                Les silences et hésitations sont des <strong>données précieuses</strong>.
-            </p>
-            
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="color: var(--mer); font-size: 20px;">✓</span>
-                    <span style="color: var(--text-secondary); font-size: 14px;">Endroit calme</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="color: var(--mer); font-size: 20px;">✓</span>
-                    <span style="color: var(--text-secondary); font-size: 14px;">Batterie chargée</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="color: var(--mer); font-size: 20px;">✓</span>
-                    <span style="color: var(--text-secondary); font-size: 14px;">Connexion stable</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="color: var(--mer); font-size: 20px;">✓</span>
-                    <span style="color: var(--text-secondary); font-size: 14px;">Caméra & micro OK</span>
-                </div>
-            </div>
-            
-            <p style="color: var(--text); font-size: 14px; margin: 20px 0 0 0; text-align: center; font-style: italic;">
-                L'analyse démarre automatiquement et observe en continu
-            </p>
-        </div>
+        <p style="margin: 30px auto; max-width: 500px; line-height: 1.8; color: var(--text-secondary);">
+            <strong>Durée :</strong> 45-60 minutes<br>
+            <strong>Questions :</strong> 40<br>
+            <strong>Concordance cible :</strong> 101%+ (mode vidéo)
+        </p>
         
         <button class="start-btn" onclick="showModeSelection()" style="font-size: 16px; padding: 16px 48px;">
-            Je suis prêt · Commencer
+            Commencer l'interview
         </button>
     </div>
     
     <!-- INTERVIEW SCREEN -->
     <div class="interview-screen" id="interview-screen">
-        <!-- PROGRESS -->
-        <div class="progress-section">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill"></div>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="question-num">0</div>
-                    <div class="stat-label">Question</div>
+        <!-- PROGRESS v17.3.3 - Badges discrets charte -->
+        <div class="progress-section" style="background: transparent; padding: 15px 20px; margin-bottom: 20px;">
+            <div class="stats-grid" style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <div style="background: white; padding: 8px 16px; border-radius: 20px; border: 2px solid var(--mer); display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">Question</span>
+                    <span style="font-size: 16px; color: var(--mer); font-weight: 700;" id="question-num">0</span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="response-count-main">0</div>
-                    <div class="stat-label">Réponses</div>
+                <div style="background: white; padding: 8px 16px; border-radius: 20px; border: 2px solid var(--vert-sauge); display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">Réponses</span>
+                    <span style="font-size: 16px; color: var(--vert-sauge); font-weight: 700;" id="response-count-main">0</span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="word-count-stat">0</div>
-                    <div class="stat-label">Mots</div>
+                <div style="background: white; padding: 8px 16px; border-radius: 20px; border: 2px solid var(--sable); display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">Mots</span>
+                    <span style="font-size: 16px; color: var(--text); font-weight: 700;" id="word-count-stat">0</span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="concordance-stat">0%</div>
-                    <div class="stat-label">Concordance</div>
+                <div style="background: white; padding: 8px 16px; border-radius: 20px; border: 2px solid var(--mer); display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">Concordance</span>
+                    <span style="font-size: 16px; color: var(--mer); font-weight: 700;" id="concordance-stat">0%</span>
                 </div>
             </div>
         </div>
@@ -1843,26 +1785,52 @@
                     <video id="video-preview" class="video-preview" autoplay muted playsinline></video>
                 </div>
                 <div class="media-controls">
-                    <!-- v17.3.2: Indicateur statut analyse (non-cliquable) -->
-                    <div class="analyze-status-indicator" id="analyze-status-indicator" style="
-                        width: 100%;
-                        padding: 12px 24px;
-                        border-radius: 8px;
-                        background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-                        color: white;
-                        font-size: 15px;
-                        font-weight: 600;
-                        text-align: center;
-                        margin-bottom: 15px;
-                        box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
-                    ">
-                        <span id="analyze-status-text">✓ Analyse active</span>
+                    <!-- v17.3.3: Petits boutons discrets charte -->
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <div id="analyze-status-indicator" style="
+                            flex: 1;
+                            padding: 10px 16px;
+                            border-radius: 20px;
+                            background: white;
+                            border: 2px solid #27ae60;
+                            color: #27ae60;
+                            font-size: 13px;
+                            font-weight: 600;
+                            text-align: center;
+                        ">
+                            <span id="analyze-status-text">Analyse active</span>
+                        </div>
+                        
+                        <button class="pause-btn" id="pause-btn" onclick="togglePause()" style="
+                            flex: 1;
+                            padding: 10px 16px;
+                            border-radius: 20px;
+                            background: white;
+                            border: 2px solid var(--mer);
+                            color: var(--mer);
+                            font-size: 13px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            display: block;
+                        ">
+                            <span id="pause-text">Pause</span>
+                        </button>
                     </div>
                     
-                    <!-- v17.3.2: Bouton Pause conversation (arrête questions seulement) -->
-                    <button class="pause-btn" id="pause-btn" onclick="togglePause()" style="display: block;">
-                        <span id="pause-text">⏸ Pause conversation</span>
-                    </button>
+                    <!-- v17.3.3: Indicateur audio minimal (charte, sans emojis) -->
+                    <div id="audio-status-indicator" style="
+                        padding: 8px 16px;
+                        border-radius: 20px;
+                        background: white;
+                        border: 2px solid var(--sable);
+                        color: var(--text-secondary);
+                        font-size: 13px;
+                        font-weight: 500;
+                        text-align: center;
+                        margin-bottom: 15px;
+                    ">
+                        Silence...
+                    </div>
                     
                     <div class="transcription-panel" id="transcription-panel">
                         <div style="font-weight: 600; margin-bottom: 8px;">
@@ -3279,6 +3247,12 @@ class TTSQueue {
                 console.log(`[Performance] 📊 TTS Metrics: API=${apiTime.toFixed(0)}ms, Total=${totalTime.toFixed(0)}ms`);
                 URL.revokeObjectURL(audioUrl);
                 this.currentAudio = null;
+                
+                // v17.3.3: Indicateur retour à Silence
+                if (typeof updateAudioStatusIndicator === 'function') {
+                    updateAudioStatusIndicator('silence');
+                }
+                
                 resolve();
             };
             
@@ -3286,12 +3260,23 @@ class TTSQueue {
                 console.error('[TTSQueue] ❌ Audio playback error:', error);
                 URL.revokeObjectURL(audioUrl);
                 this.currentAudio = null;
+                
+                // v17.3.3: Indicateur retour à Silence
+                if (typeof updateAudioStatusIndicator === 'function') {
+                    updateAudioStatusIndicator('silence');
+                }
+                
                 reject(error);
             };
             
             await this.currentAudio.play();
             const playTime = performance.now() - audioStartTime;
             console.log(`[TTSQueue] ▶️ Audio playback started (${playTime.toFixed(0)}ms to start)`);
+            
+            // v17.3.3: Indicateur Clone parle
+            if (typeof updateAudioStatusIndicator === 'function') {
+                updateAudioStatusIndicator('clone');
+            }
             
         } catch (error) {
             const failTime = performance.now() - startTime;
@@ -3351,6 +3336,12 @@ class TTSQueue {
         
         utterance.onend = () => {
             console.log('[TTSQueue] ✅ Web Speech finished');
+            
+            // v17.3.3: Indicateur retour à Silence
+            if (typeof updateAudioStatusIndicator === 'function') {
+                updateAudioStatusIndicator('silence');
+            }
+            
             resolve();
         };
         
@@ -3358,14 +3349,31 @@ class TTSQueue {
             // Si cancel volontaire (interruption), résoudre au lieu de rejeter
             if (error.error === 'canceled') {
                 console.log('[TTSQueue] ℹ️ Web Speech canceled (interrupted)');
+                
+                // v17.3.3: Indicateur retour à Silence
+                if (typeof updateAudioStatusIndicator === 'function') {
+                    updateAudioStatusIndicator('silence');
+                }
+                
                 resolve(); // Résoudre normalement
             } else {
                 console.error('[TTSQueue] ❌ Web Speech error:', error);
+                
+                // v17.3.3: Indicateur retour à Silence
+                if (typeof updateAudioStatusIndicator === 'function') {
+                    updateAudioStatusIndicator('silence');
+                }
+                
                 reject(error);
             }
         };
         
         speechSynthesis.speak(utterance);
+        
+        // v17.3.3: Indicateur Clone parle
+        if (typeof updateAudioStatusIndicator === 'function') {
+            updateAudioStatusIndicator('clone');
+        }
     }
     
     /**
@@ -3466,11 +3474,13 @@ class AudioInterruptionDetector {
             
             // Calculer baseline = moyenne + marge
             this.noiseBaseline = samples.reduce((a, b) => a + b) / samples.length;
-            this.threshold = this.noiseBaseline + 0.015; // +1.5% marge
+            // v17.3.3: Seuil × 5 pour éviter interruptions intempestives
+            this.threshold = this.noiseBaseline + (0.015 * 5); // +7.5% marge (était +1.5%)
             
             console.log('[Interruption] ✅ Calibration complete:', {
                 noiseBaseline: this.noiseBaseline.toFixed(4),
                 threshold: this.threshold.toFixed(4),
+                multiplier: '5x (moins sensible)',
                 samples: samples.length
             });
             
@@ -9538,6 +9548,9 @@ function setupSpeechRecognition() {
         let interimTranscript = '';
         let finalTranscript = '';
         
+        // v17.3.3: Indiquer que l'utilisateur parle
+        updateAudioStatusIndicator('user');
+        
         for (let i = event.resultIndex; i < event.results.length; i++) {
             const transcript = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
@@ -9559,6 +9572,14 @@ function setupSpeechRecognition() {
         // Update textarea
         document.getElementById('response-input').value = state.currentTranscript.trim();
         updateWordCount();
+        
+        // v17.3.3: Revenir à "Silence" après 2s sans parole
+        clearTimeout(window.silenceTimeout);
+        window.silenceTimeout = setTimeout(() => {
+            if (!window.ttsQueue || !window.ttsQueue.isCurrentlyPlaying()) {
+                updateAudioStatusIndicator('silence');
+            }
+        }, 2000);
     };
     
     state.recognition.onerror = (event) => {
@@ -9604,7 +9625,14 @@ function startAnalysis() {
     
     // Start speech recognition
     if (state.recognition) {
-        state.recognition.start();
+        try {
+            state.recognition.start();
+            console.log('[v17.3.3] ✅ Speech recognition started');
+        } catch (error) {
+            console.error('[v17.3.3] ❌ Speech recognition error:', error);
+        }
+    } else {
+        console.error('[v17.3.3] ❌ Speech recognition not initialized!');
     }
     
     // Start simulated analysis
@@ -23693,6 +23721,40 @@ function updateAvatarTooltip() {
         tooltipEmotion.textContent = window.lastDetectedEmotion;
     }
 }
+
+/**
+ * v17.3.3: Mise à jour indicateur audio (Silence / Vous parlez / Clone parle)
+ */
+function updateAudioStatusIndicator(status) {
+    const indicator = document.getElementById('audio-status-indicator');
+    if (!indicator) return;
+    
+    const statusConfig = {
+        'silence': {
+            text: 'Silence...',
+            color: 'var(--text-secondary)',
+            borderColor: 'var(--sable)'
+        },
+        'user': {
+            text: 'Vous parlez...',
+            color: 'var(--mer)',
+            borderColor: 'var(--mer)'
+        },
+        'clone': {
+            text: 'Clone parle...',
+            color: 'var(--vert-sauge)',
+            borderColor: 'var(--vert-sauge)'
+        }
+    };
+    
+    const config = statusConfig[status] || statusConfig['silence'];
+    indicator.textContent = config.text;
+    indicator.style.color = config.color;
+    indicator.style.borderColor = config.borderColor;
+}
+
+// Initialiser l'indicateur au silence
+window.currentAudioStatus = 'silence';
 
 /**
  * Mode Développeur/Production
