@@ -2965,7 +2965,7 @@ class TTSQueue {
         }
     }
     
-    playGoogleTTS(text, resolve, reject) {
+    async playGoogleTTS(text, resolve, reject) {
         const startTime = performance.now();
         
         // Clean markdown formatting before TTS
@@ -2983,7 +2983,7 @@ class TTSQueue {
                     input: { text: text },
                     voice: {
                         languageCode: 'fr-FR',
-                        name: this.getGoogleVoiceName(state.voiceMode, state.googleTTSVoice),
+                        name: state.googleTTSVoice || 'fr-FR-Neural2-B',
                         ssmlGender: 'MALE'
                     },
                     audioConfig: {
@@ -19869,7 +19869,7 @@ class BrainBuilderUltimate {
             label: "Ouverture",
             score: parseFloat(score.toFixed(2)),
             confidence: parseFloat(confidence.toFixed(2)),
-            summary: this.generateOpennessS ummary(score),
+            summary: this.generateOpennessSummary(score),
             evidence: evidence.slice(0, 5) // Top 5
         };
     }
@@ -20113,7 +20113,7 @@ class BrainBuilderUltimate {
         return dataStr.includes(trait.toLowerCase());
     }
     
-    generateOpennessS ummary(score) {
+    generateOpennessSummary(score) {
         if (score > 0.75) return "Très ouvert intellectuellement, curieux, apprécie approches créatives et systèmes complexes";
         if (score > 0.5) return "Ouverture modérée, équilibre entre tradition et innovation";
         return "Préfère approches éprouvées, prudent face nouveauté";
