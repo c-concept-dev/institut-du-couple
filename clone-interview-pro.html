@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <!--
 ╔═══════════════════════════════════════════════════════════════════════════╗
-║  CLONE INTERVIEW PRO v17.0.1 WORLDCLASS                                  ║
+║  CLONE INTERVIEW PRO v17.2.0 ULTIMATE                                    ║
 ║  Institut du Couple - Concordance 101%+                                  ║
 ║                                                                           ║
 ║  🌟 NIVEAU 5 - PRODUCTION READY                                          ║
 ║                                                                           ║
 ║  📅 Date: 2024-12-01                                                     ║
 ║  👤 Author: Christophe (avec Claude Sonnet 4)                            ║
-║  🔧 Version: 17.0.1 (Chirp 3 HD fix)                                     ║
+║  🔧 Version: 17.2.0 (TTS Ultimate Fix)                                   ║
 ║                                                                           ║
 ║  🔥 NOUVEAUTÉS v17.0:                                                    ║
 ║    ✅ MultimodalFusionEngine (indicateurs psycho audio/vidéo)           ║
 ║    ✅ BrainBuilderAIHelper (5 appels IA stratégiques)                   ║
 ║    ✅ BrainJSONSchemaValidator (validation progressive)                 ║
 ║                                                                           ║
-║  🔧 FIX v17.0.1:                                                         ║
-║    ✅ Google Chirp 3 HD voices (Journey, Studio, Polyglot)              ║
-║    ✅ playGoogleTTS() now calls getGoogleVoiceName()                    ║
-║    ✅ ssmlGender: MALE → FEMALE (Chirp 3 voices)                        ║
+║  🔧 FIX v17.2.0 ULTIMATE:                                                ║
+║    ✅ isGoogleMode fix (google-journey/google-* détectés)               ║
+║    ✅ Journey-F (femme Chirp 3 HD) ⭐⭐⭐⭐⭐                               ║
+║    ✅ Neural2-D (homme Standard) testé                                   ║
+║    ✅ ssmlGender dynamique (MALE/FEMALE auto)                            ║
+║    ✅ ElevenLabs supprimé (trop cher)                                    ║
+║    ✅ Interface simplifiée (3 options vs 6)                              ║
+║    ✅ Diagnostic erreur 400 détaillé                                     ║
+║    ✅ Avertissement si pas de clé API                                    ║
 ║                                                                           ║
 ║  📊 MÉTRIQUES:                                                           ║
 ║    - Taille: 844 KB                                                      ║
@@ -52,7 +57,7 @@
 ║    Console (F12) pour diagnostics                                        ║
 ║    Voir DEPANNAGE-INTERVIEW.md                                           ║
 ║                                                                           ║
-║  🎉 PROFITE DE v17.0.1 WORLDCLASS !                                     ║
+║  🎉 PROFITE DE v17.2.0 ULTIMATE !                                        ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
 -->
 
@@ -2895,24 +2900,33 @@ class TTSQueue {
      */
     async generateAndPlay(text) {
         return new Promise((resolve, reject) => {
-            // v17.1.0: Support Google Cloud TTS uniquement (Chirp 3 HD + Neural2)
-            const isGoogleMode = state.voiceMode === 'google' || 
-                                 state.voiceMode === 'auto' ||
-                                 state.voiceMode === 'google-journey' ||
-                                 state.voiceMode === 'google-studio' ||
-                                 state.voiceMode === 'google-polyglot';
-            
-            if (isGoogleMode && state.googleTTSApiKey) {
-                console.log('[TTSQueue] 🎯 Using Google TTS mode:', state.voiceMode);
+            const mode = state.voiceMode || 'auto';
+            const hasGoogleKey = !!state.googleTTSApiKey;
+            const hasElevenKey = !!state.elevenLabsApiKey;
+
+            // Considérer tous les modes "google", "auto" et "google-*"
+            const isGoogleMode =
+                mode === 'google' ||
+                mode === 'auto' ||
+                (typeof mode === 'string' && mode.startsWith('google'));
+
+            // v17.2.0: Log du mode utilisé
+            console.log(`[TTSQueue] 🎯 Mode: "${mode}" | isGoogleMode: ${isGoogleMode} | hasKey: ${hasGoogleKey}`);
+
+            // Priorité 1: Google Cloud TTS (tous les modes google-*)
+            if (isGoogleMode && hasGoogleKey) {
                 this.playGoogleTTS(text, resolve, reject);
             }
-            // Fallback: Web Speech
+            // Priorité 2: ElevenLabs (deprecated)
+            else if (mode === 'elevenlabs' && hasElevenKey) {
+                this.playElevenLabs(text, resolve, reject);
+            }
+            // Priorité 3: Web Speech (fallback)
             else {
-                console.log('[TTSQueue] 🎯 Using Web Speech (fallback)');
-                console.log('[TTSQueue] ℹ️ Current mode:', state.voiceMode, '| Has Google key:', !!state.googleTTSApiKey);
-                if (!state.googleTTSApiKey) {
-                    console.warn('[TTSQueue] ⚠️ No Google Cloud API key configured! Add one in Settings for best quality.');
+                if (isGoogleMode && !hasGoogleKey) {
+                    console.warn('[TTSQueue] ⚠️ No Google Cloud API key! Add one in Settings for best quality.');
                 }
+                console.log('[TTSQueue] 🎯 Using Web Speech (fallback)');
                 this.playWebSpeech(text, resolve, reject);
             }
         });
@@ -2920,11 +2934,10 @@ class TTSQueue {
     
     /**
      * Jouer avec ElevenLabs
-     * DEPRECATED v17.1.0: ElevenLabs removed (too expensive)
-     * Use Google Cloud TTS instead (Journey-F or Neural2-D)
      */
+    // v17.2.0: DEPRECATED - ElevenLabs trop cher
     async playElevenLabs(text, resolve, reject) {
-        console.warn('[TTSQueue] ⚠️ ElevenLabs deprecated in v17.1.0 - fallback to Web Speech');
+        console.warn('[TTSQueue] ⚠️ ElevenLabs deprecated in v17.2.0 (too expensive) - fallback to Web Speech');
         this.playWebSpeech(text, resolve, reject);
     }
     
@@ -2966,19 +2979,30 @@ class TTSQueue {
         // Si voix personnalisée spécifiée, l'utiliser
         if (customVoice) return customVoice;
         
-        // Sinon, utiliser selon le mode
-        // NOMS VÉRIFIÉS qui fonctionnent avec l'API
+        // v17.2.0: 2 voix uniquement - Journey (femme Chirp 3) + Neural2-D (homme)
         switch(voiceMode) {
             case 'google-journey':
-                return 'fr-FR-Journey-F'; // ✅ VÉRIFIÉ: Fonctionne
-            case 'google-studio':
-                return 'fr-FR-Studio-Q'; // Tentative Studio-Q (si erreur 400, voix pas disponible)
-            case 'google-polyglot':
-                return 'fr-FR-Polyglot-1'; // Polyglot multilingue
+                return 'fr-FR-Journey-F'; // 👩 Voix féminine Journey (Chirp 3 HD)
             case 'google':
             default:
-                return 'fr-FR-Neural2-D'; // Neural2 homme (D au lieu de B)
+                return 'fr-FR-Neural2-D'; // 👨 Voix masculine Neural2-D
         }
+    }
+    
+    // v17.2.0: Déterminer le genre selon la voix
+    getVoiceGender(voiceName) {
+        if (!voiceName) return 'FEMALE';
+        
+        // Voix masculines
+        if (voiceName.includes('Neural2-D') || 
+            voiceName.includes('Neural2-D') ||
+            voiceName.includes('Wavenet-B') ||
+            voiceName.includes('Standard-B')) {
+            return 'MALE';
+        }
+        
+        // Par défaut (Journey, Neural2-A/B/C/E) = féminin
+        return 'FEMALE';
     }
     
     async playGoogleTTS(text, resolve, reject) {
@@ -2988,9 +3012,13 @@ class TTSQueue {
         text = this.cleanTextForTTS(text);
         
         try {
-            const voiceName = this.getGoogleVoiceName(state.voiceMode) || 'fr-FR-Neural2-B';
             console.log('[TTSQueue] 🌐 Calling Google Cloud TTS...');
-            console.log('[TTSQueue] 🎤 Voice:', voiceName);
+            
+            // v17.2.0: Déterminer voix et genre dynamiquement
+            const voiceName = this.getGoogleVoiceName(state.voiceMode) || 'fr-FR-Neural2-D';
+            const voiceGender = this.getVoiceGender(voiceName);
+            
+            console.log(`[TTSQueue] 🎤 Voice: "${voiceName}" (${voiceGender})`);
             
             const response = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize?key=' + state.googleTTSApiKey, {
                 method: 'POST',
@@ -3002,7 +3030,7 @@ class TTSQueue {
                     voice: {
                         languageCode: 'fr-FR',
                         name: voiceName,
-                        ssmlGender: 'FEMALE'  // Chirp 3 voix sont féminines
+                        ssmlGender: voiceGender  // v17.2.0: Dynamique !
                     },
                     audioConfig: {
                         audioEncoding: 'MP3',
@@ -3053,20 +3081,22 @@ class TTSQueue {
             const failTime = performance.now() - startTime;
             console.error(`[TTSQueue] ❌ Google TTS error (${failTime.toFixed(0)}ms):`, error);
             
-            // v17.1.0: Diagnostic détaillé
+            // v17.2.0: Diagnostic détaillé pour erreur 400
             if (error.message && error.message.includes('400')) {
                 console.error('[TTSQueue] 🔍 DIAGNOSTIC ERREUR 400:');
-                console.error('  - La voix demandée n\'est pas disponible OU');
-                console.error('  - La clé API Google Cloud est invalide/expirée OU');
-                console.error('  - L\'API Text-to-Speech n\'est pas activée OU');
-                console.error('  - Quota dépassé');
+                console.error('  ❌ Causes possibles:');
+                console.error('    1. La voix demandée n\'est PAS disponible dans votre projet Google Cloud');
+                console.error('    2. La clé API est invalide ou expirée');
+                console.error('    3. L\'API Text-to-Speech n\'est pas activée');
+                console.error('    4. Quota dépassé');
                 console.error('  📌 Actions recommandées:');
-                console.error('  1. Vérifier clé API dans console.cloud.google.com');
-                console.error('  2. Activer Text-to-Speech API si nécessaire');
-                console.error('  3. Essayer l\'autre voix (Journey ↔ Neural2)');
-                console.error('  4. Vérifier quota dans Google Cloud Console');
+                console.error('    → Vérifier console.cloud.google.com/apis/credentials');
+                console.error('    → Activer Text-to-Speech API si nécessaire');
+                console.error('    → Essayer l\'autre voix (Journey ↔ Neural2)');
+                console.error('    → Vérifier quota dans Google Cloud Console');
             }
             
+            // v17.2.0: Fallback direct à Web Speech (pas ElevenLabs)
             console.log('[TTSQueue] → Fallback to Web Speech');
             this.playWebSpeech(text, resolve, reject);
         }
@@ -9607,12 +9637,12 @@ document.getElementById('response-input').addEventListener('input', updateWordCo
 // INIT
 // ============================================================================
 console.log('═══════════════════════════════════════════════════════════');
-console.log('  Clone Interview Pro v17.1.0 CLEAN                      ');
+console.log('  Clone Interview Pro v17.2.0 ULTIMATE                          ');
 console.log('  Institut du Couple - Concordance 101%+                  ');
-console.log('  Modules Psycho 23-32 + Google TTS                   ');
+console.log('  Modules Psycho 23-32 + ElevenLabs TTS                   ');
 console.log('═══════════════════════════════════════════════════════════');
 console.log('[v15.3] ✅ Ready! Worker:', CONFIG.WORKER_URL);
-console.log('[v15.3] Features: Multi-Modal, Google Cloud TTS, Psychological Profiling');
+console.log('[v15.3] Features: Multi-Modal, ElevenLabs, Psychological Profiling');
 
 // ============================================================================
 // MODULES PSYCHOLOGIQUES COMPLETS (Phase 5-6)
