@@ -1558,49 +1558,34 @@
             box-shadow: 0 15px 50px rgba(143, 175, 177, 0.25);
         }
         
+        /* v17.4.2: Infobulle HOVER - Fond blanc + Charte graphique */
         .progress-avatar-tooltip {
             position: absolute;
             top: 60px;
             right: 0;
-            background: white;
+            background: #FFFFFF;
             padding: 16px 20px;
             border-radius: 12px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             font-size: 13px;
-            color: var(--text);
-            white-space: nowrap;
+            color: #333333;
+            min-width: 280px;
+            max-width: 320px;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s;
-            border: 2px solid var(--mer);
-            min-width: 250px;
+            transition: opacity 0.3s ease;
+            border: 2px solid #8FAFB1;
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            z-index: 1000;
         }
         
         .progress-avatar:hover .progress-avatar-tooltip {
             opacity: 1;
+            pointer-events: auto;
         }
         
-        .tooltip-line {
-            display: flex;
-            justify-content: space-between;
-            margin: 6px 0;
-            padding: 4px 0;
-            border-bottom: 1px solid var(--sable);
-        }
-        
-        .tooltip-line:last-child {
-            border-bottom: none;
-        }
-        
-        .tooltip-label {
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-right: 20px;
-        }
-        
-        .tooltip-value {
-            font-weight: 700;
-            color: var(--mer);
+        #tooltip-content-hover {
+            line-height: 1.6;
         }
         
         /* Mode Développeur: Debug Bar */
@@ -1676,26 +1661,11 @@
 <body>
 
 <!-- v17.3.15 ULTIMATE: Avatar + Infobulle INTELLIGENTE dynamique -->
-<div class="progress-avatar" id="progress-avatar" title="Analyse en temps réel">
+<div class="progress-avatar" id="progress-avatar">
     <span id="avatar-icon">🌱</span>
-    <div class="progress-avatar-tooltip" id="avatar-tooltip">
-        <!-- Titre dynamique -->
-        <div style="border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px; margin-bottom: 8px; font-weight: 600; font-size: 13px;" id="tooltip-title">
-            Progression Interview
-        </div>
-        <!-- Lignes d'infos dynamiques -->
-        <div class="tooltip-line">
-            <span class="tooltip-label" id="tooltip-label-1">Question</span>
-            <span class="tooltip-value" id="tooltip-value-1">1/40</span>
-        </div>
-        <div class="tooltip-line">
-            <span class="tooltip-label" id="tooltip-label-2">Temps</span>
-            <span class="tooltip-value" id="tooltip-value-2">0:00</span>
-        </div>
-        <div class="tooltip-line">
-            <span class="tooltip-label" id="tooltip-label-3">Concordance</span>
-            <span class="tooltip-value" id="tooltip-value-3">0%</span>
-        </div>
+    <!-- v17.4.2: Infobulle HOVER - Fond blanc + Charte graphique -->
+    <div class="progress-avatar-tooltip" id="smart-tooltip-hover">
+        <div id="tooltip-content-hover"></div>
     </div>
 </div>
 
@@ -7776,6 +7746,13 @@ QUESTION :`;
             wordCountStat.textContent = totalWords;
         }
         
+        // v17.4.2: Synchroniser window.state pour les métriques de la tooltip
+        if (window.state) {
+            window.state.totalWords = totalWords;
+            window.state.currentQuestionIndex = this.questionCount;
+            window.state.responses = this.responses;
+        }
+        
         // Concordance (estimation basée sur thèmes)
         const concordance = Math.min(100, 60 + (this.exploredThemes.size * 4) + (this.questionCount * 0.5));
         const concordanceStat = document.getElementById('concordance-stat');
@@ -7788,6 +7765,11 @@ QUESTION :`;
         const progressFill = document.getElementById('progress-fill');
         if (progressFill) {
             progressFill.style.width = `${Math.min(100, progress)}%`;
+        }
+        
+        // v17.4.2: Mettre à jour l'avatar selon la concordance
+        if (typeof window.updateAvatarIcon === 'function') {
+            window.updateAvatarIcon();
         }
     }
     
@@ -23212,6 +23194,7 @@ class BrainBuilderUltimate {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
     }
+}
 
 </script>
 
@@ -24082,16 +24065,6 @@ function stopTooltipRotation() {
         tooltipRotationInterval = null;
     }
 }
-        const dbLevel = Math.round(window.lastAudioRMS);
-        tooltipAudio.textContent = `${dbLevel} dB`;
-    }
-    
-    // Émotion détectée
-    const tooltipEmotion = document.getElementById('tooltip-emotion');
-    if (tooltipEmotion && window.lastDetectedEmotion) {
-        tooltipEmotion.textContent = window.lastDetectedEmotion;
-    }
-}
 
 /**
  * v17.3.3: Mise à jour indicateur audio (Silence / Vous parlez / Clone parle)
@@ -24131,6 +24104,8 @@ window.currentAudioStatus = 'silence';
  * v17.3.6: Mode Développeur désactivé
  * (Barre violette supprimée - interface épurée)
  */
+let devModeEnabled = false; // Mode dev désactivé en v17.3.6
+
 function toggleDevMode() {
     // Mode dev désactivé - interface épurée v17.3.6
     console.log('[v17.3.6] Mode développeur désactivé (interface épurée)');
@@ -24510,12 +24485,6 @@ function saveDevAPIKey() {
  * L'analyse démarre automatiquement dès que l'interview commence
  */
 
-            
-            console.log('[v17.3.2] 🎬 Analyse démarrée automatiquement (observation 24/7)');
-        }
-    }, 1000); // Délai 1s pour que la caméra se charge
-}
-
 /**
  * Stocker les données audio/émotion pour le tooltip
  */
@@ -24536,7 +24505,7 @@ updateDebugBar = function(data) {
     updateAvatarTooltip();
 };
 
-console.log('[v17.3.1 CLEAN] ✅ Nouvelles fonctionnalités initialisées
+console.log('[v17.3.1 CLEAN] ✅ Nouvelles fonctionnalités initialisées');
 // ============================================================================
 // TODO v17.4 - Améliorations demandées par Christophe
 // ============================================================================
@@ -24563,7 +24532,6 @@ console.log('[v17.3.1 CLEAN] ✅ Nouvelles fonctionnalités initialisées
 //
 // ============================================================================
 
-    console.log');
 console.log('[v17.3.1 CLEAN] - Pause conversation (observation continue)');
 console.log('[v17.3.1 CLEAN] - Auto-save silencieux (30s)');
 console.log('[v17.3.1 CLEAN] - Modal Google Cloud TTS');
@@ -24580,6 +24548,311 @@ if (document.readyState === 'loading') {
     checkInterruptedSession();
     checkGoogleTTSConfig();
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// v17.4.2: SYSTÈME INFOBULLE HOVER - Fond blanc + Charte graphique
+// ═══════════════════════════════════════════════════════════════════════════
+
+(function() {
+    'use strict';
+    
+    console.log('[v17.4.2] 🎨 Initialisation infobulle hover (Charte graphique)');
+    
+    // État du système
+    const tooltipState = {
+        currentMode: 0,
+        interval: null,
+        isHovering: false
+    };
+    
+    // Fonctions de calcul des métriques pour chaque mode
+    const modeCalculators = [
+        // Mode 0: Progression
+        function() {
+            const questionNum = window.state?.currentQuestionIndex || 0;
+            const startTime = window.state?.startTime || Date.now();
+            const elapsed = Date.now() - startTime;
+            const min = Math.floor(elapsed / 60000);
+            const sec = Math.floor((elapsed % 60000) / 1000);
+            const concordance = document.getElementById('concordance-stat')?.textContent || '0%';
+            
+            return {
+                title: 'Progression Interview',
+                lines: [
+                    { label: 'Question', value: questionNum + '/40' },
+                    { label: 'Temps', value: min + ':' + sec.toString().padStart(2, '0') },
+                    { label: 'Concordance', value: concordance }
+                ]
+            };
+        },
+        
+        // Mode 1: Style Communication
+        function() {
+            const responses = window.state?.responses || [];
+            const totalWords = window.state?.totalWords || 0;
+            const avgWords = responses.length > 0 ? Math.round(totalWords / responses.length) : 0;
+            
+            let type = 'Concis';
+            if (avgWords > 50) type = 'Narratif';
+            else if (avgWords > 30) type = 'Équilibré';
+            else if (avgWords > 15) type = 'Descriptif';
+            
+            let richesse = 'Moyenne';
+            if (avgWords > 40) richesse = 'Élevée';
+            else if (avgWords < 20) richesse = 'Simple';
+            
+            return {
+                title: 'Style Communication',
+                lines: [
+                    { label: 'Type', value: type },
+                    { label: 'Mots/réponse', value: avgWords.toString() },
+                    { label: 'Richesse', value: richesse }
+                ]
+            };
+        },
+        
+        // Mode 2: Traits Personnalité
+        function() {
+            const responses = window.state?.responses || [];
+            const totalWords = window.state?.totalWords || 0;
+            const avgWords = responses.length > 0 ? Math.round(totalWords / responses.length) : 0;
+            
+            let ouverture = 'Moyen';
+            if (avgWords > 50) ouverture = 'Élevé';
+            else if (avgWords < 20) ouverture = 'Modéré';
+            
+            const conscience = responses.length > 2 ? 'Élevé' : 'Moyen';
+            const engagement = responses.length > 0 ? 'Excellent' : 'En cours';
+            
+            return {
+                title: 'Traits Personnalité',
+                lines: [
+                    { label: 'Ouverture', value: ouverture },
+                    { label: 'Conscience', value: conscience },
+                    { label: 'Engagement', value: engagement }
+                ]
+            };
+        },
+        
+        // Mode 3: Analyse Lexicale
+        function() {
+            const responses = window.state?.responses || [];
+            const totalWords = window.state?.totalWords || 0;
+            const avgWords = responses.length > 0 ? Math.round(totalWords / responses.length) : 0;
+            
+            let variete = 'Moyenne';
+            if (avgWords > 40) variete = 'Élevée';
+            else if (avgWords < 20) variete = 'Simple';
+            
+            return {
+                title: 'Analyse Lexicale',
+                lines: [
+                    { label: 'Mots totaux', value: totalWords.toString() },
+                    { label: 'Moyenne/rép', value: avgWords.toString() },
+                    { label: 'Variété', value: variete }
+                ]
+            };
+        },
+        
+        // Mode 4: Engagement Émotionnel
+        function() {
+            const responses = window.state?.responses || [];
+            
+            let niveau = 'Faible';
+            if (responses.length > 5) niveau = 'Élevé';
+            else if (responses.length > 2) niveau = 'Moyen';
+            
+            const stabilite = responses.length > 3 ? 'Stable' : 'En cours';
+            
+            return {
+                title: 'Engagement Émotionnel',
+                lines: [
+                    { label: 'Niveau', value: niveau },
+                    { label: 'Réponses', value: responses.length.toString() },
+                    { label: 'Stabilité', value: stabilite }
+                ]
+            };
+        },
+        
+        // Mode 5: Rythme Conversationnel
+        function() {
+            const responses = window.state?.responses || [];
+            const startTime = window.state?.startTime || Date.now();
+            const elapsedMin = (Date.now() - startTime) / 60000;
+            
+            const cadence = elapsedMin > 0 ? (responses.length / elapsedMin).toFixed(1) : '0.0';
+            
+            let fluidite = 'Modérée';
+            if (parseFloat(cadence) > 0.5) fluidite = 'Élevée';
+            else if (parseFloat(cadence) < 0.3) fluidite = 'Posée';
+            
+            const dureeMoy = responses.length > 0 ? Math.round(elapsedMin / responses.length) : 0;
+            
+            return {
+                title: 'Rythme Conversationnel',
+                lines: [
+                    { label: 'Fluidité', value: fluidite },
+                    { label: 'Durée moy', value: dureeMoy + ' min' },
+                    { label: 'Cadence', value: cadence + '/min' }
+                ]
+            };
+        },
+        
+        // Mode 6: Profondeur Réflexive
+        function() {
+            const responses = window.state?.responses || [];
+            const totalWords = window.state?.totalWords || 0;
+            const avgWords = responses.length > 0 ? Math.round(totalWords / responses.length) : 0;
+            
+            let niveau = 'Superficiel';
+            if (avgWords > 50) niveau = 'Profond';
+            else if (avgWords > 30) niveau = 'Moyen';
+            
+            let detail = 'Basique';
+            if (avgWords > 40) detail = 'Riche';
+            else if (avgWords > 25) detail = 'Modéré';
+            
+            const introspection = avgWords > 35 ? 'Élevée' : 'Moyenne';
+            
+            return {
+                title: 'Profondeur Réflexive',
+                lines: [
+                    { label: 'Niveau', value: niveau },
+                    { label: 'Détail', value: detail },
+                    { label: 'Introspection', value: introspection }
+                ]
+            };
+        },
+        
+        // Mode 7: Cohérence Narrative
+        function() {
+            const responses = window.state?.responses || [];
+            
+            let structure = 'En construction';
+            if (responses.length > 5) structure = 'Solide';
+            else if (responses.length > 2) structure = 'Émergente';
+            
+            const continuite = responses.length > 3 ? 'Bonne' : 'Initiale';
+            const clarte = responses.length > 2 ? 'Claire' : 'En cours';
+            
+            return {
+                title: 'Cohérence Narrative',
+                lines: [
+                    { label: 'Structure', value: structure },
+                    { label: 'Continuité', value: continuite },
+                    { label: 'Clarté', value: clarte }
+                ]
+            };
+        }
+    ];
+    
+    // Formater le HTML de l'infobulle (Charte graphique)
+    function formatTooltipHTML(data) {
+        let html = '<div style="font-weight: 600; font-size: 14px; margin-bottom: 10px; color: #8FAFB1; font-family: Montserrat, sans-serif;">';
+        html += data.title;
+        html += '</div>';
+        
+        data.lines.forEach(function(line) {
+            html += '<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">';
+            html += '<span style="color: #666666; font-family: Montserrat, sans-serif;">' + line.label + '</span>';
+            html += '<span style="font-weight: 500; color: #333333; font-family: Montserrat, sans-serif;">' + line.value + '</span>';
+            html += '</div>';
+        });
+        
+        return html;
+    }
+    
+    // Mettre à jour l'infobulle
+    function updateTooltip() {
+        const contentDiv = document.getElementById('tooltip-content-hover');
+        if (!contentDiv) return;
+        
+        try {
+            const data = modeCalculators[tooltipState.currentMode]();
+            contentDiv.innerHTML = formatTooltipHTML(data);
+            console.log('[v17.4.2] ✅ Mode ' + tooltipState.currentMode + ': ' + data.title);
+        } catch (e) {
+            console.error('[v17.4.2] ❌ Erreur:', e);
+        }
+    }
+    
+    // Mettre à jour l'icône avatar
+    function updateAvatarIcon() {
+        const icon = document.getElementById('avatar-icon');
+        if (!icon) return;
+        
+        const concordanceText = document.getElementById('concordance-stat')?.textContent || '0%';
+        const concordance = parseFloat(concordanceText.replace(/[^0-9.]/g, '')) || 0;
+        
+        let emoji = '🌱';
+        if (concordance >= 75) emoji = '🎯';
+        else if (concordance >= 50) emoji = '🌳';
+        else if (concordance >= 25) emoji = '🌿';
+        
+        if (icon.textContent !== emoji) {
+            icon.textContent = emoji;
+            console.log('[v17.4.2] 🌱→' + emoji + ' (' + concordance + '%)');
+        }
+    }
+    
+    // Rotation des modes
+    function rotateMode() {
+        tooltipState.currentMode = (tooltipState.currentMode + 1) % 8;
+        updateTooltip();
+    }
+    
+    // Démarrer la rotation (mouseenter)
+    function startRotation() {
+        if (tooltipState.interval) return;
+        
+        tooltipState.isHovering = true;
+        updateTooltip();
+        updateAvatarIcon();
+        
+        tooltipState.interval = setInterval(rotateMode, 4000);
+        console.log('[v17.4.2] 🎯 Rotation démarrée');
+    }
+    
+    // Arrêter la rotation (mouseleave)
+    function stopRotation() {
+        if (tooltipState.interval) {
+            clearInterval(tooltipState.interval);
+            tooltipState.interval = null;
+        }
+        tooltipState.isHovering = false;
+        tooltipState.currentMode = 0;
+        console.log('[v17.4.2] ⏹️ Rotation arrêtée');
+    }
+    
+    // Initialiser le système
+    function init() {
+        const avatar = document.getElementById('progress-avatar');
+        if (!avatar) {
+            console.warn('[v17.4.2] ⚠️ Avatar non trouvé');
+            return;
+        }
+        
+        avatar.addEventListener('mouseenter', startRotation);
+        avatar.addEventListener('mouseleave', stopRotation);
+        
+        // Exposer sur window
+        window.updateAvatarIcon = updateAvatarIcon;
+        
+        console.log('[v17.4.2] ✅ Système infobulle hover initialisé');
+    }
+    
+    // Démarrer au chargement
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+    
+})();
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FIN v17.4.2: SYSTÈME INFOBULLE HOVER
+// ═══════════════════════════════════════════════════════════════════════════
 
 console.log('[v17.3.0 UX] Avatar Évolutif & Mode Dev initialisés ✅');
 console.log('[v17.3.0 UX] Appuyez sur Ctrl+D pour activer le mode développeur');
