@@ -8375,6 +8375,14 @@ async function startInterview() {
     // Setup media if needed
     if (state.mode !== 'text') {
         await setupMedia();
+        
+        // v17.3.4 FINAL: Auto-start de l'analyse APRÈS setup media complet
+        console.log('[v17.3.4 FINAL] 🎬 Auto-starting analysis after media setup...');
+        // Petit délai pour s'assurer que Speech Recognition est bien prêt
+        setTimeout(() => {
+            console.log('[v17.3.4 FINAL] 🚀 Starting analysis now');
+            startAnalysis();
+        }, 500);
     }
     
     // Initialiser ConversationalSystem
@@ -8398,15 +8406,6 @@ async function startInterview() {
     // v17.3.15 ULTIMATE: Démarrer rotation intelligente de l'infobulle
     if (typeof startTooltipRotation === 'function') {
         startTooltipRotation();
-    }
-    
-    // v17.3.4 FINAL: Auto-start de l'analyse (reconnaissance vocale active)
-    if (state.mode !== 'text') {
-        console.log('[v17.3.4 FINAL] 🎬 Auto-starting analysis...');
-        setTimeout(() => {
-            console.log('[v17.3.4 FINAL] 🚀 Starting analysis now');
-            startAnalysis();
-        }, 1000);
     }
 }
 
