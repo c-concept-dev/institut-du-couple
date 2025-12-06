@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le secret des couples heureux : l’égoïsme partagé - Visualiseur</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <style>
+        :root {
+            --primary: #8FAFB1;
+            --secondary: #C8D0C3;
+            --accent: #E6D7C3;
+            --gold: #D8CDBB;
+            --white: #FFFFFF;
+            --text: #333333;
+            --border: #E0E0E0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: var(--white);
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 500px;
+            gap: 0;
+        }
+        .header {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .header h1 { font-size: 2em; margin-bottom: 5px; }
+        .subtitle { font-size: 0.9em; opacity: 0.9; }
+        .pdf-viewer {
+            padding: 20px;
+            background: var(--bg);
+            overflow-y: auto;
+            height: calc(100vh - 100px);
+        }
+        .sidebar {
+            background: white;
+            border-left: 2px solid var(--border);
+            overflow-y: auto;
+            height: calc(100vh - 100px);
+            padding: 20px;
+        }
+        #pdf-canvas {
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-radius: 10px;
+            background: white;
+        }
+        .pdf-controls {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .page-info {
+            font-weight: 600;
+            color: var(--text);
+        }
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 20px;
+        }
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .result-card {
+            background: linear-gradient(135deg, var(--accent), var(--gold));
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .result-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(143, 175, 177, 0.3);
+        }
+        .result-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        .result-pages {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .module-section {
+            margin: 20px 0;
+        }
+        .module-title {
+            font-size: 1.2em;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Le secret des couples heureux : l’égoïsme partagé</h1>
+            <div class="subtitle">N/A • 73 pages</div>
+        </div>
+        
+        <div class="pdf-viewer">
+            <div class="pdf-controls">
+                <button class="btn btn-primary" onclick="prevPage()">◀ Précédent</button>
+                <span class="page-info">Page <span id="page-num">1</span> / <span id="page-count">0</span></span>
+                <button class="btn btn-primary" onclick="nextPage()">Suivant ▶</button>
+            </div>
+            <canvas id="pdf-canvas"></canvas>
+        </div>
+        
+        <div class="sidebar">
+            <input type="text" class="search-box" id="search-input" placeholder="Rechercher concepts, sections...">
+            <div id="results-container"></div>
+        </div>
+    </div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+        
+        let pdfDoc = null;
+        let pageNum = 1;
+        let pageRendering = false;
+        let pageNumPending = null;
+        const scale = 1.5;
+        let knowledgeBase = null;
+
+        const url = 'Le secret des couples heureux.l'égoïsme partagé.Sylvain Mimoun copie.pdf';
+        pdfjsLib.getDocument(url).promise.then(function(pdf) {
+            pdfDoc = pdf;
+            document.getElementById('page-count').textContent = pdf.numPages;
+            renderPage(pageNum);
+        });
+
+        fetch('knowledge_index.json')
+            .then(r => r.json())
+            .then(data => {
+                knowledgeBase = data;
+                displayKnowledgeBase();
+            });
+
+        function renderPage(num) {
+            pageRendering = true;
+            pdfDoc.getPage(num).then(function(page) {
+                const canvas = document.getElementById('pdf-canvas');
+                const ctx = canvas.getContext('2d');
+                const viewport = page.getViewport({scale: scale});
+                
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                
+                const renderTask = page.render(renderContext);
+                renderTask.promise.then(function() {
+                    pageRendering = false;
+                    if (pageNumPending !== null) {
+                        renderPage(pageNumPending);
+                        pageNumPending = null;
+                    }
+                });
+            });
+            
+            document.getElementById('page-num').textContent = num;
+        }
+
+        function queueRenderPage(num) {
+            if (pageRendering) {
+                pageNumPending = num;
+            } else {
+                renderPage(num);
+            }
+        }
+
+        function prevPage() {
+            if (pageNum <= 1) return;
+            pageNum--;
+            queueRenderPage(pageNum);
+        }
+
+        function nextPage() {
+            if (pageNum >= pdfDoc.numPages) return;
+            pageNum++;
+            queueRenderPage(pageNum);
+        }
+
+        function goToPage(page) {
+            pageNum = Math.max(1, Math.min(page, pdfDoc.numPages));
+            queueRenderPage(pageNum);
+        }
+
+        function displayKnowledgeBase() {
+            const container = document.getElementById('results-container');
+            if (!knowledgeBase) return;
+
+            let html = '<div class="module-section"><div class="module-title">Structure du document</div>';
+            
+            if (knowledgeBase.structure_hierarchique?.sections) {
+                knowledgeBase.structure_hierarchique.sections.forEach(section => {
+                    html += `
+                        <div class="result-card" onclick="goToPage(${section.position_debut || 1})">
+                            <div class="result-title">${section.titre}</div>
+                            <div class="result-pages">Pages ${section.position_debut}-${section.position_fin}</div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+
+            if (knowledgeBase.index_conceptuel?.concepts) {
+                html += '<div class="module-section"><div class="module-title">Concepts clés</div>';
+                for (const [concept, data] of Object.entries(knowledgeBase.index_conceptuel.concepts)) {
+                    const pages = data.pages || [];
+                    if (pages.length > 0) {
+                        html += `
+                            <div class="result-card" onclick="goToPage(${pages[0]})">
+                                <div class="result-title">${concept}</div>
+                                <div class="result-pages">Pages ${pages.join(', ')}</div>
+                            </div>
+                        `;
+                    }
+                }
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            if (query.length < 2) {
+                displayKnowledgeBase();
+                return;
+            }
+
+            const results = searchInKnowledge(query);
+            displaySearchResults(results);
+        });
+
+        function searchInKnowledge(query) {
+            const results = [];
+            
+            if (knowledgeBase.structure_hierarchique?.sections) {
+                knowledgeBase.structure_hierarchique.sections.forEach(section => {
+                    if (section.titre.toLowerCase().includes(query)) {
+                        results.push({
+                            type: 'Section',
+                            title: section.titre,
+                            page: section.position_debut
+                        });
+                    }
+                });
+            }
+
+            if (knowledgeBase.index_conceptuel?.concepts) {
+                for (const [concept, data] of Object.entries(knowledgeBase.index_conceptuel.concepts)) {
+                    if (concept.toLowerCase().includes(query)) {
+                        results.push({
+                            type: 'Concept',
+                            title: concept,
+                            page: data.pages?.[0] || 1
+                        });
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        function displaySearchResults(results) {
+            const container = document.getElementById('results-container');
+            
+            if (results.length === 0) {
+                container.innerHTML = '<div style="text-align:center;padding:20px;color:#666;">Aucun résultat</div>';
+                return;
+            }
+
+            let html = `<div class="module-section"><div class="module-title">Résultats (${results.length})</div>`;
+            results.forEach(result => {
+                html += `
+                    <div class="result-card" onclick="goToPage(${result.page})">
+                        <div class="result-title">${result.title}</div>
+                        <div class="result-pages">${result.type} • Page ${result.page}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
