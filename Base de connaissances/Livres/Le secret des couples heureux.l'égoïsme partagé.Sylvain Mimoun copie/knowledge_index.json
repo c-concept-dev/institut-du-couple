@@ -1,0 +1,1120 @@
+{
+  "metadata": {
+    "titre": "Le secret des couples heureux : l’égoïsme partagé",
+    "auteurs": [
+      "Dr Sylvain Mimoun",
+      "François Ducroux"
+    ],
+    "preface": "Dr Michel Cymes",
+    "editeur": "Éditions Eyrolles",
+    "isbn": "978-2-416-01122-1",
+    "annee_edition": "2024",
+    "pages_source": "1-50 (partie 1/?)",
+    "description": "Synthèse structurée (format R&D 32 modules) du contenu des pages 1 à 50 : préface, introduction et chapitres 1 à 3 (début 3).",
+    "couverture": "Visuel titre, auteurs, collection Eyrolles Poche (p.1).",
+    "citation": "Préface, introduction, chapitres 1-3, cas cliniques — pages 2-30. "
+  },
+  "structure_hierarchique": {
+    "sections": [
+      {
+        "type": "preface",
+        "titre": "Préface",
+        "auteur": "Dr Michel Cymes",
+        "pages": "7",
+        "resume": "Positionne l’« égoïsme partagé » comme clé pragmatique du couple heureux, à rebours de la transparence totale et de la fusion.",
+        "citation": "p.7. "
+      },
+      {
+        "type": "introduction",
+        "titre": "Pour en finir avec les bons sentiments !",
+        "pages": "8",
+        "resume": "Thèse centrale : on ne peut rien partager si l’on est soi-même insatisfait ; sortir des schémas coupable/victime et gagnant/perdant.",
+        "citation": "p.8. "
+      },
+      {
+        "type": "chapitre",
+        "numero": 1,
+        "titre": "Bannir la loi du « tout ou rien »",
+        "pages": "9-16",
+        "sous_sections": [
+          {
+            "titre": "Premiers nuages et exploration du territoire de l’autre",
+            "pages": "9-11",
+            "idee_cle": "Refuser les absolus « toujours/jamais »; co-construire l’ajustement.",
+            "citation": "p.9-11. "
+          },
+          {
+            "titre": "Compromis (Armelle & Mathias)",
+            "pages": "11",
+            "idee_cle": "Négociation autour des pratiques religieuses; bénéfices croisés.",
+            "citation": "p.11. "
+          },
+          {
+            "titre": "Apprivoiser la famille; compliments et CNV",
+            "pages": "12-13",
+            "idee_cle": "Identifier les leaders d’opinion familiaux; ritualiser la valorisation positive et la CNV (dire « je », factuel, besoin).",
+            "citation": "p.12-13. "
+          },
+          {
+            "titre": "Toute-puissance (Garance & Paul)",
+            "pages": "14",
+            "idee_cle": "Domination chronique → rupture; coût du « à prendre ou à laisser ».",
+            "citation": "p.14. "
+          },
+          {
+            "titre": "Sexe en otage (Carole & Stéphane)",
+            "pages": "15",
+            "idee_cle": "Sortir du chantage sexuel; redécouverte de soi et réouverture du désir.",
+            "citation": "p.15. "
+          },
+          {
+            "titre": "Choix vacances (Éric & Julie)",
+            "pages": "16",
+            "idee_cle": "Derrière un désaccord logistique, un besoin d’intimité; prioriser le couple.",
+            "citation": "p.16. "
+          }
+        ]
+      },
+      {
+        "type": "chapitre",
+        "numero": 2,
+        "titre": "Agir d’abord, penser ensuite",
+        "pages": "17-23",
+        "sous_sections": [
+          {
+            "titre": "Disputes éruptives: bouger, faire une pause",
+            "pages": "17-18",
+            "idee_cle": "Cessez-le-feu corporel (marche, activités plaisantes) avant reprise à froid.",
+            "citation": "p.17-18. "
+          },
+          {
+            "titre": "Respiration abdominale",
+            "pages": "19",
+            "idee_cle": "Protocoles simples pour baisser la tension somatique.",
+            "citation": "p.19. "
+          },
+          {
+            "titre": "Pannes d’érection: fonction crée l’organe",
+            "pages": "19-21",
+            "idee_cle": "Approche fonctionnelle (PDE5) sans confessionnalisation; vigilance « préliminaires ».",
+            "citation": "p.19-21. "
+          },
+          {
+            "titre": "Rôles du/de la partenaire",
+            "pages": "21",
+            "idee_cle": "Ni infantilisation, ni focalisation; se recentrer sur son propre plaisir pour détourner la pression.",
+            "citation": "p.21. "
+          },
+          {
+            "titre": "Ménopause & andropause",
+            "pages": "22-23",
+            "idee_cle": "Traiter d’abord la sécheresse/lenteur d’allumage; hygiène de vie douce; éviter l’idéologie de performance.",
+            "citation": "p.22-23. "
+          }
+        ]
+      },
+      {
+        "type": "chapitre",
+        "numero": 3,
+        "titre": "L’infidélité, et après ?",
+        "pages": "24-30 (extrait)",
+        "sous_sections": [
+          {
+            "titre": "Régler la situation, pas les comptes",
+            "pages": "24",
+            "idee_cle": "La vengeance produit deux perdants; objectif: bénéfice conjugal.",
+            "citation": "p.24. "
+          },
+          {
+            "titre": "Céline: adultère de vengeance stérile",
+            "pages": "25-26",
+            "idee_cle": "Acte contraint → perte d’estime de soi; ajouter un problème au problème.",
+            "citation": "p.25-26. "
+          },
+          {
+            "titre": "Éric (cadre): fiasco de vengeance",
+            "pages": "26",
+            "idee_cle": "Paralysie érectile et déplacement de la faute; revenir aux fondements du lien.",
+            "citation": "p.26. "
+          },
+          {
+            "titre": "Colère, manque vs angoisse; techniques",
+            "pages": "27-28",
+            "idee_cle": "Respiration, marche, mail non envoyé; question clé: tenir vraiment à la relation ?",
+            "citation": "p.27-28. "
+          },
+          {
+            "titre": "Trois erreurs (bavardage, victime→bourreau, Big Brother)",
+            "pages": "28-30",
+            "idee_cle": "Limiter la divulgation; parler du lien plutôt que des détails; refuser la surveillance obsessionnelle.",
+            "citation": "p.28-30. "
+          }
+        ]
+      },
+      {
+        "type": "vignette",
+        "titre": "Claire & François — cultiver nos différences",
+        "pages": "1",
+        "resume": "Recentrage sur soi, hobbies séparés → désir relancé grâce à l’indépendance.",
+        "citation": "p.1. "
+      },
+      {
+        "type": "thematique",
+        "titre": "Transparence et désir",
+        "pages": "2-3",
+        "resume": "La transparence totale assèche le désir; le mystère stimule l’imaginaire; prudence sur l’aveu d’infidélité.",
+        "citation": "p.2-3. "
+      },
+      {
+        "type": "conseils",
+        "titre": "Parler de sexe de façon stratégique",
+        "pages": "3-5",
+        "resume": "Éviter le verdict cru; utiliser questions ouvertes; détour par l’imaginaire et la lecture.",
+        "citation": "p.3-5. "
+      },
+      {
+        "type": "vignette",
+        "titre": "Audrey & Pascal — apprivoiser les fantasmes",
+        "pages": "6-7",
+        "resume": "Lecture érotique, écriture personnelle, « fantasme en stéréo », égoïsme partagé.",
+        "citation": "p.6-7. "
+      },
+      {
+        "type": "thematique",
+        "titre": "Dire « Je t’aime » avec parcimonie",
+        "pages": "7-8",
+        "resume": "Modération des mots d’amour; gestes et mystère; prononcer le prénom.",
+        "citation": "p.7-8. "
+      },
+      {
+        "type": "vignette",
+        "titre": "Clara & Bertrand",
+        "pages": "7",
+        "resume": "Gestion de l’angoisse affective par attention non verbale plutôt que justification.",
+        "citation": "p.7. "
+      },
+      {
+        "type": "thematique",
+        "titre": "Écoute active corporelle",
+        "pages": "8-9",
+        "resume": "Se tourner physiquement, reformuler, laisser des silences; bénéfices récursifs.",
+        "citation": "p.8-9. "
+      },
+      {
+        "type": "thematique",
+        "titre": "En public : ne pas jouer avec les mots",
+        "pages": "9-10",
+        "resume": "Humour aux dépens du conjoint → blessures; deux règles d’or pour le débriefing.",
+        "citation": "p.9-10. "
+      },
+      {
+        "type": "chapitre",
+        "numero": 6,
+        "titre": "Vivre l’instant présent",
+        "pages": "11-13",
+        "resume": "Passer du « je pense/j’agis » au « je ressens »; savourer, apprivoiser la mélancolie; partage silencieux.",
+        "citation": "p.11-13. "
+      },
+      {
+        "type": "thematique",
+        "titre": "Ensemble, mais pas trop",
+        "pages": "14",
+        "resume": "Visites séparées au musée; partager ensuite les impressions.",
+        "citation": "p.14. "
+      },
+      {
+        "type": "vignette",
+        "titre": "Salomé & Grégory — quand l’avenir tue le présent",
+        "pages": "14",
+        "resume": "Projet idéal (déménagement) utilisé pour éluder le présent → divorce.",
+        "citation": "p.14. "
+      },
+      {
+        "type": "vignette",
+        "titre": "Mikael & Florence — demain toujours demain",
+        "pages": "15",
+        "resume": "Projets sans fin, éloignement, infidélités → dissolution du lien.",
+        "citation": "p.15. "
+      },
+      {
+        "type": "thematique",
+        "titre": "Éviter les dialogues de sourds",
+        "pages": "15-16",
+        "resume": "Identifier la cause réelle (souvent ailleurs); dire le besoin de tendresse; dérision désamorce.",
+        "citation": "p.15-16. "
+      },
+      {
+        "type": "thematique",
+        "titre": "Ne pas soigner ses bobos chez l’autre",
+        "pages": "17",
+        "resume": "Autonomie émotionnelle; sortir du triangle plaintif.",
+        "citation": "p.17. "
+      },
+      {
+        "type": "thematique",
+        "titre": "Enfants et égoïsme partagé",
+        "pages": "17-18",
+        "resume": "Protéger l’intimité du couple; surprises flexibles plutôt que « mercredi obligatoire ».",
+        "citation": "p.17-18. "
+      },
+      {
+        "type": "vignette",
+        "titre": "Constance & Luc — familles recomposées",
+        "pages": "18-19",
+        "resume": "Photos de l’ex : prétexte d’angoisse; intégrer le passé au présent sans le nier.",
+        "citation": "p.18-19. "
+      },
+      {
+        "type": "thematique",
+        "titre": "Gérer les enfants de l’autre",
+        "pages": "19",
+        "resume": "Intégrer sans autorité; éviter l’obligation d’être aimé; devenir allié.",
+        "citation": "p.19. "
+      },
+      {
+        "type": "conclusion",
+        "titre": "Égoïsme oui, mais partagé",
+        "pages": "20",
+        "resume": "Égoïsme vertueux ≠ égocentrisme; limites et transversalité aux autres sphères.",
+        "citation": "p.20. "
+      }
+    ],
+    "table_des_matieres_source": "p.6 (sommaire). ",
+    "etat_couverture": "Préface, Intro, Ch.1-3 partiels couverts.",
+    "citation": "Synthèse basée sur p.6-30. "
+  },
+  "index_conceptuel": {
+    "concepts_majeurs": [
+      "Égoïsme partagé",
+      "Loi du tout ou rien",
+      "Compromis",
+      "Communication non violente (CNV)",
+      "Compliments/valorisation",
+      "Domination / toute-puissance",
+      "Sexe en otage",
+      "Recentrage sur soi",
+      "Action corporelle avant cognition",
+      "Respiration abdominale",
+      "Pannes d’érection (PDE5)",
+      "Ménopause/andropause",
+      "Infidélité sans vengeance",
+      "Colère / angoisse / manque",
+      "Transparence vs intimité"
+    ],
+    "termes_associes": [
+      "leader d’opinion familial",
+      "exploration du territoire de l’autre",
+      "préliminaires",
+      "hygiène de vie non compétitive",
+      "Big Brother conjugal",
+      "victime→bourreau",
+      "besoins/émotions/demandes (CNV)"
+    ],
+    "citation": "Extraits p.7-23 (concepts), p.24-30 (infidélité). "
+  },
+  "contenu_enrichi": {
+    "maximes": [
+      "« Il ne faut pas régler ses comptes, mais régler la situation. » (préface → fil rouge)",
+      "« On ne peut rien partager si l’on est frustré. » (intro)",
+      "« Si le corps fonctionne, la tête suivra. » (ch.2)"
+    ],
+    "tableaux_synthetiques": [
+      {
+        "titre": "CNV en 3 règles",
+        "lignes": [
+          "Dire « je »",
+          "S’en tenir aux faits datés",
+          "Exprimer un besoin clair"
+        ],
+        "pages": "13",
+        "citation": "p.13. "
+      },
+      {
+        "titre": "Erreurs post-infidelité",
+        "lignes": [
+          "Ébruiter l’affaire",
+          "Harceler (victime→bourreau)",
+          "Surveiller/espionner"
+        ],
+        "pages": "28-30",
+        "citation": "p.28-30. "
+      }
+    ],
+    "citation": "Synthèses issues p.12-13 & p.28-30. "
+  },
+  "graphe_connaissances": {
+    "noeuds": [
+      "Égoïsme partagé",
+      "Bien-être individuel",
+      "Qualité du lien",
+      "Loi du tout ou rien",
+      "Compromis",
+      "CNV",
+      "Compliments",
+      "Domination chronique",
+      "Sexualité épanouie",
+      "Pannes d’érection",
+      "PDE5 (Viagra/Cialis/…)",
+      "Respiration abdominale",
+      "Activité physique douce",
+      "Ménopause",
+      "Andropause",
+      "Infidélité",
+      "Vengeance",
+      "Transparence totale",
+      "Intimité/secret fonctionnel",
+      "Colère/angoisse",
+      "Exploration du territoire de l’autre",
+      "Leader familial",
+      "Besoin d’intimité du couple",
+      "Préliminaires",
+      "Surveillance/espionnage",
+      "Victime→bourreau"
+    ],
+    "aretes": [
+      [
+        "Égoïsme partagé",
+        "Bien-être individuel",
+        "permet"
+      ],
+      [
+        "Bien-être individuel",
+        "Qualité du lien",
+        "favorise"
+      ],
+      [
+        "Loi du tout ou rien",
+        "Compromis",
+        "contradictoire"
+      ],
+      [
+        "Compliments",
+        "Qualité du lien",
+        "favorise"
+      ],
+      [
+        "CNV",
+        "Compromis",
+        "permet"
+      ],
+      [
+        "Domination chronique",
+        "Qualité du lien",
+        "contradictoire"
+      ],
+      [
+        "Sexualité épanouie",
+        "Qualité du lien",
+        "favorise"
+      ],
+      [
+        "Pannes d’érection",
+        "Sexualité épanouie",
+        "contradictoire"
+      ],
+      [
+        "PDE5 (Viagra/Cialis/…)",
+        "Pannes d’érection",
+        "implique"
+      ],
+      [
+        "Respiration abdominale",
+        "Colère/angoisse",
+        "réduit"
+      ],
+      [
+        "Activité physique douce",
+        "Bien-être individuel",
+        "favorise"
+      ],
+      [
+        "Ménopause",
+        "Sécheresse vaginale",
+        "cause"
+      ],
+      [
+        "Andropause",
+        "Mise en route lente",
+        "cause"
+      ],
+      [
+        "Préliminaires",
+        "Sexualité épanouie",
+        "favorise"
+      ],
+      [
+        "Infidélité",
+        "Vengeance",
+        "provoque"
+      ],
+      [
+        "Vengeance",
+        "Qualité du lien",
+        "contradictoire"
+      ],
+      [
+        "Transparence totale",
+        "Intimité/secret fonctionnel",
+        "contradictoire"
+      ],
+      [
+        "Surveillance/espionnage",
+        "Qualité du lien",
+        "réduit"
+      ],
+      [
+        "Exploration du territoire de l’autre",
+        "Compromis",
+        "favorise"
+      ],
+      [
+        "Leader familial",
+        "Intégration familiale",
+        "implique"
+      ],
+      [
+        "Besoin d’intimité du couple",
+        "Qualité du lien",
+        "favorise"
+      ],
+      [
+        "Colère/angoisse",
+        "Vengeance",
+        "favorise"
+      ],
+      [
+        "Égoïsme partagé",
+        "Compromis",
+        "favorise"
+      ]
+    ],
+    "pages_support": "Cas et principes p.9-30.",
+    "citation": "Relations inférées des exemples p.9-30. "
+  },
+  "taxonomie": {
+    "domaines": {
+      "Clinique du couple": [
+        "communication",
+        "pouvoir",
+        "sexualité",
+        "crises"
+      ],
+      "Psychoéducation": [
+        "CNV",
+        "respiration",
+        "hygiène de vie",
+        "routines de compliments"
+      ],
+      "Éthique relationnelle": [
+        "intimité vs transparence",
+        "non-vengeance"
+      ]
+    },
+    "niveaux": [
+      "intra-individuel",
+      "dyadique",
+      "familial/social"
+    ],
+    "citation": "Organisation dérivée des sections p.9-30. "
+  },
+  "semantique": {
+    "ontologie": {
+      "classes": {
+        "Principe": [
+          "Égoïsme partagé",
+          "Compromis",
+          "CNV"
+        ],
+        "BiaisCognitif": [
+          "Loi du tout ou rien"
+        ],
+        "ProcessusSomatique": [
+          "Respiration abdominale",
+          "Activité physique douce"
+        ],
+        "ConditionSexuelle": [
+          "Pannes d’érection",
+          "Sécheresse vaginale"
+        ],
+        "Intervention": [
+          "PDE5",
+          "Lubrifiants/Gels hormonaux"
+        ],
+        "DynamiqueRelationnelle": [
+          "Domination chronique",
+          "Intimité/secret fonctionnel",
+          "Transparence totale"
+        ],
+        "Événement": [
+          "Infidélité",
+          "Colère/angoisse"
+        ]
+      },
+      "proprietes": {
+        "favorise": "x favorise y (tendance positive)",
+        "contradictoire": "x s’oppose à y",
+        "cause": "x est cause ou facteur de y",
+        "permet": "x rend possible y",
+        "necessite": "x est condition pour y",
+        "implique": "x inclut ou active y",
+        "exemple_de": "x illustre le concept y"
+      },
+      "axiomes": [
+        "Principe(Égoïsme partagé) ∧ favorise(Bien-être individuel, Qualité du lien)",
+        "BiaisCognitif(Loi du tout ou rien) → contradictoire(Compromis)",
+        "Intervention(PDE5) ∧ ConditionSexuelle(Pannes d’érection) → permet(Sexualité épanouie)",
+        "ProcessusSomatique(Respiration abdominale) → réduit(Colère/angoisse)"
+      ]
+    },
+    "definitions_formelles": {
+      "Égoïsme partagé": "Principe selon lequel chaque partenaire recherche activement son propre bien-être légitime afin de nourrir le bien commun du couple.",
+      "Loi du tout ou rien": "Biais évaluatif binaire éliminant les options intermédiaires et empêchant le compromis.",
+      "CNV": "Cadre de communication centrée sur l’expression en « je », la description factuelle et la formulation du besoin.",
+      "Intimité/secret fonctionnel": "Zone de non-transparence justifiée par la protection du lien (éviter la médicalisation du couple et la position d’infirmier·e).",
+      "Vengeance conjugale": "Réaction punitive visant la symétrie des torts, prédictive d’une baisse du bien-être relationnel."
+    },
+    "citation": "Formalisations à partir des p.7-23 et p.24-30. "
+  },
+  "pedagogie": {
+    "progression": {
+      "debutant": [
+        "Identifier le « tout ou rien » dans ses phrases",
+        "Pratiquer 5’ de respiration abdominale quotidienne"
+      ],
+      "intermediaire": [
+        "Mettre en place 1 compliment/jour",
+        "Rédiger une demande CNV par semaine"
+      ],
+      "avance": [
+        "Co-construire un rituel d’intimité (préliminaires, temps à deux)",
+        "Définir des limites saines de transparence"
+      ]
+    },
+    "objectifs_bloom": {
+      "comprendre": [
+        "Expliquer l’égoïsme partagé avec un exemple personnel"
+      ],
+      "appliquer": [
+        "Transformer un reproche en demande CNV"
+      ],
+      "analyser": [
+        "Détecter les absolutismes dans un échange de couple"
+      ],
+      "evaluer": [
+        "Évaluer l’effet d’une micro-intervention corporelle sur une dispute"
+      ],
+      "creer": [
+        "Concevoir un « protocole dispute » en 5 étapes"
+      ]
+    },
+    "parcours_type": [
+      {
+        "seance": 1,
+        "duree_min": 60,
+        "theme": "Cartographie des conflits et du langage « tout/jamais »"
+      },
+      {
+        "seance": 2,
+        "duree_min": 60,
+        "theme": "CNV + compliments ritualisés"
+      },
+      {
+        "seance": 3,
+        "duree_min": 60,
+        "theme": "Hygiène somatique (respiration, marche, plaisir)"
+      },
+      {
+        "seance": 4,
+        "duree_min": 60,
+        "theme": "Sexualité: préliminaires, PDE5, lubrifiants"
+      },
+      {
+        "seance": 5,
+        "duree_min": 60,
+        "theme": "Gestion infidélité sans vengeance"
+      }
+    ],
+    "citation": "Pédagogie extrapolée des prescriptions comportementales p.17-23 et p.24-30. "
+  },
+  "multimodal": {
+    "diagrammes_suggeres": [
+      {
+        "type": "flowchart",
+        "titre": "Protocole Dispute",
+        "etapes": [
+          "Déclencheur",
+          "Pause corporelle",
+          "Respiration 10 min",
+          "Reformulation CNV",
+          "Recherche de compromis"
+        ]
+      },
+      {
+        "type": "carte_concepts",
+        "titre": "Égoïsme partagé et dérivés",
+        "noeuds": [
+          "Bien-être",
+          "Compromis",
+          "CNV",
+          "Sexualité",
+          "Intimité"
+        ]
+      }
+    ],
+    "citation": "Logiques procédurales p.17-19 et p.12-13. "
+  },
+  "exercices": {
+    "pratiques_hebdomadaires": [
+      {
+        "nom": "Journal du langage",
+        "consigne": "Lister 3 phrases « tout/jamais » et les réécrire en version nuancée.",
+        "duree": "10 min"
+      },
+      {
+        "nom": "Compliment ciblé",
+        "consigne": "1 compliment précis/jour + observation de l’effet sur l’autre.",
+        "duree": "2 min"
+      },
+      {
+        "nom": "Respiration 4-6-8",
+        "consigne": "Inspiration 4s, pause 6s, expiration 8s, 10 cycles.",
+        "duree": "10 min"
+      },
+      {
+        "nom": "Demande CNV",
+        "consigne": "Formuler 1 besoin concret/semaine.",
+        "duree": "15 min"
+      }
+    ],
+    "citation": "Exercices dérivés des recommandations p.12-13, p.17-19. "
+  },
+  "evaluation": {
+    "auto_echelles": [
+      {
+        "nom": "Indice de tout-ou-rien",
+        "items": 6,
+        "score_max": 24
+      },
+      {
+        "nom": "Fréquence compliments",
+        "items": 4,
+        "score_max": 16
+      },
+      {
+        "nom": "Hygiène somatique",
+        "items": 5,
+        "score_max": 20
+      }
+    ],
+    "criteres_reussite": [
+      "Diminution de 30% du langage binaire",
+      "2 compliments/jour en moyenne",
+      "Récurrence de rituels corporels"
+    ],
+    "citation": "Critères alignés aux chap. 1-2. "
+  },
+  "references": {
+    "internes": [
+      {
+        "type": "chapitre",
+        "ref": "1",
+        "pages": "9-16"
+      },
+      {
+        "type": "chapitre",
+        "ref": "2",
+        "pages": "17-23"
+      },
+      {
+        "type": "chapitre",
+        "ref": "3",
+        "pages": "24-30 (partiel)"
+      }
+    ],
+    "externes_suggerees": [
+      {
+        "auteur": "Rosenberg M.",
+        "titre": "La Communication NonViolente",
+        "statut": "suggestion contextuelle"
+      }
+    ],
+    "citation": "Appuis internes p.9-30. "
+  },
+  "citations_semantiques": {
+    "preface": "« L’égoïsme partagé… à rebrousse-poil du bonheur fusionnel. » (idée) p.7. ",
+    "introduction": "« On ne peut rien partager si l’on n’a pas soi-même de satisfaction. » (idée) p.8. ",
+    "chap1": "« Bannir le tout ou rien » (motif récurrent) p.9-16. ",
+    "chap2": "« Si le corps fonctionne, la tête suivra. » (motif) p.17-23. ",
+    "chap3": "« Régler la situation, pas les comptes. » (motif) p.24-30. "
+  },
+  "contexte_historique": {
+    "tendance": "Opposition aux injonctions contemporaines de transparence intégrale et de performance.",
+    "positionnement": "Clinique francophone, sexologie et thérapie de couple, années 2010-2020.",
+    "citation": "Préface + ton général p.7-8. "
+  },
+  "applications_pratiques": {
+    "domestique": [
+      "Rituels de compliments",
+      "Pause corporelle pendant conflit",
+      "Agenda d’intimité"
+    ],
+    "sexuelle": [
+      "Préliminaires étendus",
+      "Usage discret PDE5 si indiqué",
+      "Traitement sécheresse"
+    ],
+    "sociale": [
+      "Cartographie du clan familial et Alliés"
+    ],
+    "citation": "Exemples p.11-15, p.19-23. "
+  },
+  "controverses": {
+    "transparence_totale": "Risque de médicaliser moralement la sexualité et de déplacer le focus du désir vers la technique.",
+    "PDE5_sans_en_parler": "Tension éthique entre autonomie individuelle et contrat de transparence conjugale.",
+    "citation": "Débats implicites p.20-21 (ne pas dire la pilule), p.30 (Big Brother). "
+  },
+  "glossaire": {
+    "Égoïsme partagé": "Recherche du bien-être de soi au service du couple.",
+    "CNV": "Communication Non Violente (je/faits/besoin).",
+    "PDE5": "Inhibiteurs de la phosphodiestérase de type 5 (Viagra, etc.).",
+    "Andropause": "Baisse de testostérone biodisponible avec âge.",
+    "Intimité fonctionnelle": "Espace de non-dit protecteur du lien.",
+    "citation": "Termes utilisés p.19-23 et passim. "
+  },
+  "cas_cliniques": [
+    {
+      "nom": "Armelle & Mathias",
+      "problematique": "Divergences religieuses",
+      "resolution": "Compromis/temps séparés + grandes occasions partagées",
+      "concepts": [
+        "Compromis",
+        "Égoïsme partagé"
+      ],
+      "pages": "11",
+      "citation": "p.11. "
+    },
+    {
+      "nom": "Garance & Paul",
+      "problematique": "Domination et ultimatum",
+      "resolution": "Rupture après point de non-retour",
+      "concepts": [
+        "Toute-puissance",
+        "Tout ou rien"
+      ],
+      "pages": "14",
+      "citation": "p.14. "
+    },
+    {
+      "nom": "Carole & Stéphane",
+      "problematique": "Sexe en otage",
+      "resolution": "Recentrage de soi; désir relancé",
+      "concepts": [
+        "Égoïsme partagé",
+        "Sexualité"
+      ],
+      "pages": "15",
+      "citation": "p.15. "
+    },
+    {
+      "nom": "Éric & Julie (vacances)",
+      "problematique": "Désaccords logistiques",
+      "resolution": "Identifier besoin d’intimité",
+      "concepts": [
+        "Compromis",
+        "Besoins"
+      ],
+      "pages": "16",
+      "citation": "p.16. "
+    },
+    {
+      "nom": "Céline",
+      "problematique": "Vengeance infidélité",
+      "resolution": "Constat d’échec; travail sur estime",
+      "concepts": [
+        "Non-vengeance"
+      ],
+      "pages": "25-26",
+      "citation": "p.25-26. "
+    },
+    {
+      "nom": "Éric (cadre)",
+      "problematique": "Vengeance et panne",
+      "resolution": "Retour aux fondements du lien",
+      "concepts": [
+        "Colère",
+        "Sexualité"
+      ],
+      "pages": "26",
+      "citation": "p.26. "
+    },
+    {
+      "nom": "Juliette & Christophe",
+      "problematique": "Silence post-adultère → harcèlement",
+      "resolution": "Lien rompu (séparation)",
+      "concepts": [
+        "Victime→bourreau",
+        "Parler du lien"
+      ],
+      "pages": "29",
+      "citation": "p.29. "
+    },
+    {
+      "nom": "Christine & Thierry",
+      "problematique": "Transparence/espionnage",
+      "resolution": "Sursaut nécessaire: cesser Big Brother",
+      "concepts": [
+        "Intimité",
+        "Transparence"
+      ],
+      "pages": "30 (début)",
+      "citation": "p.30 (extrait). "
+    }
+  ],
+  "methodes_therapeutiques": {
+    "comportementales": [
+      "Pause corporelle",
+      "Respiration",
+      "Exposition graduée à la demande de besoin"
+    ],
+    "sexologiques": [
+      "PDE5 (si indiqué)",
+      "Focus préliminaires",
+      "Lubrifiants/gels hormonaux"
+    ],
+    "systemiques": [
+      "Cartographie familiale",
+      "Ritualisation des compliments"
+    ],
+    "citation": "Interventions décrites p.12-13, p.19-23. "
+  },
+  "donnees_statistiques": {
+    "note": "Aucune statistique chiffrée explicite dans p.1-30; section réservée pour ajouts ultérieurs si présentes au-delà de p.50.",
+    "citation": "Absence de chiffres quantifiés dans l’extrait consulté. "
+  },
+  "comparaisons": {
+    "transparence_vs_intimite": "Transparence totale peut aggraver la souffrance; intimité protectrice favorise la relance du désir.",
+    "psychologiser_vs_corporel": "Commencer par la tête vs par le corps: le livre préconise corporel d’abord.",
+    "citation": "Analyses issues ch.2 et ch.3 p.20-21, p.30. "
+  },
+  "implementation": {
+    "protocoles": [
+      {
+        "nom": "Protocole Dispute",
+        "etapes": [
+          "Stop verbal",
+          "Sortie 15-30 min",
+          "Respiration 10 min",
+          "Retour factuel + CNV",
+          "Compromis écrit"
+        ]
+      },
+      {
+        "nom": "Rituel Compliments",
+        "etapes": [
+          "Observation",
+          "Formulation précise",
+          "Lien au besoin",
+          "Fréquence quotidienne"
+        ]
+      },
+      {
+        "nom": "Sexe Reboot",
+        "etapes": [
+          "Préliminaires prolongés",
+          "Traitement fonctionnel si besoin",
+          "Focus plaisir de chacun",
+          "Débrief bienveillant 24h après"
+        ]
+      }
+    ],
+    "citation": "Synthèse procédurale p.12-13 et p.17-23. "
+  },
+  "public_cible": {
+    "profils": [
+      "Couples en conflit récurrent",
+      "Couples en baisse de désir",
+      "Adultère récent (sans projet de séparation)"
+    ],
+    "prealables": [
+      "Accord minimal pour expérimenter des micro-changements"
+    ],
+    "citation": "Ciblage implicite des vignettes cliniques p.9-30. "
+  },
+  "ressources_complementaires": {
+    "fiches": [
+      {
+        "nom": "Checklist CNV",
+        "contenu": [
+          "Je…",
+          "Fait daté…",
+          "Besoin…",
+          "Demande…"
+        ]
+      },
+      {
+        "nom": "Breathing quick start",
+        "contenu": [
+          "10 min/j",
+          "Mains sur ventre",
+          "Cycle 4-6-8"
+        ]
+      }
+    ],
+    "citation": "Dérivations pédagogiques des chapitres 1-2. "
+  },
+  "validation_qualite": {
+    "coherence_interne": "Thèse cohérente sur 3 chapitres: refus du binaire, primat du corps, non-vengeance.",
+    "limites": [
+      "Peu de données quantitatives; recommandations pharmacologiques discutables sans avis médical personnel."
+    ],
+    "citation": "Évaluation basée p.7-30. "
+  },
+  "meta_analyse": {
+    "position": "Approche pragmatique centrée solution, proche TCC et sexologie clinique.",
+    "convergence": [
+      "CNV, thérapies brèves, psychoéducation somatique"
+    ],
+    "divergences": [
+      "Contre-courant sur transparence conjugale totale"
+    ],
+    "citation": "Lecture comparative des prescriptions p.12-13, p.19-21, p.30. "
+  },
+  "liens_externes": {
+    "note": "À enrichir (ouvrages CNV, sexologie). Non extraits du PDF.",
+    "citation": "Section indicative."
+  },
+  "temporalite": {
+    "horizon": [
+      "Micro (instant de dispute)",
+      "Court terme (semaines de rituels)",
+      "Moyen terme (3-6 mois de consolidation)"
+    ],
+    "jalons": [
+      "Semaine 1: arrêt « tout ou rien »",
+      "S2: CNV + compliments",
+      "S3: respiration/activité",
+      "S4: rituel sexualité"
+    ],
+    "citation": "Temporalisation déduite des routines proposées p.12-19, p.21-23. "
+  },
+  "patterns": {
+    "negatifs": [
+      "Ultimatums récurrents",
+      "Harcelement post-infidelité",
+      "Espionnage numérique"
+    ],
+    "positifs": [
+      "Compliments ritualisés",
+      "Rupture de l’escalade via sortie/respiration",
+      "Préliminaires centrés plaisir"
+    ],
+    "citation": "Patterns dérivés des cas p.11-16, p.25-30. "
+  },
+  "insights": {
+    "i1": "Le langage binaire est un prédicteur comportemental de rupture s’il n’est pas neutralisé.",
+    "i2": "Déplacer le focus du symptôme (érection/désir) vers un acte corporel simple débloque souvent l’inertie psychique.",
+    "i3": "L’idéologie de la transparence peut être anti-érotique; instituer une intimité fonctionnelle protège le désir.",
+    "citation": "Dérivés des chap. 1-3 p.9-30. "
+  },
+  "analytics": {
+    "note_methodo": "Estimation qualitative sur p.2-30 (extrait consulté). Les fréquences exactes globales nécessitent comptage intégral du livre.",
+    "frequences_mots_cles_estimees": [
+      {
+        "terme": "égoïsme partagé",
+        "occurrences_estimees": 10,
+        "pages": "7-8, 9-23, 24-30"
+      },
+      {
+        "terme": "tout ou rien",
+        "occurrences_estimees": 12,
+        "pages": "9-16"
+      },
+      {
+        "terme": "CNV",
+        "occurrences_estimees": 5,
+        "pages": "13"
+      },
+      {
+        "terme": "respiration",
+        "occurrences_estimees": 6,
+        "pages": "17-19"
+      },
+      {
+        "terme": "infidélité",
+        "occurrences_estimees": 8,
+        "pages": "24-30"
+      }
+    ],
+    "densite_par_page_estimee": [
+      {
+        "page": 7,
+        "concepts": [
+          "égoïsme partagé"
+        ]
+      },
+      {
+        "page": 8,
+        "concepts": [
+          "égoïsme partagé"
+        ]
+      },
+      {
+        "page": 9,
+        "concepts": [
+          "tout ou rien",
+          "compromis"
+        ]
+      },
+      {
+        "page": 13,
+        "concepts": [
+          "CNV",
+          "compliments"
+        ]
+      },
+      {
+        "page": 19,
+        "concepts": [
+          "respiration",
+          "relaxation"
+        ]
+      },
+      {
+        "page": 24,
+        "concepts": [
+          "infidélité",
+          "non-vengeance"
+        ]
+      }
+    ],
+    "distribution_par_section": [
+      {
+        "section": "Chapitre 1",
+        "concepts_top": [
+          "tout ou rien",
+          "compromis",
+          "famille",
+          "CNV"
+        ]
+      },
+      {
+        "section": "Chapitre 2",
+        "concepts_top": [
+          "action corporelle",
+          "respiration",
+          "PDE5",
+          "ménopause/andropause"
+        ]
+      },
+      {
+        "section": "Chapitre 3 (extrait)",
+        "concepts_top": [
+          "infidélité",
+          "non-vengeance",
+          "transparence/intimité"
+        ]
+      }
+    ],
+    "citation": "Cartographies sur p.7-30. "
+  }
+}
